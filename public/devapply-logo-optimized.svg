@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" fill="none">
+  <defs>
+    <linearGradient id="brandGrad" x1="80" y1="40" x2="1080" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#4ADE80"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="80" y1="40" x2="360" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0F172A" flood-opacity="0.15"/>
+    </filter>
+    <style>
+      .word {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+      }
+    </style>
+  </defs>
+
+  <rect width="1200" height="360" fill="transparent"/>
+
+  <!-- Icon -->
+  <g transform="translate(70,44)" filter="url(#softShadow)">
+    <!-- outer clipboard brackets -->
+    <path d="M70 58
+             C70 44 82 32 96 32
+             H120
+             V56
+             H102
+             C97 56 94 59 94 64
+             V204
+             C94 209 97 212 102 212
+             H120
+             V236
+             H96
+             C82 236 70 224 70 210
+             Z" fill="url(#iconGrad)"/>
+
+    <path d="M274 32
+             H298
+             C312 32 324 44 324 58
+             V92
+             L300 110
+             V64
+             C300 59 297 56 292 56
+             H274
+             Z" fill="url(#iconGrad)"/>
+
+    <path d="M274 212
+             H292
+             C297 212 300 209 300 204
+             V162
+             L324 144
+             V210
+             C324 224 312 236 298 236
+             H274
+             Z" fill="url(#iconGrad)"/>
+
+    <!-- clipboard top -->
+    <path d="M160 18
+             C164 8 173 2 184 2
+             H210
+             C221 2 230 8 234 18
+             H260
+             C272 18 282 28 282 40
+             V54
+             C282 66 272 76 260 76
+             H134
+             C122 76 112 66 112 54
+             V40
+             C112 28 122 18 134 18
+             H160Z"
+          fill="url(#iconGrad)"/>
+    <path d="M170 18
+             C173 13 178 10 184 10
+             H210
+             C216 10 221 13 224 18
+             L233 42
+             H161
+             L170 18Z" fill="white" fill-opacity="0.16"/>
+    <rect x="154" y="26" width="86" height="22" rx="11" fill="white" fill-opacity="0.10"/>
+
+    <!-- inner paper -->
+    <rect x="110" y="86" width="174" height="120" rx="22" fill="white"/>
+
+    <!-- code chevron -->
+    <path d="M145 146
+             L178 118
+             C183 114 191 114 196 119
+             C201 124 200 132 194 137
+             L171 157
+             L194 176
+             C200 181 201 189 196 194
+             C191 199 183 199 178 195
+             L145 167
+             C139 162 139 151 145 146Z"
+          fill="url(#iconGrad)"/>
+
+    <!-- checkmark -->
+    <path d="M196 165
+             C191 160 191 151 196 146
+             L216 126
+             C221 121 229 121 234 126
+             L247 139
+             L294 92
+             C299 87 307 87 312 92
+             C317 97 317 105 312 110
+             L255 167
+             C250 172 242 172 237 167
+             L225 155
+             L213 167
+             C208 172 201 172 196 167
+             Z"
+          fill="url(#iconGrad)"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(395,66)">
+    <text x="0" y="150" class="word" font-size="124" fill="url(#brandGrad)">DevApply</text>
+  </g>
+</svg>
