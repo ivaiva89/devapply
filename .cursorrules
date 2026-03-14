@@ -1,0 +1,140 @@
+You are working in an early-stage SaaS codebase for a real production product.
+
+Project:
+Developer Job Application Tracker -> Developer Job CRM -> Developer Career Toolkit
+
+Current priority:
+Build and ship a production-quality MVP of the Job Application Tracker quickly, without overengineering.
+
+Scope allowed right now:
+- authentication
+- dashboard
+- applications CRUD
+- applications table
+- kanban pipeline
+- reminders
+- resume attachments
+- basic analytics
+- billing and plan limits
+
+Do not build unless explicitly requested:
+- resume builder
+- cover letter generator
+- salary comparison tool
+- interview prep AI
+- recruiter CRM
+- email sync
+- browser extension
+- mobile app
+
+Tech stack:
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Prisma
+- PostgreSQL
+- Stripe
+- Resend
+- PostHog
+
+Architecture rules:
+- This project is a modular monolith
+- Organize by feature/domain first
+- Keep business logic out of page components
+- Keep database access server-side only
+- Prefer feature folders like:
+  - features/applications
+  - features/pipeline
+  - features/dashboard
+  - features/resumes
+  - features/reminders
+  - features/billing
+  - features/analytics
+  - features/auth
+
+Preferred feature structure:
+- components/
+- schemas/
+- server/
+- utils/
+- types.ts
+
+Coding rules:
+- Use strict TypeScript
+- Avoid any
+- Prefer explicit naming over clever abstractions
+- Prefer small, focused modules
+- Keep diffs minimal and task-focused
+- Reuse existing repo patterns before introducing new abstractions
+- Do not modify unrelated files
+- Add loading, empty, and error states where relevant
+
+Validation and security:
+- Use Zod for input validation
+- Validate all user input
+- Never trust client input
+- Every query must be scoped to the authenticated user
+- Every mutation must verify ownership server-side
+- Never weaken auth checks for convenience
+
+Billing rules:
+- Enforce all plan limits server-side
+- Free plan limits:
+  - 30 applications
+  - 1 resume
+  - 3 reminders
+- Pro removes those limits
+- UI prompts are not the source of truth; server checks are
+
+Database rules:
+- Use Prisma with PostgreSQL
+- Do not change schema casually
+- Explain why schema changes are needed
+- Add indexes for common filters like userId, status, createdAt, updatedAt
+- Preserve data integrity
+
+Dependency rules:
+- Add dependencies conservatively
+- Prefer built-in platform capabilities when reasonable
+- Explain why a new dependency is necessary
+- Avoid speculative tooling
+
+Performance rules:
+- Avoid unnecessary refetches
+- Avoid over-fetching data
+- Keep expensive logic server-side when appropriate
+- Paginate large lists when needed
+- Avoid obviously inefficient patterns
+
+MVP mindset:
+- Favor practical delivery over theoretical elegance
+- Build the smallest polished version that solves the core workflow well
+- Do not overbuild for hypothetical future requirements
+
+When asked to implement a task:
+1. Inspect the existing code first
+2. Reuse current patterns
+3. Keep changes focused
+4. Validate edge cases
+5. Enforce auth and plan limits
+6. Summarize what changed
+7. List changed files
+8. Mention env or migration changes
+9. Note follow-up improvements
+10. Mention risks or tradeoffs
+
+Preferred output style:
+- concise
+- explicit
+- practical
+- production-minded
+
+Decision heuristic:
+Prefer the option that is:
+1. simpler
+2. safer
+3. easier to maintain
+4. aligned with current repo patterns
+5. sufficient for the MVP
