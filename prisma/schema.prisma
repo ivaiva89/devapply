@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ApplicationStatus {
+  WISHLIST
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
+enum ApplicationSource {
+  LINKEDIN
+  COMPANY_SITE
+  REFERRAL
+  INDEED
+  WELLFOUND
+  OTHER
+}
+
+enum InterviewType {
+  RECRUITER_SCREEN
+  TECHNICAL_SCREEN
+  TAKE_HOME
+  LIVE_CODING
+  ONSITE
+  FINAL_ROUND
+  BEHAVIORAL
+  OTHER
+}
+
+enum InterviewResult {
+  PENDING
+  PASSED
+  FAILED
+  CANCELLED
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum AttachmentKind {
+  RESUME
+  COVER_LETTER
+  PORTFOLIO
+  OTHER
+}
+
+model User {
+  id           String                  @id @default(cuid())
+  email        String                  @unique
+  name         String?
+  imageUrl     String?
+  plan         Plan                    @default(FREE)
+  timezone     String                  @default("UTC")
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  applications Application[]
+  interviews   Interview[]
+  resumes      Resume[]
+  attachments  ApplicationAttachment[]
+  reminders    Reminder[]
+
+  @@index([plan])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model Application {
+  id             String                  @id @default(cuid())
+  userId         String
+  company        String
+  role           String
+  location       String?
+  source         ApplicationSource
+  status         ApplicationStatus       @default(WISHLIST)
+  salaryMin      Int?
+  salaryMax      Int?
+  currency       String                  @default("USD") @db.VarChar(3)
+  jobUrl         String?
+  notes          String?                 @db.Text
+  appliedDate    DateTime?
+  lastActivityAt DateTime?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  user           User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews     Interview[]
+  attachments    ApplicationAttachment[]
+  reminders      Reminder[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+}
+
+model Interview {
+  id              String          @id @default(cuid())
+  userId          String
+  applicationId   String
+  type            InterviewType
+  result          InterviewResult @default(PENDING)
+  title           String
+  interviewerName String?
+  scheduledAt     DateTime
+  completedAt     DateTime?
+  notes           String?         @db.Text
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application     Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([applicationId])
+  @@index([applicationId, scheduledAt])
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+}
+
+model Resume {
+  id            String                  @id @default(cuid())
+  userId        String
+  label         String
+  version       String?
+  fileName      String
+  storageKey    String                  @unique
+  mimeType      String
+  fileSizeBytes Int
+  isDefault     Boolean                 @default(false)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments   ApplicationAttachment[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([userId, isDefault])
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+}
+
+model ApplicationAttachment {
+  id            String         @id @default(cuid())
+  userId        String
+  applicationId String
+  resumeId      String?
+  kind          AttachmentKind @default(RESUME)
+  label         String
+  fileName      String
+  storageKey    String?
+  mimeType      String?
+  fileSizeBytes Int?
+  notes         String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application   Application    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  resume        Resume?        @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([applicationId])
+  @@index([resumeId])
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+}
+
+model Reminder {
+  id            String       @id @default(cuid())
+  userId        String
+  applicationId String?
+  title         String
+  notes         String?      @db.Text
+  dueAt         DateTime
+  completedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([applicationId])
+  @@index([userId, dueAt])
+  @@index([userId, completedAt])
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+}
