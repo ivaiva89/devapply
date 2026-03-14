@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/layout/page-shell";
 import { PlaceholderPanel } from "@/components/layout/placeholder-panel";
+import { Button } from "@/components/ui/button";
 
 export default function MarketingHomePage() {
   return (
@@ -12,6 +13,7 @@ export default function MarketingHomePage() {
         description="This repository now starts from an intentional SaaS foundation: marketing routes are separated from the authenticated product area, and the core MVP sections already have stable URLs for incremental implementation."
       >
         <div className="flex flex-wrap gap-3">
+          <Button type="button">DevApply primary action</Button>
           <Link
             href="/sign-in"
             className="rounded-full bg-stone-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-800"
