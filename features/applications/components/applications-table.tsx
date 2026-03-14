@@ -1,6 +1,6 @@
-import { applicationSourceLabels } from "@/features/applications/server/application-list";
 import type { ApplicationListItem } from "@/features/applications/types";
 import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
+import { applicationSourceLabels } from "@/features/applications/config";
 
 type ApplicationsTableProps = {
   applications: ApplicationListItem[];

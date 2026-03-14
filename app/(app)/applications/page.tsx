@@ -1,6 +1,7 @@
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFilters } from "@/features/applications/components/applications-filters";
 import { ApplicationsTable } from "@/features/applications/components/applications-table";
+import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
 
@@ -38,8 +39,11 @@ export default async function ApplicationsPage({
               Search, filter, and sort the authenticated user&apos;s applications without exposing any cross-user data.
             </p>
           </div>
-          <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
-            {items.length} {items.length === 1 ? "application" : "applications"}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
+              {items.length} {items.length === 1 ? "application" : "applications"}
+            </div>
+            <NewApplicationModal />
           </div>
         </div>
       </section>

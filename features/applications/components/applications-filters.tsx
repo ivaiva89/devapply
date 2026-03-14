@@ -1,4 +1,5 @@
-import { applicationSortSelectOptions, applicationStatusOptions } from "@/features/applications/server/application-list";
+import { applicationStatusFilterOptions } from "@/features/applications/config";
+import { applicationSortSelectOptions } from "@/features/applications/server/application-list";
 import type { ApplicationsQueryState } from "@/features/applications/types";
 
 type ApplicationsFiltersProps = {
@@ -31,7 +32,7 @@ export function ApplicationsFilters({ state }: ApplicationsFiltersProps) {
             defaultValue={state.status}
             className="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-950 outline-none transition focus:border-stone-950"
           >
-            {applicationStatusOptions.map((option) => (
+            {applicationStatusFilterOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

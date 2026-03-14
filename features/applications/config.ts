@@ -1,0 +1,61 @@
+export const applicationStatusValues = [
+  "WISHLIST",
+  "APPLIED",
+  "INTERVIEW",
+  "OFFER",
+  "REJECTED",
+] as const;
+
+export type ApplicationStatusValue = (typeof applicationStatusValues)[number];
+
+export const applicationSourceValues = [
+  "LINKEDIN",
+  "COMPANY_SITE",
+  "REFERRAL",
+  "INDEED",
+  "WELLFOUND",
+  "OTHER",
+] as const;
+
+export type ApplicationSourceValue = (typeof applicationSourceValues)[number];
+
+export const applicationStatusLabels: Record<ApplicationStatusValue, string> = {
+  WISHLIST: "Wishlist",
+  APPLIED: "Applied",
+  INTERVIEW: "Interview",
+  OFFER: "Offer",
+  REJECTED: "Rejected",
+};
+
+export const applicationSourceLabels: Record<ApplicationSourceValue, string> = {
+  LINKEDIN: "LinkedIn",
+  COMPANY_SITE: "Company site",
+  REFERRAL: "Referral",
+  INDEED: "Indeed",
+  WELLFOUND: "Wellfound",
+  OTHER: "Other",
+};
+
+export const applicationFormStatusOptions: ReadonlyArray<{
+  value: ApplicationStatusValue;
+  label: string;
+}> = applicationStatusValues.map((value) => ({
+  value,
+  label: applicationStatusLabels[value],
+}));
+
+export const applicationStatusFilterOptions: ReadonlyArray<{
+  value: ApplicationStatusValue | "ALL";
+  label: string;
+}> = [
+  { value: "ALL", label: "All statuses" },
+  ...applicationFormStatusOptions,
+];
+
+export const applicationSourceOptions: ReadonlyArray<{
+  value: ApplicationSourceValue;
+  label: string;
+}> = applicationSourceValues.map((value) => ({
+  value,
+  label: applicationSourceLabels[value],
+}));

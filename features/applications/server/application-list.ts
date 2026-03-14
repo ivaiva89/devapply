@@ -1,10 +1,6 @@
 import "server-only";
 
-import {
-  ApplicationSource,
-  ApplicationStatus,
-  Prisma,
-} from "@prisma/client";
+import { ApplicationStatus, Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import {
@@ -118,26 +114,9 @@ export async function getApplicationsForUser(
   return { items, state };
 }
 
-export const applicationStatusOptions = [
-  { value: "ALL", label: "All statuses" },
-  ...Object.values(ApplicationStatus).map((status) => ({
-    value: status,
-    label: status.replaceAll("_", " ").toLowerCase().replace(/^\w/, (char) => char.toUpperCase()),
-  })),
-] as const;
-
 export const applicationSortSelectOptions = [
   { value: "updated-desc", label: "Recently updated" },
   { value: "updated-asc", label: "Least recently updated" },
   { value: "applied-desc", label: "Newest applied date" },
   { value: "applied-asc", label: "Oldest applied date" },
 ] as const;
-
-export const applicationSourceLabels: Record<ApplicationSource, string> = {
-  LINKEDIN: "LinkedIn",
-  COMPANY_SITE: "Company site",
-  REFERRAL: "Referral",
-  INDEED: "Indeed",
-  WELLFOUND: "Wellfound",
-  OTHER: "Other",
-};
