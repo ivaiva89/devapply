@@ -46,6 +46,6 @@ next-env.d.ts
 AGENTS.md
 ARCHITECTURE.md
 PRODUCT.md
-ROADMAP.md
 TASKS.md
 docs
+.env*.local
