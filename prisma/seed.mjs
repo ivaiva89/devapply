@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import {
   PrismaClient,
   ApplicationSource,
@@ -7,8 +9,16 @@ import {
   InterviewType,
   Plan,
 } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to run prisma/seed.mjs.");
+}
+
+const adapter = new PrismaNeon({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   await prisma.applicationAttachment.deleteMany();
