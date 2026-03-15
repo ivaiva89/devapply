@@ -38,7 +38,7 @@ export default async function RemindersPage() {
             title="Upgrade to keep more active reminders."
             description={`Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more follow-ups and outreach tracking tasks.`}
           />
-          <UpgradeButton />
+          <UpgradeButton userId={user.id} />
         </>
       ) : null}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">

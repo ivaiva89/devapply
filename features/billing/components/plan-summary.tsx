@@ -3,9 +3,10 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 
 type PlanSummaryProps = {
   plan: "FREE" | "PRO";
+  userId: string;
 };
 
-export function PlanSummary({ plan }: PlanSummaryProps) {
+export function PlanSummary({ plan, userId }: PlanSummaryProps) {
   return (
     <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
@@ -42,7 +43,7 @@ export function PlanSummary({ plan }: PlanSummaryProps) {
             </div>
           </div>
           <div className="mt-6">
-            <UpgradeButton />
+            <UpgradeButton userId={userId} />
           </div>
         </>
       ) : null}

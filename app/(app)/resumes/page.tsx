@@ -37,7 +37,7 @@ export default async function ResumesPage() {
             title="Upgrade to keep multiple resume versions."
             description={`Free plan users can store ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to keep multiple role-specific versions and tailor attachments per application.`}
           />
-          <UpgradeButton />
+          <UpgradeButton userId={user.id} />
         </>
       ) : null}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">

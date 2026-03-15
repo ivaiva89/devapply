@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Stripe from "stripe";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
 
 export type CreateCheckoutSessionState = {
@@ -58,29 +59,45 @@ export async function createCheckoutSession(
     };
   }
 
-  const stripe = new Stripe(secretKey);
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer_email: user.email,
-    line_items: [
-      {
-        price: priceId,
-        quantity: 1,
+  try {
+    const stripe = new Stripe(secretKey);
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      customer_email: user.email,
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      success_url: `${baseUrl}/settings?billing=success`,
+      cancel_url: `${baseUrl}/settings?billing=cancelled`,
+      metadata: {
+        userId: user.id,
       },
-    ],
-    success_url: `${baseUrl}/settings?billing=success`,
-    cancel_url: `${baseUrl}/settings?billing=cancelled`,
-    metadata: {
-      userId: user.id,
-    },
-  });
+    });
 
-  if (!session.url) {
+    if (!session.url) {
+      return {
+        status: "error",
+        error: "Stripe did not return a checkout URL.",
+      };
+    }
+
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "checkout_started",
+      properties: {
+        checkoutSessionId: session.id,
+        plan: "PRO",
+      },
+    });
+
+    redirect(session.url);
+  } catch {
     return {
       status: "error",
-      error: "Stripe did not return a checkout URL.",
+      error: "Stripe checkout could not be started. Try again.",
     };
   }
-
-  redirect(session.url);
 }

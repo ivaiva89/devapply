@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+import { TrackedLink } from "@/features/analytics/components/tracked-link";
 import { marketingNavigation } from "@/features/navigation/config";
 
 export default function MarketingLayout({
@@ -19,9 +20,14 @@ export default function MarketingLayout({
                 {item.label}
               </Link>
             ))}
-            <Link href="/sign-in" className="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-950 hover:text-stone-950">
+            <TrackedLink
+              href="/sign-in"
+              event="signup"
+              properties={{ source: "marketing_header" }}
+              className="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-950 hover:text-stone-950"
+            >
               Start free
-            </Link>
+            </TrackedLink>
           </nav>
         </header>
         <main className="flex-1 py-10">{children}</main>

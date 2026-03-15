@@ -45,7 +45,7 @@ export default async function SettingsPage({
           </p>
         </section>
       ) : null}
-      <PlanSummary plan={user.plan} />
+      <PlanSummary plan={user.plan} userId={user.id} />
     </div>
   );
 }

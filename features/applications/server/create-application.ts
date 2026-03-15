@@ -6,6 +6,7 @@ import {
   createApplicationDefaultValues,
   type CreateApplicationActionState,
 } from "@/features/applications/create-application-form";
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import {
   applicationFormSchema,
   getApplicationFormErrorState,
@@ -43,7 +44,7 @@ export async function createApplication(
 
     const input = result.data;
 
-    await prisma.application.create({
+    const application = await prisma.application.create({
       data: {
         userId: user.id,
         company: input.company,
@@ -57,6 +58,15 @@ export async function createApplication(
         jobUrl: input.jobUrl,
         notes: input.notes,
         appliedDate: input.appliedDate,
+      },
+    });
+
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "application_created",
+      properties: {
+        applicationId: application.id,
+        status: application.status,
       },
     });
 

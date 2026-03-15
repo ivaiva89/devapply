@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto";
 
 import { revalidatePath } from "next/cache";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { getPlanGate } from "@/features/billing/server/plan-enforcement";
@@ -94,7 +95,7 @@ export async function uploadResume(
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, Buffer.from(arrayBuffer));
 
-  await prisma.resume.create({
+  const resume = await prisma.resume.create({
     data: {
       userId: user.id,
       label: title.trim(),
@@ -103,6 +104,15 @@ export async function uploadResume(
       mimeType: file.type,
       fileSizeBytes: file.size,
       isDefault: resumeCount === 0,
+    },
+  });
+
+  await trackServerEvent({
+    distinctId: user.id,
+    event: "resume_uploaded",
+    properties: {
+      fileSizeBytes: resume.fileSizeBytes,
+      resumeId: resume.id,
     },
   });
 

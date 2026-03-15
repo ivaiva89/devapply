@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { getPlanGate } from "@/features/billing/server/plan-enforcement";
@@ -83,12 +84,21 @@ export async function createReminder(
     }
   }
 
-  await prisma.reminder.create({
+  const reminder = await prisma.reminder.create({
     data: {
       userId: user.id,
       title: input.title,
       dueAt: new Date(input.remindAt),
       applicationId: input.applicationId,
+    },
+  });
+
+  await trackServerEvent({
+    distinctId: user.id,
+    event: "reminder_created",
+    properties: {
+      hasLinkedApplication: Boolean(reminder.applicationId),
+      reminderId: reminder.id,
     },
   });
 

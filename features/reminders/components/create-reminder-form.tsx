@@ -94,7 +94,7 @@ export function CreateReminderForm({
           <select
             id="applicationId"
             name="applicationId"
-            disabled={isPending}
+            disabled={!canCreate || isPending}
             defaultValue=""
             className="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-950 outline-none transition focus:border-stone-950 disabled:cursor-not-allowed disabled:bg-stone-100"
           >
