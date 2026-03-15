@@ -8,6 +8,7 @@
     "build:vercel": "npm run db:generate && if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:deploy; fi && next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
