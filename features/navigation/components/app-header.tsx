@@ -1,4 +1,4 @@
-import { signOut } from "@/features/auth/server/actions";
+import { UserButton } from "@clerk/nextjs";
 
 type AppHeaderProps = {
   title: string;
@@ -36,14 +36,7 @@ export function AppHeader({
             {planLabel} plan
           </p>
         </div>
-        <form action={signOut}>
-          <button
-            type="submit"
-            className="rounded-full border border-stone-300 px-3 py-2 text-sm text-stone-700 transition hover:border-stone-950 hover:text-stone-950"
-          >
-            Sign out
-          </button>
-        </form>
+        <UserButton />
       </div>
     </header>
   );

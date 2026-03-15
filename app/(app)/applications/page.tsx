@@ -26,8 +26,13 @@ export default async function ApplicationsPage({
     resolvedSearchParams,
   );
   const hasFilters = Boolean(state.query) || state.status !== "ALL";
+  const hasActiveSort = state.sort !== "updated-desc";
   const canCreateApplication =
     plan === "PRO" || totalCount < FREE_PLAN_LIMITS.applications;
+  const resultsLabel =
+    hasFilters || hasActiveSort
+      ? `${items.length} of ${totalCount} ${totalCount === 1 ? "application" : "applications"}`
+      : `${totalCount} ${totalCount === 1 ? "application" : "applications"}`;
 
   return (
     <div className="space-y-6">
@@ -46,7 +51,7 @@ export default async function ApplicationsPage({
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
-              {items.length} {items.length === 1 ? "application" : "applications"}
+              {resultsLabel}
             </div>
             <NewApplicationModal disabled={!canCreateApplication} />
           </div>
@@ -65,7 +70,7 @@ export default async function ApplicationsPage({
       {items.length > 0 ? (
         <ApplicationsTable applications={items} />
       ) : (
-        <ApplicationsEmptyState hasFilters={hasFilters} />
+        <ApplicationsEmptyState hasFilters={hasFilters || hasActiveSort} />
       )}
     </div>
   );

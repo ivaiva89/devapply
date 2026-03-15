@@ -50,6 +50,13 @@ Install dependencies
 
 npm install
 
+Configure environment variables
+
+- Copy `.env.example` to `.env.local`
+- Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
+- Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
+- Restart `npm run dev` after changing Clerk environment variables
+
 Run database migrations
 
 npx prisma migrate dev
@@ -61,3 +68,27 @@ npx prisma db seed
 Start development
 
 npm run dev
+
+## Authentication setup
+
+DevApply now uses Clerk for production auth in the App Router.
+
+Required environment variables:
+
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL`
+
+Operational notes:
+
+- Clerk auth does not require seeded users
+- Sign in and sign up must use the same Clerk application whose keys are loaded locally
+- After first Clerk authentication, DevApply creates or links the Prisma `User` record on demand
+
+Database change:
+
+- `User.clerkUserId` was added as a nullable unique field to link Clerk identities to Prisma users
+- Existing local users can be linked automatically on first sign-in when the Clerk email matches the existing `User.email`

@@ -51,6 +51,7 @@ export async function updateApplicationStatus(
 
   revalidatePath("/applications");
   revalidatePath("/pipeline");
+  revalidatePath("/dashboard");
 
   return { status: "success" };
 }

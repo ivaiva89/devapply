@@ -7,6 +7,7 @@ Dockerfile for local database development.
 
 - The app runtime uses `DATABASE_URL`
 - Prisma CLI uses `DIRECT_URL`
+- Prisma migrations use `SHADOW_DATABASE_URL` for the shadow database
 - Both local connections should point to `localhost:5432`
 
 Recommended local workflow:
@@ -19,6 +20,7 @@ Recommended local workflow:
 
 - `DATABASE_URL`
 - `DIRECT_URL`
+- `SHADOW_DATABASE_URL`
 - `NEON_API_KEY`
 - `NEON_PROJECT_ID`
 - `NEON_BRANCH_ID`

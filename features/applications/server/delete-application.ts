@@ -31,6 +31,10 @@ export async function deleteApplication(
     }
 
     revalidatePath("/applications");
+    revalidatePath("/dashboard");
+    revalidatePath("/pipeline");
+    revalidatePath("/reminders");
+    revalidatePath("/resumes");
 
     return {
       status: "success",

@@ -1,12 +1,16 @@
 import type { ReactNode } from "react";
+import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 import { TrackedLink } from "@/features/analytics/components/tracked-link";
 import { marketingNavigation } from "@/features/navigation/config";
 
-export default function MarketingLayout({
+export default async function MarketingLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  const { userId } = await auth();
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(245,158,11,0.16),_transparent_28%),linear-gradient(180deg,_#fffdf7_0%,_#f5f5f4_100%)]">
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6">
@@ -20,14 +24,34 @@ export default function MarketingLayout({
                 {item.label}
               </Link>
             ))}
-            <TrackedLink
-              href="/sign-in"
-              event="signup"
-              properties={{ source: "marketing_header" }}
-              className="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-950 hover:text-stone-950"
-            >
-              Start free
-            </TrackedLink>
+            {!userId ? (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-950 hover:text-stone-950"
+                >
+                  Sign in
+                </Link>
+                <TrackedLink
+                  href="/sign-up"
+                  event="signup"
+                  properties={{ source: "marketing_header" }}
+                  className="rounded-full bg-stone-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-800"
+                >
+                  Start free
+                </TrackedLink>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-950 hover:text-stone-950"
+                >
+                  Dashboard
+                </Link>
+                <UserButton />
+              </>
+            )}
           </nav>
         </header>
         <main className="flex-1 py-10">{children}</main>

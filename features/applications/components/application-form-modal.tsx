@@ -106,6 +106,8 @@ export function ApplicationFormModal({
     action,
     getCreateApplicationInitialState(initialValues),
   );
+  const formValues = state.values;
+  const formKey = JSON.stringify(formValues);
 
   useEffect(() => {
     if (!isOpen) {
@@ -177,7 +179,7 @@ export function ApplicationFormModal({
             </p>
           </div>
         </div>
-        <form action={formAction} className="space-y-5">
+        <form key={formKey} action={formAction} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               error={state.fieldErrors.company}
@@ -187,7 +189,7 @@ export function ApplicationFormModal({
               <TextInputField
                 id="company"
                 name="company"
-                defaultValue={initialValues.company}
+                defaultValue={formValues.company}
                 error={state.fieldErrors.company}
                 placeholder="Linear"
                 autoComplete="organization"
@@ -198,7 +200,7 @@ export function ApplicationFormModal({
               <TextInputField
                 id="role"
                 name="role"
-                defaultValue={initialValues.role}
+                defaultValue={formValues.role}
                 error={state.fieldErrors.role}
                 placeholder="Senior Frontend Engineer"
                 autoComplete="organization-title"
@@ -213,7 +215,7 @@ export function ApplicationFormModal({
               <TextInputField
                 id="location"
                 name="location"
-                defaultValue={initialValues.location}
+                defaultValue={formValues.location}
                 error={state.fieldErrors.location}
                 placeholder="Remote, US"
               />
@@ -222,7 +224,7 @@ export function ApplicationFormModal({
               <select
                 id="source"
                 name="source"
-                defaultValue={initialValues.source}
+                defaultValue={formValues.source}
                 aria-describedby={
                   state.fieldErrors.source ? "source-error" : undefined
                 }
@@ -240,7 +242,7 @@ export function ApplicationFormModal({
               <select
                 id="status"
                 name="status"
-                defaultValue={initialValues.status}
+                defaultValue={formValues.status}
                 aria-describedby={
                   state.fieldErrors.status ? "status-error" : undefined
                 }
@@ -266,7 +268,7 @@ export function ApplicationFormModal({
                 min="0"
                 step="1"
                 inputMode="numeric"
-                defaultValue={initialValues.salaryMin}
+                defaultValue={formValues.salaryMin}
                 error={state.fieldErrors.salaryMin}
                 placeholder="120000"
               />
@@ -283,7 +285,7 @@ export function ApplicationFormModal({
                 min="0"
                 step="1"
                 inputMode="numeric"
-                defaultValue={initialValues.salaryMax}
+                defaultValue={formValues.salaryMax}
                 error={state.fieldErrors.salaryMax}
                 placeholder="160000"
               />
@@ -296,7 +298,7 @@ export function ApplicationFormModal({
               <TextInputField
                 id="currency"
                 name="currency"
-                defaultValue={initialValues.currency}
+                defaultValue={formValues.currency}
                 error={state.fieldErrors.currency}
                 placeholder="USD"
                 autoCapitalize="characters"
@@ -313,7 +315,7 @@ export function ApplicationFormModal({
                 id="appliedDate"
                 name="appliedDate"
                 type="date"
-                defaultValue={initialValues.appliedDate}
+                defaultValue={formValues.appliedDate}
                 error={state.fieldErrors.appliedDate}
               />
             </FormField>
@@ -327,7 +329,7 @@ export function ApplicationFormModal({
                   id="jobUrl"
                   name="jobUrl"
                   type="url"
-                  defaultValue={initialValues.jobUrl}
+                  defaultValue={formValues.jobUrl}
                   error={state.fieldErrors.jobUrl}
                   placeholder="https://jobs.example.com/roles/frontend-engineer"
                 />
@@ -338,7 +340,7 @@ export function ApplicationFormModal({
                 <textarea
                   id="notes"
                   name="notes"
-                  defaultValue={initialValues.notes}
+                  defaultValue={formValues.notes}
                   aria-describedby={state.fieldErrors.notes ? "notes-error" : undefined}
                   aria-invalid={Boolean(state.fieldErrors.notes)}
                   rows={5}

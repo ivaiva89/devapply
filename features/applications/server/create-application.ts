@@ -71,6 +71,10 @@ export async function createApplication(
     });
 
     revalidatePath("/applications");
+    revalidatePath("/dashboard");
+    revalidatePath("/pipeline");
+    revalidatePath("/reminders");
+    revalidatePath("/resumes");
 
     return getApplicationFormSuccessState(createApplicationDefaultValues);
   } catch {
