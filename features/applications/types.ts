@@ -4,8 +4,14 @@ export type ApplicationListItem = {
   id: string;
   company: string;
   role: string;
+  location: string | null;
   status: ApplicationStatus;
   source: ApplicationSource;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  currency: string;
+  jobUrl: string | null;
+  notes: string | null;
   appliedDate: Date | null;
   updatedAt: Date;
 };

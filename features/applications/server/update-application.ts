@@ -3,10 +3,6 @@
 import { revalidatePath } from "next/cache";
 
 import {
-  createApplicationDefaultValues,
-  type CreateApplicationActionState,
-} from "@/features/applications/create-application-form";
-import {
   applicationFormSchema,
   getApplicationFormErrorState,
   getApplicationFormFieldErrors,
@@ -15,8 +11,10 @@ import {
 } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/lib/prisma";
+import type { CreateApplicationActionState } from "@/features/applications/create-application-form";
 
-export async function createApplication(
+export async function updateApplication(
+  applicationId: string,
   _prevState: CreateApplicationActionState,
   formData: FormData,
 ): Promise<CreateApplicationActionState> {
@@ -31,11 +29,29 @@ export async function createApplication(
 
   try {
     const user = await requireCurrentUser();
+    const ownedApplication = await prisma.application.findFirst({
+      where: {
+        id: applicationId,
+        userId: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!ownedApplication) {
+      return getApplicationFormErrorState(values, {
+        formError: "That application could not be found.",
+      });
+    }
+
     const input = result.data;
 
-    await prisma.application.create({
+    await prisma.application.update({
+      where: {
+        id: ownedApplication.id,
+      },
       data: {
-        userId: user.id,
         company: input.company,
         role: input.role,
         location: input.location,
@@ -52,11 +68,11 @@ export async function createApplication(
 
     revalidatePath("/applications");
 
-    return getApplicationFormSuccessState(createApplicationDefaultValues);
+    return getApplicationFormSuccessState(values);
   } catch {
     return getApplicationFormErrorState(values, {
       formError:
-        "The application could not be saved. Check the form and try again.",
+        "The application could not be updated. Check the form and try again.",
     });
   }
 }

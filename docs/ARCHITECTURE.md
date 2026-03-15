@@ -2,79 +2,138 @@
 
 ## Overview
 
-The application uses a **modular monolith architecture**.
+DevApply uses a **modular monolith architecture**.
 
-The system runs as a single application but is organized into clear
-domain modules.
+The application runs as a single deployable system, but the codebase is
+organized into clear domain modules with explicit boundaries.
 
-Benefits:
+This architecture supports:
 
--   faster development
+-   fast MVP development
+-   simpler deployment and operations
 -   easier reasoning for AI coding agents
--   simpler deployment
--   clean future scaling
+-   clean evolution into a larger developer career toolkit
 
-## Technology
+## Architectural Principles
 
-Frontend - Next.js - React - TypeScript - Tailwind
+-   Server-first architecture
+-   Business logic lives on the server
+-   Validation required for all write operations
+-   Every tenant-scoped query must filter by authenticated user
+-   Feature modules should remain loosely coupled
+-   Shared infrastructure separated from domain logic
 
-Backend - Next.js Server Actions - Prisma - PostgreSQL
+## Technology Stack
 
-Infrastructure - Stripe - Resend - PostHog
+### Frontend
+
+-   Next.js (App Router)
+-   React
+-   TypeScript
+-   Tailwind CSS
+-   shadcn/ui
+
+### Backend
+
+-   Next.js Server Actions
+-   Route Handlers for webhooks and external callbacks
+-   Prisma ORM
+-   PostgreSQL
+
+### Platform & Integrations
+
+-   Vercel for hosting
+-   Neon for PostgreSQL
+-   Stripe for billing
+-   Resend for transactional email
+-   PostHog for product analytics
+-   Object storage (Vercel Blob or S3-compatible) for resume uploads
 
 ## Folder Structure
 
-app/
+app/ Next.js routes, layouts, pages
 
-Next.js routing and layouts
+components/ Shared UI components
 
-components/
+features/ Domain modules organized by capability
 
-Reusable UI components
+lib/ Shared infrastructure utilities
 
-features/
+prisma/ Database schema and migrations
 
-Domain modules
-
-lib/
-
-Infrastructure utilities
-
-prisma/
-
-Database schema and migrations
-
-docs/
-
-Project documentation
+docs/ Project documentation
 
 ## Domain Modules
 
-applications pipeline dashboard resumes reminders billing analytics auth
+applications --- CRUD for job applications and status tracking\
+pipeline --- visual workflow of applications\
+dashboard --- overview metrics and activity summaries\
+resumes --- resume upload and version management\
+reminders --- follow-up reminders and due dates\
+billing --- Stripe checkout and subscription state\
+analytics --- product event tracking and usage metrics\
+auth --- authentication and session access
 
-Each module should contain:
+## Feature Module Convention
 
-components schemas server logic utilities types
+features/`<feature>`{=html}/ components/ schemas/ server/ types/ utils/
+
+Guidelines:
+
+-   components: UI specific to the feature
+-   schemas: Zod validation schemas
+-   server: server actions and services
+-   types: local TypeScript types
+-   utils: pure helper logic
+
+## Rendering Strategy
+
+-   Server Components by default
+-   Client Components only when interactivity requires them
+-   Server Actions for mutations
+-   Route Handlers for webhooks and external integrations
 
 ## Data Flow
 
-UI Component → Server Action → Validation → Service Logic → Prisma →
-PostgreSQL
+UI → Server Action / Route Handler → Auth Check → Validation →
+Authorization → Plan Enforcement → Service Logic → Prisma → PostgreSQL →
+Revalidation / Side Effects
+
+Possible side effects:
+
+-   analytics events
+-   transactional email
+-   billing synchronization
 
 ## Security Rules
 
--   Every request must be authenticated
--   All queries must be scoped to userId
--   Ownership must be verified on mutations
+-   Every request must be authenticated unless explicitly public
+-   All tenant data must be scoped to the authenticated user
+-   Ownership must be verified for all mutations
+-   Sensitive logic enforced server-side
+-   Client checks are UX only, not security
 
-## Billing
+## Billing & Entitlements
 
-Free plan limits
+Free plan example limits:
 
 -   30 applications
 -   1 resume
 -   3 reminders
 
-Pro removes limits.
+Rules:
 
-Plan limits must always be enforced server‑side.
+-   plan limits enforced server-side
+-   Stripe subscription state is the source of truth
+-   UI may display limits but server enforcement is authoritative
+
+## Future Evolution
+
+The architecture should support expansion into a **Developer Career
+Toolkit**, including:
+
+-   company/contact CRM
+-   interview preparation tracker
+-   cover letter generator
+-   resume builder
+-   salary insights
