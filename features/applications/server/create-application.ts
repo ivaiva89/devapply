@@ -14,6 +14,8 @@ import {
   readApplicationFormValues,
 } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGate } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 
 export async function createApplication(
@@ -31,6 +33,14 @@ export async function createApplication(
 
   try {
     const user = await requireCurrentUser();
+    const gate = await getPlanGate(user.id, "applications");
+
+    if (!gate.allowed) {
+      return getApplicationFormErrorState(values, {
+        formError: `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
+      });
+    }
+
     const input = result.data;
 
     await prisma.application.create({

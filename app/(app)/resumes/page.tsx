@@ -1,4 +1,7 @@
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { UpgradeButton } from "@/features/billing/components/upgrade-button";
+import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { ResumeList } from "@/features/resumes/components/resume-list";
 import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
 import { UploadResumeForm } from "@/features/resumes/components/upload-resume-form";
@@ -29,17 +32,13 @@ export default async function ResumesPage() {
         </div>
       </section>
       {!data.canUpload ? (
-        <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
-            Free plan limit reached
-          </p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-950">
-            Upgrade to add more resume versions.
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-700">
-            Free plan users can store 1 resume. Upgrade to Pro to keep multiple role-specific versions and tailor attachments per application.
-          </p>
-        </section>
+        <>
+          <UpgradePrompt
+            title="Upgrade to keep multiple resume versions."
+            description={`Free plan users can store ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to keep multiple role-specific versions and tailor attachments per application.`}
+          />
+          <UpgradeButton />
+        </>
       ) : null}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <UploadResumeForm canUpload={data.canUpload} />

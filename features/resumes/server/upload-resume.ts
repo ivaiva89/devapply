@@ -7,7 +7,8 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_RESUME_LIMIT } from "@/features/resumes/server/resume-list";
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGate } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 
 export type UploadResumeActionState = {
@@ -76,20 +77,17 @@ export async function uploadResume(
     };
   }
 
-  const resumeCount = await prisma.resume.count({
-    where: {
-      userId: user.id,
-    },
-  });
+  const gate = await getPlanGate(user.id, "resumes");
 
-  if (user.plan === "FREE" && resumeCount >= FREE_RESUME_LIMIT) {
+  if (!gate.allowed) {
     return {
       status: "error",
       error:
-        "Free plan users can upload 1 resume. Upgrade to Pro to store multiple versions.",
+        `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
     };
   }
 
+  const resumeCount = gate.used;
   const { relativeUrl, absolutePath } = getUploadPathParts(user.id, file.name);
   const arrayBuffer = await file.arrayBuffer();
 

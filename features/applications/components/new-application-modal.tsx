@@ -6,10 +6,20 @@ import { ApplicationFormModal } from "@/features/applications/components/applica
 import { createApplicationDefaultValues } from "@/features/applications/create-application-form";
 import { createApplication } from "@/features/applications/server/create-application";
 
-export function NewApplicationModal() {
+type NewApplicationModalProps = {
+  disabled?: boolean;
+};
+
+export function NewApplicationModal({
+  disabled = false,
+}: NewApplicationModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   function openModal() {
+    if (disabled) {
+      return;
+    }
+
     setIsOpen(true);
   }
 
@@ -22,7 +32,8 @@ export function NewApplicationModal() {
       <button
         type="button"
         onClick={openModal}
-        className="rounded-full bg-stone-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
+        disabled={disabled}
+        className="rounded-full bg-stone-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-400"
       >
         New application
       </button>

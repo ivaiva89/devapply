@@ -1,9 +1,8 @@
 import "server-only";
 
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { prisma } from "@/lib/prisma";
 import type { RemindersPageData } from "@/features/reminders/types";
-
-export const FREE_REMINDER_LIMIT = 3;
 
 export async function getRemindersPageDataForUser(
   userId: string,
@@ -57,7 +56,7 @@ export async function getRemindersPageDataForUser(
 
   const activeReminderCount = reminders.length;
   const canCreate =
-    user.plan === "PRO" || activeReminderCount < FREE_REMINDER_LIMIT;
+    user.plan === "PRO" || activeReminderCount < FREE_PLAN_LIMITS.reminders;
 
   return {
     plan: user.plan,

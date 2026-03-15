@@ -2,6 +2,7 @@ import "server-only";
 
 import { ApplicationStatus, Prisma } from "@prisma/client";
 
+import { getUserPlan } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 import {
   type ApplicationListItem,
@@ -80,6 +81,8 @@ export async function getApplicationsForUser(
 ): Promise<{
   items: ApplicationListItem[];
   state: ApplicationsQueryState;
+  totalCount: number;
+  plan: "FREE" | "PRO";
 }> {
   const state = parseApplicationsQueryState(searchParams);
   const where: Prisma.ApplicationWhereInput = {
@@ -97,27 +100,40 @@ export async function getApplicationsForUser(
     where.status = state.status;
   }
 
-  const items = await prisma.application.findMany({
-    where,
-    orderBy: getOrderBy(state.sort),
-    select: {
-      id: true,
-      company: true,
-      role: true,
-      location: true,
-      status: true,
-      source: true,
-      salaryMin: true,
-      salaryMax: true,
-      currency: true,
-      jobUrl: true,
-      notes: true,
-      appliedDate: true,
-      updatedAt: true,
-    },
-  });
+  const [items, totalCount, user] = await Promise.all([
+    prisma.application.findMany({
+      where,
+      orderBy: getOrderBy(state.sort),
+      select: {
+        id: true,
+        company: true,
+        role: true,
+        location: true,
+        status: true,
+        source: true,
+        salaryMin: true,
+        salaryMax: true,
+        currency: true,
+        jobUrl: true,
+        notes: true,
+        appliedDate: true,
+        updatedAt: true,
+      },
+    }),
+    prisma.application.count({
+      where: {
+        userId,
+      },
+    }),
+    getUserPlan(userId),
+  ]);
 
-  return { items, state };
+  return {
+    items,
+    state,
+    totalCount,
+    plan: user?.plan ?? "FREE",
+  };
 }
 
 export const applicationSortSelectOptions = [

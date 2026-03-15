@@ -4,6 +4,9 @@ import { ApplicationsTable } from "@/features/applications/components/applicatio
 import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { UpgradeButton } from "@/features/billing/components/upgrade-button";
+import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 
 type ApplicationsPageProps = {
   searchParams?: Promise<{
@@ -18,11 +21,13 @@ export default async function ApplicationsPage({
 }: ApplicationsPageProps) {
   const user = await requireCurrentUser();
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const { items, state } = await getApplicationsForUser(
+  const { items, state, totalCount, plan } = await getApplicationsForUser(
     user.id,
     resolvedSearchParams,
   );
   const hasFilters = Boolean(state.query) || state.status !== "ALL";
+  const canCreateApplication =
+    plan === "PRO" || totalCount < FREE_PLAN_LIMITS.applications;
 
   return (
     <div className="space-y-6">
@@ -43,10 +48,19 @@ export default async function ApplicationsPage({
             <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
               {items.length} {items.length === 1 ? "application" : "applications"}
             </div>
-            <NewApplicationModal />
+            <NewApplicationModal disabled={!canCreateApplication} />
           </div>
         </div>
       </section>
+      {!canCreateApplication ? (
+        <>
+          <UpgradePrompt
+            title="Upgrade to keep tracking more applications."
+            description={`Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to remove the application limit and keep a larger search pipeline active.`}
+          />
+          <UpgradeButton />
+        </>
+      ) : null}
       <ApplicationsFilters state={state} />
       {items.length > 0 ? (
         <ApplicationsTable applications={items} />

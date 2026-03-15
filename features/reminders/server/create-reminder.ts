@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_REMINDER_LIMIT } from "@/features/reminders/server/reminder-list";
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGate } from "@/features/billing/server/plan-enforcement";
 import type { CreateReminderActionState } from "@/features/reminders/types";
 import { prisma } from "@/lib/prisma";
 
@@ -51,18 +52,13 @@ export async function createReminder(
   }
 
   const user = await requireCurrentUser();
-  const activeReminderCount = await prisma.reminder.count({
-    where: {
-      userId: user.id,
-      completedAt: null,
-    },
-  });
+  const gate = await getPlanGate(user.id, "reminders");
 
-  if (user.plan === "FREE" && activeReminderCount >= FREE_REMINDER_LIMIT) {
+  if (!gate.allowed) {
     return {
       status: "error",
       error:
-        "Free plan users can keep 3 active reminders. Upgrade to Pro to create more reminders.",
+        `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
     };
   }
 

@@ -1,6 +1,6 @@
 export const marketingNavigation = [
-  { href: "/", label: "Home" },
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/#features", label: "Features" },
+  { href: "/#pricing", label: "Pricing" },
 ];
 
 export const appNavigation = [

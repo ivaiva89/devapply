@@ -1,9 +1,8 @@
 import "server-only";
 
+import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { prisma } from "@/lib/prisma";
 import type { ResumePageData } from "@/features/resumes/types";
-
-export const FREE_RESUME_LIMIT = 1;
 
 export async function getResumePageDataForUser(
   userId: string,
@@ -65,7 +64,8 @@ export async function getResumePageDataForUser(
   }
 
   const resumeCount = resumes.length;
-  const canUpload = user.plan === "PRO" || resumeCount < FREE_RESUME_LIMIT;
+  const canUpload =
+    user.plan === "PRO" || resumeCount < FREE_PLAN_LIMITS.resumes;
 
   return {
     plan: user.plan,
