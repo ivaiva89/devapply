@@ -5,14 +5,19 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:vercel": "npm run db:generate && if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:deploy; fi && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "neon-local:up": "docker compose -f docker-compose.neon-local.yml up -d",
+    "neon-local:down": "docker compose -f docker-compose.neon-local.yml down",
+    "neon-local:logs": "docker compose -f docker-compose.neon-local.yml logs -f db"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"
