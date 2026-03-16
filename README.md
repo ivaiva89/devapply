@@ -54,6 +54,7 @@ Configure environment variables
 
 - Copy `.env.example` to `.env.local`
 - Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
+- Add `BLOB_READ_WRITE_TOKEN` to enable resume uploads via Vercel Blob
 - Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
 - Restart `npm run dev` after changing Clerk environment variables
 
@@ -68,6 +69,24 @@ npx prisma db seed
 Start development
 
 npm run dev
+
+Start Storybook
+
+```bash
+npm run storybook
+```
+
+Build Storybook
+
+```bash
+npm run storybook:build
+```
+
+## UI development workflow
+
+- Use Storybook for isolated component work in `stories/ui`, `stories/design`, and `stories/features`
+- Use `app/(v0)/preview/page.tsx` for in-app mock compositions
+- Keep stories backend-agnostic: no Prisma, Clerk, auth server modules, or `server-only` imports
 
 ## Authentication setup
 
@@ -92,3 +111,23 @@ Database change:
 
 - `User.clerkUserId` was added as a nullable unique field to link Clerk identities to Prisma users
 - Existing local users can be linked automatically on first sign-in when the Clerk email matches the existing `User.email`
+
+## Storybook and design system
+
+The repository includes Storybook with:
+
+- config in `.storybook/`
+- stories in `stories/`
+- shadcn primitives in `components/ui/`
+- shared presentational components in `components/design/`
+
+Storybook loads `app/globals.css` so Tailwind styles and theme tokens match the app shell.
+
+## Resume uploads
+
+Resume uploads use Vercel Blob. Local and deployed environments need:
+
+- `BLOB_READ_WRITE_TOKEN`
+
+Uploaded resume metadata stays in Prisma, while the stored file URL comes from Blob.
+Resume downloads stay user-scoped through an authenticated app route.

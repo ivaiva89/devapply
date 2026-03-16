@@ -65,6 +65,7 @@
 ## Production Readiness
 
 -   [ ] Production env vars configured
+-   [ ] Vercel Blob token configured
 -   [ ] Database migrations applied
 -   [ ] Stripe webhook configured
 -   [ ] Resend sending verified

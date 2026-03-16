@@ -32,6 +32,7 @@ This architecture supports:
 -   TypeScript
 -   Tailwind CSS
 -   shadcn/ui
+-   Storybook for isolated UI development
 
 ### Backend
 
@@ -47,13 +48,17 @@ This architecture supports:
 -   Stripe for billing
 -   Resend for transactional email
 -   PostHog for product analytics
--   Object storage (Vercel Blob or S3-compatible) for resume uploads
+-   Private object storage (Vercel Blob or S3-compatible) for resume uploads
 
 ## Folder Structure
 
 app/ Next.js routes, layouts, pages
 
 components/ Shared UI components
+
+.storybook/ Storybook configuration
+
+stories/ Storybook stories for presentational UI
 
 features/ Domain modules organized by capability
 
@@ -86,6 +91,12 @@ Guidelines:
 -   types: local TypeScript types
 -   utils: pure helper logic
 
+UI layering convention:
+
+-   `components/ui`: low-level primitives
+-   `components/design`: reusable presentational building blocks
+-   `features/*/components`: feature-specific composition
+
 ## Rendering Strategy
 
 -   Server Components by default
@@ -104,6 +115,7 @@ Possible side effects:
 -   analytics events
 -   transactional email
 -   billing synchronization
+-   Blob object storage writes for resume uploads
 
 ## Security Rules
 

@@ -1,5 +1,16 @@
 # DevApply Design System
 
+## Current structure
+
+The UI layer is organized as:
+
+- `components/ui/` for low-level shadcn primitives
+- `components/design/` for reusable SaaS building blocks
+- `features/*/components/` for domain-specific composition
+- `stories/ui/`, `stories/design/`, and `stories/features/` for Storybook coverage
+
+Use `app/(v0)/preview/page.tsx` for mock in-app compositions and Storybook for isolated component work.
+
 ## Philosophy
 
 DevApply UI should feel:
@@ -38,6 +49,13 @@ Rules:
 ------------------------------------------------------------------------
 
 # Component Rules
+
+## Workflow rules
+
+- design-system components must be presentational only
+- design-system components must not import Prisma, Clerk, auth server modules, or `server-only`
+- feature components may compose design components, but backend wiring should stay in thin wrappers
+- new reusable UI should be storyable with mock props
 
 ## Buttons
 
@@ -121,6 +139,20 @@ Rules:
 -   zebra rows optional
 -   hover state subtle
 -   clear column spacing
+
+------------------------------------------------------------------------
+
+# Current reusable design components
+
+Current design-system building blocks include:
+
+-   section headers
+-   stats cards
+-   status badges
+-   empty states
+-   data tables
+
+Prefer extending these before adding feature-specific one-off panels.
 
 ------------------------------------------------------------------------
 
