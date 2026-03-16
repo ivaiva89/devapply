@@ -5,6 +5,7 @@ export default {
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./features/**/*.{ts,tsx}",
+    "./stories/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
   theme: {

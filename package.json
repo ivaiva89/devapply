@@ -18,7 +18,9 @@
     "db:studio": "prisma studio",
     "neon-local:up": "docker compose -f docker-compose.neon-local.yml up -d",
     "neon-local:down": "docker compose -f docker-compose.neon-local.yml down",
-    "neon-local:logs": "docker compose -f docker-compose.neon-local.yml logs -f db"
+    "neon-local:logs": "docker compose -f docker-compose.neon-local.yml logs -f db",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"
@@ -28,6 +30,7 @@
     "@clerk/nextjs": "^7.0.4",
     "@prisma/adapter-neon": "^7.0.0",
     "@prisma/client": "^7.0.0",
+    "@vercel/blob": "^2.3.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
@@ -44,6 +47,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.2.19",
+    "@storybook/addon-links": "^10.2.19",
+    "@storybook/nextjs-vite": "^10.2.19",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -51,7 +57,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "prisma": "^7.0.0",
+    "storybook": "^10.2.19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^8.0.0"
   }
 }
