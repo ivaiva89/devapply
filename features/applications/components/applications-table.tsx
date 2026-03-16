@@ -15,11 +15,12 @@ export type ApplicationTableRow = {
   id: string;
   company: string;
   role: string;
+  location: string;
   status: ApplicationStatusValue;
   appliedDate: string;
   sourceLabel: string;
   source: ApplicationSourceValue;
-  updatedAt: string;
+  lastActivity: string;
   actions?: ReactNode;
 };
 
@@ -45,6 +46,11 @@ const columns: DataTableColumn<ApplicationTableRow>[] = [
     cell: (row) => row.role,
   },
   {
+    key: "location",
+    header: "Location",
+    cell: (row) => row.location,
+  },
+  {
     key: "status",
     header: "Status",
     cell: (row) => <ApplicationStatusBadge status={row.status} />,
@@ -60,9 +66,9 @@ const columns: DataTableColumn<ApplicationTableRow>[] = [
     cell: (row) => row.sourceLabel,
   },
   {
-    key: "updatedAt",
-    header: "Updated",
-    cell: (row) => row.updatedAt,
+    key: "lastActivity",
+    header: "Last activity",
+    cell: (row) => row.lastActivity,
   },
   {
     key: "actions",

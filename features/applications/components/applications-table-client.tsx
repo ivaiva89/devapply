@@ -94,11 +94,12 @@ export function ApplicationsTableClient({
     id: application.id,
     company: application.company,
     role: application.role,
+    location: application.location?.trim() || "Not set",
     status: application.status,
     appliedDate: formatDate(application.appliedDate),
     sourceLabel: applicationSourceLabels[application.source],
     source: application.source,
-    updatedAt: formatDate(application.updatedAt),
+    lastActivity: formatDate(application.updatedAt),
     actions: (
       <RowActionsMenu
         application={application}
