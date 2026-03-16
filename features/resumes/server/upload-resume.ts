@@ -36,6 +36,24 @@ function getBlobToken() {
   return token && token.length > 0 ? token : null;
 }
 
+function getUploadErrorMessage(error: unknown) {
+  if (!(error instanceof Error)) {
+    return "The resume could not be uploaded. Try again.";
+  }
+
+  const message = error.message.trim();
+
+  if (message.length === 0) {
+    return "The resume could not be uploaded. Try again.";
+  }
+
+  if (/token/i.test(message)) {
+    return "Resume storage is not configured correctly. Check BLOB_READ_WRITE_TOKEN.";
+  }
+
+  return message;
+}
+
 export async function uploadResume(
   _prevState: UploadResumeActionState,
   formData: FormData,
@@ -132,14 +150,20 @@ export async function uploadResume(
     return {
       status: "success",
     };
-  } catch {
+  } catch (error) {
+    console.error("resume upload failed", {
+      error,
+      pathname,
+      userId: user.id,
+    });
+
     if (blobUrl) {
       await del(blobUrl, { token: blobToken }).catch(() => undefined);
     }
 
     return {
       status: "error",
-      error: "The resume could not be uploaded. Try again.",
+      error: getUploadErrorMessage(error),
     };
   }
 }
