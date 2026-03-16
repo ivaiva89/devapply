@@ -2,7 +2,11 @@
 
 import { useState, useTransition } from "react";
 
-import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
+import {
+  ApplicationCard,
+  type ApplicationCardData,
+} from "@/features/applications/components/application-card";
+import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
 import { updateApplicationStatus } from "@/features/applications/server/update-application-status";
 import type { PipelineApplicationCard, PipelineColumn } from "@/features/applications/server/pipeline-board";
 import type { ApplicationStatusValue } from "@/features/applications/config";
@@ -115,64 +119,38 @@ export function PipelineBoard({ initialColumns }: PipelineBoardProps) {
       ) : null}
       <div className="grid gap-4 xl:grid-cols-5">
         {columns.map((column) => (
-          <section
+          <ApplicationKanbanColumn
             key={column.status}
+            label={column.label}
+            status={column.status}
+            items={column.items.map<ApplicationCardData>((item) => ({
+              id: item.id,
+              company: item.company,
+              role: item.role,
+              appliedDate: formatDate(item.appliedDate),
+              sourceLabel: item.source,
+              updatedAt: formatDate(item.updatedAt),
+            }))}
             onDragOver={(event) => event.preventDefault()}
             onDrop={() => handleDrop(column.status)}
-            className="flex min-h-[24rem] flex-col rounded-3xl border border-black/10 bg-white shadow-sm"
           >
-            <header className="border-b border-stone-200 px-4 py-4">
-              <div className="flex items-center justify-between gap-3">
-                <ApplicationStatusBadge status={column.status} />
-                <span className="rounded-full bg-stone-100 px-2.5 py-1 text-xs font-semibold text-stone-600">
-                  {column.items.length}
-                </span>
-              </div>
-              <h2 className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-stone-500">
-                {column.label}
-              </h2>
-            </header>
-            <div className="flex-1 space-y-3 p-4">
-              {column.items.length > 0 ? (
-                column.items.map((item) => (
-                  <article
-                    key={item.id}
-                    draggable={!isPending}
-                    onDragStart={() => setDraggedCardId(item.id)}
-                    onDragEnd={() => setDraggedCardId(null)}
-                    className="cursor-grab rounded-2xl border border-stone-200 bg-stone-50 p-4 transition hover:border-stone-300 active:cursor-grabbing"
-                  >
-                    <div className="space-y-2">
-                      <div>
-                        <p className="text-sm font-semibold text-stone-950">
-                          {item.company}
-                        </p>
-                        <p className="text-sm text-stone-600">{item.role}</p>
-                      </div>
-                      <dl className="space-y-1 text-xs text-stone-500">
-                        <div className="flex justify-between gap-3">
-                          <dt>Applied</dt>
-                          <dd>{formatDate(item.appliedDate)}</dd>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                          <dt>Source</dt>
-                          <dd>{item.source}</dd>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                          <dt>Updated</dt>
-                          <dd>{formatDate(item.updatedAt)}</dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </article>
-                ))
-              ) : (
-                <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-4 py-6 text-sm leading-6 text-stone-500">
-                  No applications in this column yet.
-                </div>
-              )}
-            </div>
-          </section>
+            {column.items.map((item) => (
+              <ApplicationCard
+                key={item.id}
+                item={{
+                  id: item.id,
+                  company: item.company,
+                  role: item.role,
+                  appliedDate: formatDate(item.appliedDate),
+                  sourceLabel: item.source,
+                  updatedAt: formatDate(item.updatedAt),
+                }}
+                draggable={!isPending}
+                onDragStart={() => setDraggedCardId(item.id)}
+                onDragEnd={() => setDraggedCardId(null)}
+              />
+            ))}
+          </ApplicationKanbanColumn>
         ))}
       </div>
     </div>

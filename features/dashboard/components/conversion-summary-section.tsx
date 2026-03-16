@@ -1,3 +1,5 @@
+import { SectionHeader } from "@/components/design/section-header";
+import { StatsCard } from "@/components/design/stats-card";
 import { DashboardSectionEmpty } from "@/features/dashboard/components/dashboard-section-empty";
 
 type ConversionSummarySectionProps = {
@@ -14,27 +16,21 @@ export function ConversionSummarySection({
   isEmpty,
 }: ConversionSummarySectionProps) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-        Conversion summary
-      </p>
-      <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-950">
-        Funnel snapshot
-      </h2>
+    <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+      <SectionHeader
+        eyebrow="Conversion summary"
+        title="Funnel snapshot"
+      />
       <div className="mt-6">
         {!isEmpty ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {items.map((item) => (
-              <article
+              <StatsCard
                 key={item.label}
-                className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
-              >
-                <p className="text-sm text-stone-500">{item.label}</p>
-                <p className="mt-3 text-3xl font-semibold tracking-tight text-stone-950">
-                  {item.value}
-                </p>
-                <p className="mt-2 text-sm text-stone-600">{item.helper}</p>
-              </article>
+                label={item.label}
+                value={item.value}
+                helper={item.helper}
+              />
             ))}
           </div>
         ) : (

@@ -1,4 +1,6 @@
-import { DashboardSectionEmpty } from "@/features/dashboard/components/dashboard-section-empty";
+import { EmptyState } from "@/components/design/empty-state";
+import { SectionHeader } from "@/components/design/section-header";
+import { Card, CardContent } from "@/components/ui/card";
 
 type UpcomingRemindersSectionProps = {
   items: Array<{
@@ -21,39 +23,35 @@ export function UpcomingRemindersSection({
   items,
 }: UpcomingRemindersSectionProps) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-        Upcoming reminders
-      </p>
-      <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-950">
-        Follow-ups in view
-      </h2>
+    <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+      <SectionHeader eyebrow="Upcoming reminders" title="Follow-ups in view" />
       <div className="mt-6">
         {items.length > 0 ? (
           <div className="space-y-3">
             {items.map((item) => (
-              <article
+              <Card
                 key={item.id}
-                className="rounded-2xl border border-stone-200 bg-stone-50 p-4"
+                className="rounded-2xl border border-border bg-muted/40 shadow-none"
               >
-                <div className="flex items-start justify-between gap-4">
+                <CardContent className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-stone-950">
+                    <p className="text-sm font-semibold text-foreground">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-sm text-stone-600">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       {item.company ? item.company : "General reminder"}
                     </p>
                   </div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-stone-500">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                     {formatDate(item.dueAt)}
                   </p>
-                </div>
-              </article>
+                </CardContent>
+              </Card>
             ))}
           </div>
         ) : (
-          <DashboardSectionEmpty
+          <EmptyState
+            compact
             title="No reminders scheduled"
             description="Upcoming reminders will appear here once follow-ups are created."
           />

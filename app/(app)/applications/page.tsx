@@ -1,12 +1,13 @@
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFilters } from "@/features/applications/components/applications-filters";
-import { ApplicationsTable } from "@/features/applications/components/applications-table";
+import { ApplicationsTableClient } from "@/features/applications/components/applications-table-client";
 import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { SectionHeader } from "@/components/design/section-header";
 
 type ApplicationsPageProps = {
   searchParams?: Promise<{
@@ -36,21 +37,15 @@ export default async function ApplicationsPage({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
-          Applications
-        </p>
+      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
         <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-stone-950">
-              Applications table
-            </h1>
-            <p className="max-w-2xl text-sm leading-6 text-stone-600">
-              Search, filter, and sort the authenticated user&apos;s applications without exposing any cross-user data.
-            </p>
-          </div>
+          <SectionHeader
+            eyebrow="Applications"
+            title="Applications table"
+            description="Search, filter, and sort the authenticated user&apos;s applications without exposing any cross-user data."
+          />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
+            <div className="rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
               {resultsLabel}
             </div>
             <NewApplicationModal disabled={!canCreateApplication} />
@@ -68,7 +63,7 @@ export default async function ApplicationsPage({
       ) : null}
       <ApplicationsFilters state={state} />
       {items.length > 0 ? (
-        <ApplicationsTable applications={items} />
+        <ApplicationsTableClient applications={items} />
       ) : (
         <ApplicationsEmptyState hasFilters={hasFilters || hasActiveSort} />
       )}

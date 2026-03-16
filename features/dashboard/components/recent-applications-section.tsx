@@ -1,5 +1,7 @@
+import { EmptyState } from "@/components/design/empty-state";
+import { SectionHeader } from "@/components/design/section-header";
+import { Card, CardContent } from "@/components/ui/card";
 import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
-import { DashboardSectionEmpty } from "@/features/dashboard/components/dashboard-section-empty";
 
 type RecentApplicationsSectionProps = {
   items: Array<{
@@ -23,42 +25,36 @@ export function RecentApplicationsSection({
   items,
 }: RecentApplicationsSectionProps) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-            Recent applications
-          </p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-950">
-            Latest activity
-          </h2>
-        </div>
-      </div>
+    <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+      <SectionHeader eyebrow="Recent applications" title="Latest activity" />
       <div className="mt-6">
         {items.length > 0 ? (
           <div className="space-y-3">
             {items.map((item) => (
-              <article
+              <Card
                 key={item.id}
-                className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                className="rounded-2xl border border-border bg-muted/40 shadow-none"
               >
-                <div>
-                  <p className="text-sm font-semibold text-stone-950">
-                    {item.company}
-                  </p>
-                  <p className="text-sm text-stone-600">{item.role}</p>
-                </div>
-                <div className="flex flex-col gap-2 sm:items-end">
-                  <ApplicationStatusBadge status={item.status} />
-                  <p className="text-xs text-stone-500">
-                    Updated {formatDate(item.updatedAt)}
-                  </p>
-                </div>
-              </article>
+                <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      {item.company}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{item.role}</p>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:items-end">
+                    <ApplicationStatusBadge status={item.status} />
+                    <p className="text-xs text-muted-foreground">
+                      Updated {formatDate(item.updatedAt)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         ) : (
-          <DashboardSectionEmpty
+          <EmptyState
+            compact
             title="No recent applications"
             description="Applications will appear here once you start tracking roles."
           />
