@@ -7,8 +7,8 @@ import {
   getApplicationFormErrorState,
   getApplicationFormFieldErrors,
   getApplicationFormSuccessState,
-  readApplicationFormValues,
-} from "@/features/applications/server/application-form";
+} from "@/features/applications/schemas/application-form-schema";
+import { readApplicationFormValues } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/lib/prisma";
 import type { CreateApplicationActionState } from "@/features/applications/create-application-form";
