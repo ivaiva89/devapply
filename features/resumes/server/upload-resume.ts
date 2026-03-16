@@ -1,10 +1,9 @@
 "use server";
 
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { randomUUID } from "node:crypto";
 
 import { revalidatePath } from "next/cache";
+import { del, put } from "@vercel/blob";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -27,19 +26,14 @@ function sanitizeFileName(value: string) {
   return value.replace(/[^a-zA-Z0-9._-]/g, "-");
 }
 
-function getUploadPathParts(userId: string, fileName: string) {
+function getBlobPathname(userId: string, fileName: string) {
   const uniqueName = `${randomUUID()}-${sanitizeFileName(fileName)}`;
-  const relativeUrl = `/uploads/resumes/${userId}/${uniqueName}`;
-  const absolutePath = path.join(
-    process.cwd(),
-    "public",
-    "uploads",
-    "resumes",
-    userId,
-    uniqueName,
-  );
+  return `resumes/${userId}/${uniqueName}`;
+}
 
-  return { relativeUrl, absolutePath };
+function getBlobToken() {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+  return token && token.length > 0 ? token : null;
 }
 
 export async function uploadResume(
@@ -88,37 +82,64 @@ export async function uploadResume(
     };
   }
 
+  const blobToken = getBlobToken();
+
+  if (!blobToken) {
+    return {
+      status: "error",
+      error:
+        "Resume storage is not configured yet. Add BLOB_READ_WRITE_TOKEN to enable uploads.",
+    };
+  }
+
   const resumeCount = gate.used;
-  const { relativeUrl, absolutePath } = getUploadPathParts(user.id, file.name);
-  const arrayBuffer = await file.arrayBuffer();
+  const pathname = getBlobPathname(user.id, file.name);
+  let blobUrl: string | null = null;
 
-  await mkdir(path.dirname(absolutePath), { recursive: true });
-  await writeFile(absolutePath, Buffer.from(arrayBuffer));
+  try {
+    const blob = await put(pathname, file, {
+      access: "private",
+      addRandomSuffix: false,
+      contentType: file.type,
+      token: blobToken,
+    });
 
-  const resume = await prisma.resume.create({
-    data: {
-      userId: user.id,
-      label: title.trim(),
-      fileName: file.name,
-      storageKey: relativeUrl,
-      mimeType: file.type,
-      fileSizeBytes: file.size,
-      isDefault: resumeCount === 0,
-    },
-  });
+    blobUrl = blob.url;
 
-  await trackServerEvent({
-    distinctId: user.id,
-    event: "resume_uploaded",
-    properties: {
-      fileSizeBytes: resume.fileSizeBytes,
-      resumeId: resume.id,
-    },
-  });
+    const resume = await prisma.resume.create({
+      data: {
+        userId: user.id,
+        label: title.trim(),
+        fileName: file.name,
+        storageKey: blob.pathname,
+        mimeType: file.type,
+        fileSizeBytes: file.size,
+        isDefault: resumeCount === 0,
+      },
+    });
 
-  revalidatePath("/resumes");
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "resume_uploaded",
+      properties: {
+        fileSizeBytes: resume.fileSizeBytes,
+        resumeId: resume.id,
+      },
+    });
 
-  return {
-    status: "success",
-  };
+    revalidatePath("/resumes");
+
+    return {
+      status: "success",
+    };
+  } catch {
+    if (blobUrl) {
+      await del(blobUrl, { token: blobToken }).catch(() => undefined);
+    }
+
+    return {
+      status: "error",
+      error: "The resume could not be uploaded. Try again.",
+    };
+  }
 }

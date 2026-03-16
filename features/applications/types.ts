@@ -1,12 +1,15 @@
-import { ApplicationSource, ApplicationStatus } from "@prisma/client";
+import type {
+  ApplicationSourceValue,
+  ApplicationStatusValue,
+} from "@/features/applications/config";
 
 export type ApplicationListItem = {
   id: string;
   company: string;
   role: string;
   location: string | null;
-  status: ApplicationStatus;
-  source: ApplicationSource;
+  status: ApplicationStatusValue;
+  source: ApplicationSourceValue;
   salaryMin: number | null;
   salaryMax: number | null;
   currency: string;
@@ -27,6 +30,6 @@ export type ApplicationSortOption = (typeof applicationSortOptions)[number];
 
 export type ApplicationsQueryState = {
   query: string;
-  status: ApplicationStatus | "ALL";
+  status: ApplicationStatusValue | "ALL";
   sort: ApplicationSortOption;
 };

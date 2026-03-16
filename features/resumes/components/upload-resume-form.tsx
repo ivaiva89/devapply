@@ -46,7 +46,7 @@ export function UploadResumeForm({ canUpload }: UploadResumeFormProps) {
           Add a resume version
         </h2>
         <p className="text-sm leading-6 text-stone-600">
-          Upload PDF, DOC, or DOCX files and keep a title you can recognize later.
+          Upload PDF, DOC, or DOCX files to Blob storage and keep a title you can recognize later.
         </p>
       </div>
       <div className="mt-6 grid gap-4">

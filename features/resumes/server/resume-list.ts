@@ -75,7 +75,7 @@ export async function getResumePageDataForUser(
       id: resume.id,
       title: resume.label,
       fileName: resume.fileName,
-      fileUrl: resume.storageKey,
+      fileUrl: `/api/resumes/${resume.id}`,
       mimeType: resume.mimeType,
       fileSizeBytes: resume.fileSizeBytes,
       uploadedAt: resume.createdAt.toISOString(),

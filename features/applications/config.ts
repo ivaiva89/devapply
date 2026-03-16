@@ -36,6 +36,17 @@ export const applicationSourceLabels: Record<ApplicationSourceValue, string> = {
   OTHER: "Other",
 };
 
+export const applicationStatusTones: Record<
+  ApplicationStatusValue,
+  "neutral" | "info" | "warning" | "success" | "danger"
+> = {
+  WISHLIST: "neutral",
+  APPLIED: "info",
+  INTERVIEW: "warning",
+  OFFER: "success",
+  REJECTED: "danger",
+};
+
 export const applicationFormStatusOptions: ReadonlyArray<{
   value: ApplicationStatusValue;
   label: string;
