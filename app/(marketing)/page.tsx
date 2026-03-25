@@ -24,6 +24,8 @@ import {
   FREE_PLAN_LIMITS,
   PRO_PLAN_PRICE_MONTHLY,
 } from "@/features/billing/config";
+import { UpgradeButton } from "@/features/billing/components/upgrade-button";
+import { getCurrentUser } from "@/features/auth/server/session";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -156,7 +158,9 @@ const pricingTiers = [
   },
 ] as const;
 
-export default function MarketingHomePage() {
+export default async function MarketingHomePage() {
+  const user = await getCurrentUser();
+
   return (
     <div className="space-y-16">
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-center">
@@ -429,24 +433,67 @@ export default function MarketingHomePage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href="/sign-in"
-                  className={cn(
-                    buttonVariants({
-                      size: "lg",
-                      variant: tier.ctaVariant,
-                    }),
-                    "mt-6 w-full justify-center rounded-full",
+                <div className="mt-6">
+                  {tier.name === "Pro" && user?.plan === "FREE" ? (
+                    <UpgradeButton
+                      userId={user.id}
+                      label="Upgrade to Pro"
+                      className={cn(
+                        buttonVariants({
+                          size: "lg",
+                          variant: tier.ctaVariant,
+                        }),
+                        "w-full justify-center rounded-full",
+                      )}
+                    />
+                  ) : tier.name === "Pro" && user?.plan === "PRO" ? (
+                    <Link
+                      href="/dashboard"
+                      className={cn(
+                        buttonVariants({
+                          size: "lg",
+                          variant: tier.ctaVariant,
+                        }),
+                        "w-full justify-center rounded-full",
+                      )}
+                    >
+                      Open dashboard
+                    </Link>
+                  ) : tier.name === "Free" && user ? (
+                    <Link
+                      href="/dashboard"
+                      className={cn(
+                        buttonVariants({
+                          size: "lg",
+                          variant: tier.ctaVariant,
+                        }),
+                        "w-full justify-center rounded-full",
+                      )}
+                    >
+                      Open dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/sign-up"
+                      className={cn(
+                        buttonVariants({
+                          size: "lg",
+                          variant: tier.ctaVariant,
+                        }),
+                        "w-full justify-center rounded-full",
+                      )}
+                    >
+                      {tier.name === "Pro" ? "Sign up to upgrade" : tier.ctaLabel}
+                    </Link>
                   )}
-                >
-                  {tier.ctaLabel}
-                </Link>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
         <p className="text-sm leading-7 text-stone-600">
-          Upgrade to Pro from inside the app after you create an account.
+          Signed-in users can start hosted checkout directly from the Pro tier.
+          New users still begin with account creation first.
         </p>
       </section>
 
