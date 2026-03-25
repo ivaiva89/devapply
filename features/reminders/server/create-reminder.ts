@@ -5,8 +5,10 @@ import { z } from "zod";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { getPlanGate } from "@/features/billing/server/plan-enforcement";
+import {
+  getPlanGate,
+  getPlanLimitReachedMessage,
+} from "@/features/billing/server/plan-enforcement";
 import type { CreateReminderActionState } from "@/features/reminders/types";
 import { prisma } from "@/lib/prisma";
 
@@ -58,8 +60,7 @@ export async function createReminder(
   if (!gate.allowed) {
     return {
       status: "error",
-      error:
-        `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
+      error: getPlanLimitReachedMessage("reminders"),
     };
   }
 

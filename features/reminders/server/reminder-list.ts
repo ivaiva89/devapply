@@ -1,6 +1,6 @@
 import "server-only";
 
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 import type { RemindersPageData } from "@/features/reminders/types";
 
@@ -55,8 +55,11 @@ export async function getRemindersPageDataForUser(
   }
 
   const activeReminderCount = reminders.length;
-  const canCreate =
-    user.plan === "PRO" || activeReminderCount < FREE_PLAN_LIMITS.reminders;
+  const canCreate = getPlanGateFromUsage(
+    user.plan,
+    activeReminderCount,
+    "reminders",
+  ).allowed;
 
   return {
     plan: user.plan,

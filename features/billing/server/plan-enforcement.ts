@@ -5,7 +5,18 @@ import type { Plan } from "@prisma/client";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { prisma } from "@/lib/prisma";
 
-type LimitResource = keyof typeof FREE_PLAN_LIMITS;
+export type LimitResource = keyof typeof FREE_PLAN_LIMITS;
+
+const PLAN_LIMIT_REACHED_MESSAGES: Record<LimitResource, string> = {
+  applications:
+    `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
+  resumes:
+    `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
+  reminders:
+    `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
+};
+
+type SupportedPlan = Plan | "FREE" | "PRO";
 
 export async function getUserPlan(userId: string) {
   return prisma.user.findUnique({
@@ -21,6 +32,30 @@ export async function getUserPlan(userId: string) {
 
 export function hasUnlimitedAccess(plan: Plan) {
   return plan === "PRO";
+}
+
+export function getPlanLimit(resource: LimitResource) {
+  return FREE_PLAN_LIMITS[resource];
+}
+
+export function getPlanLimitReachedMessage(resource: LimitResource) {
+  return PLAN_LIMIT_REACHED_MESSAGES[resource];
+}
+
+export function getPlanGateFromUsage(
+  plan: SupportedPlan,
+  used: number,
+  resource: LimitResource,
+) {
+  const limit = getPlanLimit(resource);
+  const allowed = hasUnlimitedAccess(plan) || used < limit;
+
+  return {
+    allowed,
+    limit,
+    plan,
+    used,
+  };
 }
 
 export async function getUsageCount(userId: string, resource: LimitResource) {
@@ -50,19 +85,12 @@ export async function getPlanGate(userId: string, resource: LimitResource) {
     return {
       allowed: false,
       plan: "FREE" as const,
-      limit: FREE_PLAN_LIMITS[resource],
+      limit: getPlanLimit(resource),
       used: 0,
     };
   }
 
   const used = await getUsageCount(user.id, resource);
-  const limit = FREE_PLAN_LIMITS[resource];
-  const allowed = hasUnlimitedAccess(user.plan) || used < limit;
 
-  return {
-    allowed,
-    plan: user.plan,
-    limit,
-    used,
-  };
+  return getPlanGateFromUsage(user.plan, used, resource);
 }

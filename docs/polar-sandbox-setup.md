@@ -12,6 +12,8 @@ The current billing flow is:
 - that route delegates to Polar hosted checkout
 - `app/api/webhooks/polar/route.ts` verifies webhook signatures and
   updates internal `User.plan`
+- signed-in users with a matching Polar customer can open
+  `app/api/billing/portal` from settings
 
 Checkout redirects alone are not enough to grant `PRO`. Webhook delivery
 must succeed before plan state changes in the app.
@@ -58,6 +60,27 @@ If checkout fails before redirect:
 If Polar returns `401 invalid_token`, replace the access token with a
 fresh sandbox token.
 
+## Local customer portal verification
+
+Customer portal access is optional, but the current implementation
+supports it for authenticated users whose Polar customer record can be
+resolved by external customer ID.
+
+Portal verification flow:
+
+1. Sign in with an account that has already completed Polar checkout.
+2. Open `/settings`.
+3. Trigger the billing portal action from the Pro plan section.
+4. Confirm the request reaches `/api/billing/portal`.
+5. Confirm Polar redirects to the hosted customer portal.
+
+If the app redirects back to `/settings?billing=portal_unavailable`:
+
+- verify the user has completed at least one Polar checkout
+- verify the Polar customer was created with `externalCustomerId`
+  matching the local `User.id`
+- verify `POLAR_ACCESS_TOKEN` and `POLAR_ENVIRONMENT`
+
 ## Local webhook verification
 
 Webhook sync is required for entitlement changes.
@@ -102,4 +125,5 @@ If webhook delivery succeeds but `plan` does not change:
   `FREE` / `PRO`
 - provider-specific customer or subscription identifiers are not yet
   persisted in Prisma
-- customer portal support is not implemented yet
+- customer portal availability depends on Polar resolving the customer by
+  external customer ID

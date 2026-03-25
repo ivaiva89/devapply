@@ -154,8 +154,8 @@ Recommended billing flow:
     changing plan state
 -   app feature gates read internal plan state such as `FREE` or `PRO`
 -   provider-specific code remains isolated in `features/billing`
--   customer portal access is optional and can be added after core
-    checkout and sync are stable
+-   signed-in users can open the hosted customer portal from settings
+    when a matching Polar customer exists
 
 Environment guidance:
 

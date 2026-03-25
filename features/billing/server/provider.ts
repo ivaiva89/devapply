@@ -5,6 +5,8 @@ import { getBillingConfig, type BillingPlan } from "@/features/billing/server/pr
 import {
   getPolarCheckoutConfigError,
   getPolarCheckoutUrl,
+  getPolarPortalConfigError,
+  getPolarPortalUrl,
 } from "@/features/billing/server/polar";
 
 type HostedCheckoutInput = {
@@ -28,5 +30,23 @@ export function getHostedCheckoutUrl(input: HostedCheckoutInput) {
     case "polar":
       void input;
       return getPolarCheckoutUrl();
+  }
+}
+
+export function getCustomerPortalError() {
+  const config = getBillingConfig();
+
+  switch (config.provider) {
+    case "polar":
+      return getPolarPortalConfigError(config);
+  }
+}
+
+export function getCustomerPortalUrl() {
+  const config = getBillingConfig();
+
+  switch (config.provider) {
+    case "polar":
+      return getPolarPortalUrl();
   }
 }

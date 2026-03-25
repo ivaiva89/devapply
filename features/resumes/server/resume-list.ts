@@ -1,6 +1,6 @@
 import "server-only";
 
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 import type { ResumePageData } from "@/features/resumes/types";
 
@@ -64,8 +64,7 @@ export async function getResumePageDataForUser(
   }
 
   const resumeCount = resumes.length;
-  const canUpload =
-    user.plan === "PRO" || resumeCount < FREE_PLAN_LIMITS.resumes;
+  const canUpload = getPlanGateFromUsage(user.plan, resumeCount, "resumes").allowed;
 
   return {
     plan: user.plan,

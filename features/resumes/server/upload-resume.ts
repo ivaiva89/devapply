@@ -7,8 +7,10 @@ import { del, put } from "@vercel/blob";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { getPlanGate } from "@/features/billing/server/plan-enforcement";
+import {
+  getPlanGate,
+  getPlanLimitReachedMessage,
+} from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 
 export type UploadResumeActionState = {
@@ -95,8 +97,7 @@ export async function uploadResume(
   if (!gate.allowed) {
     return {
       status: "error",
-      error:
-        `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
+      error: getPlanLimitReachedMessage("resumes"),
     };
   }
 

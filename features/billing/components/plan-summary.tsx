@@ -1,4 +1,5 @@
 import { PLAN_LABELS, FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { CustomerPortalButton } from "@/features/billing/components/customer-portal-button";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 
 type PlanSummaryProps = {
@@ -17,7 +18,7 @@ export function PlanSummary({ plan, userId }: PlanSummaryProps) {
       </h2>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
         {plan === "PRO"
-          ? "Your account currently has Pro access and should not be blocked by feature limits."
+          ? "Your account currently has Pro access and should not be blocked by feature limits. Billing updates and cancellations can be managed through Polar's hosted customer portal."
           : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
       </p>
       {plan === "FREE" ? (
@@ -42,11 +43,16 @@ export function PlanSummary({ plan, userId }: PlanSummaryProps) {
               </p>
             </div>
           </div>
-          <div className="mt-6">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-start">
             <UpgradeButton userId={userId} />
+            <CustomerPortalButton label="Manage existing billing" />
           </div>
         </>
-      ) : null}
+      ) : (
+        <div className="mt-6">
+          <CustomerPortalButton />
+        </div>
+      )}
     </section>
   );
 }

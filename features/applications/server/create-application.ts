@@ -15,8 +15,10 @@ import {
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { getPlanGate } from "@/features/billing/server/plan-enforcement";
+import {
+  getPlanGate,
+  getPlanLimitReachedMessage,
+} from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
 
 export async function createApplication(
@@ -38,7 +40,7 @@ export async function createApplication(
 
     if (!gate.allowed) {
       return getApplicationFormErrorState(values, {
-        formError: `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
+        formError: getPlanLimitReachedMessage("applications"),
       });
     }
 

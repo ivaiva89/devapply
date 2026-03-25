@@ -7,6 +7,7 @@ import { requireCurrentUser } from "@/features/auth/server/session";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { SectionHeader } from "@/components/design/section-header";
 
 type ApplicationsPageProps = {
@@ -28,8 +29,11 @@ export default async function ApplicationsPage({
   );
   const hasFilters = Boolean(state.query) || state.status !== "ALL";
   const hasActiveSort = state.sort !== "updated-desc";
-  const canCreateApplication =
-    plan === "PRO" || totalCount < FREE_PLAN_LIMITS.applications;
+  const canCreateApplication = getPlanGateFromUsage(
+    plan,
+    totalCount,
+    "applications",
+  ).allowed;
   const resultsLabel =
     hasFilters || hasActiveSort
       ? `${items.length} of ${totalCount} ${totalCount === 1 ? "application" : "applications"}`
