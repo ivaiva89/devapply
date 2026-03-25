@@ -50,6 +50,8 @@
 -   Follow existing repository patterns
 -   Keep business logic server-side
 -   UI components focus on rendering and interaction
+-   If billing changes are involved, also update pricing, webhook, env,
+    and entitlement docs in the same task
 
 ## Data Model Impact
 
@@ -57,6 +59,13 @@
 -   Migration required: \[yes/no\]
 -   Seed updates required: \[yes/no\]
 -   Env changes required: \[yes/no\]
+
+## Billing Impact
+
+-   Billing provider touched: \[none/Polar/other\]
+-   Hosted checkout flow changed: \[yes/no\]
+-   Webhook sync changed: \[yes/no\]
+-   Entitlement logic changed: \[yes/no\]
 
 ## Analytics Impact
 

@@ -1,4 +1,5 @@
 import type { ApplicationStatusValue } from "@/features/applications/config";
+import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
@@ -16,6 +17,14 @@ const mockData = {
     },
     { label: "Interviews", value: 6, helper: "Interview status" },
     { label: "Offers", value: 1, helper: "Offer status" },
+  ],
+  applicationsOverTime: [
+    { label: "Oct", count: 3 },
+    { label: "Nov", count: 5 },
+    { label: "Dec", count: 7 },
+    { label: "Jan", count: 9 },
+    { label: "Feb", count: 11 },
+    { label: "Mar", count: 7 },
   ],
   recentApplications: [
     {
@@ -106,6 +115,10 @@ export default function PreviewPage() {
           </section>
           <DashboardStats items={mockData.kpis} />
           {mockData.isEmpty ? <DashboardEmptyState /> : null}
+          <ApplicationsOverTimeChartSection
+            items={mockData.applicationsOverTime}
+            isEmpty={mockData.kpis[0]?.value === 0}
+          />
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
             <RecentApplicationsSection items={mockData.recentApplications} />
             <UpcomingRemindersSection items={mockData.reminders} />

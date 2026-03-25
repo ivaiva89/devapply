@@ -28,6 +28,8 @@ After completing work agents must:
 -   update NEXT_TASK.md
 -   add follow-up tasks if necessary
 -   reconcile affected setup or workflow docs with the real codebase state
+-   if billing-related docs or code change, also review pricing, webhook,
+    env, and entitlement docs in the same pass
 
 ------------------------------------------------------------------------
 
@@ -89,6 +91,16 @@ Examples:
 -   features/applications
 -   features/reminders
 -   features/auth
+-   features/billing
+
+Billing guidance:
+
+-   Polar is the planned MVP billing provider
+-   billing code should stay isolated inside `features/billing`
+-   entitlements in the app must read normalized internal plan state,
+    not provider redirect params
+-   provider-specific checkout and webhook handling must not leak across
+    the rest of the app
 
 ------------------------------------------------------------------------
 
@@ -114,3 +126,9 @@ A task is complete when:
 -   ownership rules enforced
 -   UI loading/empty/error states exist
 -   TASKS.md updated
+
+If implementation is partial:
+
+-   document the gap
+-   add a follow-up task
+-   do not leave billing or env changes undocumented

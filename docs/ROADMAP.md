@@ -13,7 +13,7 @@ Features
 -   dashboard metrics
 -   reminders
 -   resume attachments
--   billing
+-   billing via Polar-hosted checkout plus webhook-driven entitlement sync
 -   analytics basics
 
 Success metrics

@@ -41,14 +41,24 @@ manage their job search.
 
 ## Monetization
 
+Billing provider direction for the MVP:
+
+-   Polar is the planned hosted billing provider
+-   internal app entitlements remain normalized to simple plan state
+    (`FREE`, `PRO`)
+-   checkout completion alone must not change access until webhook sync
+    confirms the purchase or subscription state
+
 Free plan
 
+-   default plan
 -   up to 30 applications
 -   1 resume
 -   3 reminders
 
 Pro plan
 
+-   premium plan
 -   unlimited applications
 -   unlimited reminders
 -   multiple resumes

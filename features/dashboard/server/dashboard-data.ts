@@ -32,8 +32,14 @@ type DashboardConversionItem = {
   helper: string;
 };
 
+type DashboardApplicationsOverTimeItem = {
+  label: string;
+  count: number;
+};
+
 export type DashboardData = {
   kpis: DashboardKpi[];
+  applicationsOverTime: DashboardApplicationsOverTimeItem[];
   recentApplications: DashboardRecentApplication[];
   reminders: DashboardReminder[];
   conversions: DashboardConversionItem[];
@@ -44,6 +50,37 @@ function getMonthStart() {
   const now = new Date();
 
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+}
+
+function getMonthBuckets(monthCount: number) {
+  const currentMonthStart = getMonthStart();
+
+  return Array.from({ length: monthCount }, (_, index) => {
+    const bucketDate = new Date(
+      Date.UTC(
+        currentMonthStart.getUTCFullYear(),
+        currentMonthStart.getUTCMonth() - (monthCount - index - 1),
+        1,
+      ),
+    );
+
+    return {
+      key: `${bucketDate.getUTCFullYear()}-${String(
+        bucketDate.getUTCMonth() + 1,
+      ).padStart(2, "0")}`,
+      label: new Intl.DateTimeFormat("en-US", {
+        month: "short",
+      }).format(bucketDate),
+      start: bucketDate,
+      end: new Date(
+        Date.UTC(
+          bucketDate.getUTCFullYear(),
+          bucketDate.getUTCMonth() + 1,
+          1,
+        ),
+      ),
+    };
+  });
 }
 
 function formatPercentage(value: number, total: number) {
@@ -58,6 +95,7 @@ export async function getDashboardDataForUser(
   userId: string,
 ): Promise<DashboardData> {
   const monthStart = getMonthStart();
+  const monthBuckets = getMonthBuckets(6);
   const now = new Date();
 
   const [
@@ -66,6 +104,7 @@ export async function getDashboardDataForUser(
     interviews,
     offers,
     statusCounts,
+    applicationsOverTime,
     recentApplications,
     reminders,
   ] = await Promise.all([
@@ -97,6 +136,17 @@ export async function getDashboardDataForUser(
       where: { userId },
       _count: {
         status: true,
+      },
+    }),
+    prisma.application.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: monthBuckets[0]?.start,
+        },
+      },
+      select: {
+        createdAt: true,
       },
     }),
     prisma.application.findMany({
@@ -149,6 +199,13 @@ export async function getDashboardDataForUser(
     countsByStatus.INTERVIEW + countsByStatus.OFFER + countsByStatus.REJECTED;
   const activePipelineCount =
     countsByStatus.WISHLIST + countsByStatus.APPLIED + countsByStatus.INTERVIEW;
+  const applicationsOverTimeByMonth = monthBuckets.map((bucket) => ({
+    label: bucket.label,
+    count: applicationsOverTime.filter(
+      (application) =>
+        application.createdAt >= bucket.start && application.createdAt < bucket.end,
+    ).length,
+  }));
 
   return {
     kpis: [
@@ -173,6 +230,7 @@ export async function getDashboardDataForUser(
         helper: `${applicationStatusLabels.OFFER} status`,
       },
     ],
+    applicationsOverTime: applicationsOverTimeByMonth,
     recentApplications: recentApplications.map((application) => ({
       id: application.id,
       company: application.company,

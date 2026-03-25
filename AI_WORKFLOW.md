@@ -80,6 +80,14 @@ Agent verifies:
 • Storybook runs for UI-only work\
 • affected docs still match the codebase
 
+If the task touches billing:
+
+• review pricing documentation\
+• review webhook handling docs\
+• review env variable docs\
+• review entitlement logic docs\
+• update all affected billing docs in the same change
+
 ------------------------------------------------------------------------
 
 Step 5 --- Update TASKS.md
@@ -171,6 +179,14 @@ AI agents should handle:
 • code scaffolding\
 • documentation updates related to tasks\
 • Storybook and UI workflow doc maintenance when tooling changes
+
+Billing note:
+
+• Polar is the planned MVP billing provider\
+• billing implementation should follow hosted checkout plus webhook-based
+subscription synchronization\
+• normalized app plan state remains the source of truth for feature
+gating inside the product
 
 ------------------------------------------------------------------------
 

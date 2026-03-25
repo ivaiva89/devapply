@@ -42,7 +42,7 @@ shadcn/ui
 
 Backend - Next.js Server Actions - Prisma ORM - PostgreSQL
 
-Infrastructure - Vercel - Stripe - Resend - PostHog
+Infrastructure - Vercel - Polar (planned billing provider) - Resend - PostHog
 
 ## Development
 
@@ -55,6 +55,9 @@ Configure environment variables
 - Copy `.env.example` to `.env.local`
 - Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
 - Add `BLOB_READ_WRITE_TOKEN` to enable resume uploads via Vercel Blob
+- Add the proposed Polar billing placeholders when billing work starts:
+  `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, and a Polar environment
+  selector such as `POLAR_ENVIRONMENT`
 - Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
 - Restart `npm run dev` after changing Clerk environment variables
 
@@ -122,6 +125,37 @@ The repository includes Storybook with:
 - shared presentational components in `components/design/`
 
 Storybook loads `app/globals.css` so Tailwind styles and theme tokens match the app shell.
+
+## Billing direction
+
+DevApply is being documented and planned around **Polar** as the MVP
+billing provider.
+
+Billing architecture for the MVP should follow this pattern:
+
+- server-side action starts hosted checkout
+- Polar owns the checkout surface
+- webhook events synchronize subscription state back into Prisma
+- application entitlements read normalized internal plan state, not
+  client redirect params
+- provider-specific code stays isolated inside `features/billing`
+
+Integration note:
+
+- Polar provides official Next.js integration guidance for hosted
+  checkout and webhook handling
+- sandbox and production billing configs should be kept separate
+
+Plan model:
+
+- `FREE` is the default plan
+- `PRO` unlocks premium features
+
+Implementation note:
+
+- the repository may still contain legacy Stripe-oriented scaffolding in
+  code while billing is migrated
+- documentation and planning should treat Polar as the primary target
 
 ## Resume uploads
 

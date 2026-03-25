@@ -21,11 +21,12 @@
 
 ## Billing
 
--   [ ] Stripe checkout works
--   [ ] Checkout success updates entitlements
+-   [ ] Polar hosted checkout works
+-   [ ] Checkout success updates entitlements via webhook sync
 -   [ ] Subscription status sync works
 -   [ ] Cancel / downgrade behavior verified
 -   [ ] Billing webhook handling verified
+-   [ ] Sandbox and production billing configs verified separately
 
 ## Uploads
 
@@ -67,7 +68,7 @@
 -   [ ] Production env vars configured
 -   [ ] Vercel Blob token configured
 -   [ ] Database migrations applied
--   [ ] Stripe webhook configured
+-   [ ] Polar webhook configured
 -   [ ] Resend sending verified
 -   [ ] PostHog production project configured
 

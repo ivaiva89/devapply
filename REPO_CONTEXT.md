@@ -134,7 +134,7 @@ Infrastructure:
 - Vercel
 - Neon
 - Vercel Blob
-- Stripe
+- Polar as the planned MVP billing provider
 
 ---
 
@@ -165,6 +165,16 @@ UI workflow:
 - Storybook is the default environment for isolated component work
 - `app/(v0)/preview/page.tsx` is the in-app mock composition route
 - stories must not import Prisma, Clerk, auth server modules, or `server-only`
+
+Billing direction:
+
+- Polar is the planned provider for MVP billing
+- hosted checkout and webhook-driven sync are the expected integration
+  pattern
+- internal plan state in Prisma remains the source of truth for
+  entitlements
+- provider-specific logic should stay isolated in `features/billing` so
+  provider swaps remain possible later
 
 ---
 

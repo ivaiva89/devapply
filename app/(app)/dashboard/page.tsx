@@ -1,3 +1,4 @@
+import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
 import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
@@ -22,6 +23,10 @@ export default async function DashboardPage() {
       </section>
       <DashboardStats items={data.kpis} />
       {data.isEmpty ? <DashboardEmptyState /> : null}
+      <ApplicationsOverTimeChartSection
+        items={data.applicationsOverTime}
+        isEmpty={data.kpis[0]?.value === 0}
+      />
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <RecentApplicationsSection items={data.recentApplications} />
         <UpcomingRemindersSection items={data.reminders} />

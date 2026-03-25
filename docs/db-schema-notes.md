@@ -54,3 +54,12 @@ Represents follow-up reminders for a user, optionally tied to an application.
 - every row must be scoped to authenticated user
 - all queries must filter by user ownership
 - free plan limits must be enforced server-side
+
+## Billing notes
+
+- store normalized app plan state such as `FREE` and `PRO`
+- store provider-specific identifiers separately from app-level
+  entitlements
+- webhook-driven synchronization should update internal billing state
+  before access changes in the app
+- billing provider code should stay swappable behind the billing module

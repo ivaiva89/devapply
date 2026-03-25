@@ -45,7 +45,7 @@ This architecture supports:
 
 -   Vercel for hosting
 -   Neon for PostgreSQL
--   Stripe for billing
+-   Polar as the planned MVP billing provider
 -   Resend for transactional email
 -   PostHog for product analytics
 -   Private object storage (Vercel Blob or S3-compatible) for resume uploads
@@ -75,7 +75,7 @@ pipeline --- visual workflow of applications\
 dashboard --- overview metrics and activity summaries\
 resumes --- resume upload and version management\
 reminders --- follow-up reminders and due dates\
-billing --- Stripe checkout and subscription state\
+billing --- billing abstraction, hosted checkout, webhook sync, and plan state\
 analytics --- product event tracking and usage metrics\
 auth --- authentication and session access
 
@@ -136,8 +136,29 @@ Free plan example limits:
 Rules:
 
 -   plan limits enforced server-side
--   Stripe subscription state is the source of truth
+-   Polar hosted checkout is the planned MVP purchase flow
+-   webhook events must synchronize purchases/subscriptions back into the
+    database
+-   normalized internal plan state is the source of truth for
+    entitlements inside the app
 -   UI may display limits but server enforcement is authoritative
+
+Recommended billing flow:
+
+-   app UI triggers a server-side checkout initiation action
+-   the billing module creates a Polar hosted checkout session
+-   Polar webhook events update normalized subscription state in Prisma
+-   app feature gates read internal plan state such as `FREE` or `PRO`
+-   provider-specific code remains isolated in `features/billing`
+-   customer portal access is optional and can be added after core
+    checkout and sync are stable
+
+Environment guidance:
+
+-   keep sandbox and production billing credentials separate
+-   proposed placeholders for future env docs include
+    `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, and a Polar
+    environment selector such as `POLAR_ENVIRONMENT`
 
 ## Future Evolution
 
