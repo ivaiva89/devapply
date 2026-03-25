@@ -28,6 +28,10 @@
 -   [ ] Billing webhook handling verified
 -   [ ] Sandbox and production billing configs verified separately
 
+Local verification reference:
+
+-   `docs/polar-sandbox-setup.md`
+
 ## Uploads
 
 -   [ ] Resume file types restricted

@@ -164,6 +164,8 @@ Environment guidance:
     `POLAR_PRODUCT_ID_PRO`, and `POLAR_ENVIRONMENT`
 -   `POLAR_WEBHOOK_SECRET` is required for webhook-driven subscription
     sync
+-   local sandbox checkout and webhook testing steps live in
+    `docs/polar-sandbox-setup.md`
 
 ## Future Evolution
 
