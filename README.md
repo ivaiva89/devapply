@@ -55,9 +55,9 @@ Configure environment variables
 - Copy `.env.example` to `.env.local`
 - Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
 - Add `BLOB_READ_WRITE_TOKEN` to enable resume uploads via Vercel Blob
-- Add the proposed Polar billing placeholders when billing work starts:
-  `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, and a Polar environment
-  selector such as `POLAR_ENVIRONMENT`
+- Add billing env vars for the hosted checkout path:
+  `POLAR_ACCESS_TOKEN`, `POLAR_PRODUCT_ID_PRO`, and `POLAR_ENVIRONMENT`
+- Add `POLAR_WEBHOOK_SECRET` to verify incoming Polar webhooks
 - Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
 - Restart `npm run dev` after changing Clerk environment variables
 
@@ -134,8 +134,12 @@ billing provider.
 Billing architecture for the MVP should follow this pattern:
 
 - server-side action starts hosted checkout
+- server-side action redirects into the internal `/api/billing/checkout`
+  entry point
 - Polar owns the checkout surface
 - webhook events synchronize subscription state back into Prisma
+- `app/api/webhooks/polar/route.ts` verifies webhook signatures before
+  applying plan changes
 - application entitlements read normalized internal plan state, not
   client redirect params
 - provider-specific code stays isolated inside `features/billing`

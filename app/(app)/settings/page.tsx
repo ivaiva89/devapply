@@ -27,21 +27,21 @@ export default async function SettingsPage({
             Account and billing
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-stone-600">
-            Review your current plan, understand the MVP limits, and start a Stripe checkout session to upgrade.
+            Review your current plan, understand the MVP limits, and start hosted checkout to upgrade.
           </p>
         </div>
       </section>
       {billingState === "success" ? (
         <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
           <p className="text-sm text-emerald-800">
-            Stripe checkout completed. Plan changes will take effect once billing synchronization is wired in.
+            Checkout completed. Plan changes will take effect once billing synchronization is wired in.
           </p>
         </section>
       ) : null}
       {billingState === "cancelled" ? (
         <section className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm">
           <p className="text-sm text-stone-700">
-            Stripe checkout was cancelled. You can restart it whenever you are ready.
+            Checkout was cancelled. You can restart it whenever you are ready.
           </p>
         </section>
       ) : null}

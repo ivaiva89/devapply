@@ -18,7 +18,7 @@ export function PlanSummary({ plan, userId }: PlanSummaryProps) {
       <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
         {plan === "PRO"
           ? "Your account currently has Pro access and should not be blocked by feature limits."
-          : "Your account is currently on the Free plan with server-enforced usage limits."}
+          : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
       </p>
       {plan === "FREE" ? (
         <>

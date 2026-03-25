@@ -146,8 +146,12 @@ Rules:
 Recommended billing flow:
 
 -   app UI triggers a server-side checkout initiation action
--   the billing module creates a Polar hosted checkout session
+-   the billing module redirects into an internal hosted-checkout entry
+    point
+-   the checkout entry point delegates to Polar's hosted checkout flow
 -   Polar webhook events update normalized subscription state in Prisma
+-   `app/api/webhooks/polar/route.ts` verifies webhook signatures before
+    changing plan state
 -   app feature gates read internal plan state such as `FREE` or `PRO`
 -   provider-specific code remains isolated in `features/billing`
 -   customer portal access is optional and can be added after core
@@ -156,9 +160,10 @@ Recommended billing flow:
 Environment guidance:
 
 -   keep sandbox and production billing credentials separate
--   proposed placeholders for future env docs include
-    `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, and a Polar
-    environment selector such as `POLAR_ENVIRONMENT`
+-   current billing checkout env names are `POLAR_ACCESS_TOKEN`,
+    `POLAR_PRODUCT_ID_PRO`, and `POLAR_ENVIRONMENT`
+-   `POLAR_WEBHOOK_SECRET` is required for webhook-driven subscription
+    sync
 
 ## Future Evolution
 
