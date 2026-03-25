@@ -46,6 +46,10 @@ enum Plan {
   PRO
 }
 
+enum BillingProvider {
+  POLAR
+}
+
 enum AttachmentKind {
   RESUME
   COVER_LETTER
@@ -60,6 +64,13 @@ model User {
   name         String?
   imageUrl     String?
   plan         Plan                    @default(FREE)
+  billingProvider           BillingProvider?
+  billingCustomerId         String?                 @unique
+  billingSubscriptionId     String?                 @unique
+  billingProductId          String?
+  billingSubscriptionStatus String?
+  billingCurrentPeriodEnd   DateTime?
+  billingSyncedAt           DateTime?
   timezone     String                  @default("UTC")
   createdAt    DateTime                @default(now())
   updatedAt    DateTime                @updatedAt
@@ -70,6 +81,8 @@ model User {
   reminders    Reminder[]
 
   @@index([plan])
+  @@index([billingProvider])
+  @@index([billingProductId])
   @@index([createdAt])
   @@index([updatedAt])
 }

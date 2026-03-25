@@ -103,6 +103,10 @@ Relevant webhook outcomes in the current implementation:
 - `subscription.uncanceled` -> `PRO`
 - `subscription.revoked` -> `FREE`
 
+Webhook sync also persists provider linkage when available, including
+Polar customer ID, subscription ID, product ID, subscription status, and
+the latest synced billing period end timestamp.
+
 `subscription.canceled` does not immediately downgrade access because the
 customer may still have access until the end of the billing period.
 
@@ -121,9 +125,10 @@ If webhook delivery succeeds but `plan` does not change:
 
 ## Current limitations
 
-- checkout and webhook sync use normalized app plan state only:
-  `FREE` / `PRO`
-- provider-specific customer or subscription identifiers are not yet
-  persisted in Prisma
+- app entitlements still use normalized app plan state only: `FREE` /
+  `PRO`
+- provider-specific linkage is persisted on `User`, but existing users
+  may keep null billing-linkage fields until a later billing webhook
+  populates them
 - customer portal availability depends on Polar resolving the customer by
   external customer ID

@@ -1,10 +1,13 @@
 # Vercel Build
 
-Set the Vercel dashboard Build Command to:
+The repository now commits the Vercel build command in `vercel.json`:
 
 ```bash
 npm run build:vercel
 ```
+
+If the Vercel project already has a dashboard-level Build Command
+override, keep it aligned with the same value.
 
 ## Production deployments
 
@@ -27,3 +30,46 @@ next build
 
 `prisma migrate deploy` is production-only so preview and development
 deployments do not apply migrations automatically against shared databases.
+
+## Required production env vars
+
+Runtime and build:
+
+- `DATABASE_URL`
+- `DIRECT_URL`
+- `SHADOW_DATABASE_URL`
+- `NEXT_PUBLIC_APP_URL`
+
+Authentication:
+
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL`
+
+Uploads:
+
+- `BLOB_READ_WRITE_TOKEN`
+
+Billing:
+
+- `POLAR_ACCESS_TOKEN`
+- `POLAR_PRODUCT_ID_PRO`
+- `POLAR_WEBHOOK_SECRET`
+- `POLAR_ENVIRONMENT`
+
+Optional analytics and email:
+
+- `POSTHOG_KEY`
+- `POSTHOG_HOST`
+- Resend env vars if transactional email is enabled later
+
+## Current deployment risks
+
+- Both `app/(app)/layout.tsx` and `app/(marketing)/layout.tsx` use
+  `next/font/google` with Geist fonts. Production builds currently
+  depend on fetching those fonts at build time.
+- Restricted-network builds can fail until the fonts are replaced with a
+  local or bundled alternative.

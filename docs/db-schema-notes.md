@@ -63,3 +63,14 @@ Represents follow-up reminders for a user, optionally tied to an application.
 - webhook-driven synchronization should update internal billing state
   before access changes in the app
 - billing provider code should stay swappable behind the billing module
+- current schema stores provider linkage on `User` for the active Polar
+  integration:
+  - `billingProvider`
+  - `billingCustomerId`
+  - `billingSubscriptionId`
+  - `billingProductId`
+  - `billingSubscriptionStatus`
+  - `billingCurrentPeriodEnd`
+  - `billingSyncedAt`
+- existing users remain compatible with null billing-linkage fields
+  until checkout or a later webhook populates them

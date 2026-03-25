@@ -70,11 +70,14 @@ Local verification reference:
 ## Production Readiness
 
 -   [ ] Production env vars configured
+-   [ ] Vercel project uses `npm run build:vercel`
 -   [ ] Vercel Blob token configured
 -   [ ] Database migrations applied
+-   [ ] Prisma runtime and migration env vars verified on Vercel (`DATABASE_URL`, `DIRECT_URL`, `SHADOW_DATABASE_URL`)
 -   [ ] Polar webhook configured
 -   [ ] Resend sending verified
 -   [ ] PostHog production project configured
+-   [ ] Production build succeeds without blocked external network dependencies
 
 ## Trust
 

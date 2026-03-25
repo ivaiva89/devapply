@@ -50,6 +50,14 @@ This architecture supports:
 -   PostHog for product analytics
 -   Private object storage (Vercel Blob or S3-compatible) for resume uploads
 
+Deployment notes:
+
+-   Vercel builds use `npm run build:vercel`
+-   Prisma runtime uses `DATABASE_URL`
+-   Prisma CLI and migrations use `DIRECT_URL` and `SHADOW_DATABASE_URL`
+-   current layouts still use `next/font/google`, so restricted-network
+    builds can fail until fonts are bundled locally
+
 ## Folder Structure
 
 app/ Next.js routes, layouts, pages
@@ -141,6 +149,9 @@ Rules:
     database
 -   normalized internal plan state is the source of truth for
     entitlements inside the app
+-   provider-specific billing identifiers should be stored separately so
+    support/debugging does not depend only on external customer ID
+    mapping
 -   UI may display limits but server enforcement is authoritative
 
 Recommended billing flow:
@@ -150,6 +161,8 @@ Recommended billing flow:
     point
 -   the checkout entry point delegates to Polar's hosted checkout flow
 -   Polar webhook events update normalized subscription state in Prisma
+-   provider-specific linkage such as customer and subscription IDs is
+    persisted separately from app-level plan state
 -   `app/api/webhooks/polar/route.ts` verifies webhook signatures before
     changing plan state
 -   app feature gates read internal plan state such as `FREE` or `PRO`

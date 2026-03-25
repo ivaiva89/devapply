@@ -2,7 +2,10 @@ import { Webhooks } from "@polar-sh/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getBillingConfig } from "@/features/billing/server/provider-config";
-import { syncUserPlanFromBillingPayload } from "@/features/billing/server/subscription-sync";
+import {
+  syncBillingLinkageFromPayload,
+  syncUserPlanFromBillingPayload,
+} from "@/features/billing/server/subscription-sync";
 
 export async function POST(request: NextRequest) {
   const config = getBillingConfig();
@@ -35,11 +38,26 @@ export async function POST(request: NextRequest) {
     onSubscriptionActive: async (payload) => {
       await syncProAccess(payload);
     },
+    onSubscriptionCreated: async (payload) => {
+      await syncBillingLinkageFromPayload(payload);
+    },
+    onSubscriptionUpdated: async (payload) => {
+      await syncBillingLinkageFromPayload(payload);
+    },
+    onSubscriptionCanceled: async (payload) => {
+      await syncBillingLinkageFromPayload(payload);
+    },
     onSubscriptionUncanceled: async (payload) => {
       await syncProAccess(payload);
     },
     onSubscriptionRevoked: async (payload) => {
       await syncUserPlanFromBillingPayload(payload, "FREE");
+    },
+    onCustomerCreated: async (payload) => {
+      await syncBillingLinkageFromPayload(payload);
+    },
+    onCustomerUpdated: async (payload) => {
+      await syncBillingLinkageFromPayload(payload);
     },
   })(request);
 }
