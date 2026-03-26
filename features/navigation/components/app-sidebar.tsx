@@ -8,19 +8,16 @@ type AppSidebarProps = {
 
 export function AppSidebar({ currentPath }: AppSidebarProps) {
   return (
-    <aside className="rounded-3xl border border-black/10 bg-white p-5 shadow-sm">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+    <aside className="flex flex-col border-r border-border bg-sidebar px-4 py-6">
+      {/* Wordmark */}
+      <div className="mb-8 px-2">
+        <span className="text-sm font-semibold tracking-tight text-foreground">
           DevApply
-        </p>
-        <h1 className="mt-2 text-lg font-semibold tracking-tight text-stone-950">
-          Job Tracker MVP
-        </h1>
-        <p className="mt-2 text-sm leading-6 text-stone-600">
-          A focused workspace for managing applications, follow-ups, and resume versions.
-        </p>
+        </span>
       </div>
-      <nav className="mt-8 space-y-2">
+
+      {/* Nav */}
+      <nav className="flex flex-col gap-0.5">
         {appNavigation.map((item) => {
           const isActive = currentPath === item.href;
 
@@ -29,10 +26,10 @@ export function AppSidebar({ currentPath }: AppSidebarProps) {
               key={item.href}
               href={item.href}
               className={[
-                "block rounded-xl px-3 py-2 text-sm transition",
+                "flex items-center rounded-md px-2 py-1.5 text-sm transition-colors duration-150",
                 isActive
-                  ? "bg-stone-950 text-white"
-                  : "text-stone-600 hover:bg-stone-100 hover:text-stone-950",
+                  ? "bg-muted font-medium text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               ].join(" ")}
             >
               {item.label}

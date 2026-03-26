@@ -38,10 +38,16 @@ export default async function AppLayout({
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
         <ClerkProvider>
-          <div className="min-h-screen bg-stone-100">
-            <div className="mx-auto grid min-h-screen w-full max-w-7xl gap-6 px-6 py-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-              <AppSidebar currentPath={currentPath} />
-              <main className="space-y-6 py-1">
+          <div className="flex min-h-screen">
+            {/* Sidebar — fixed width, full height */}
+            <div className="hidden w-52 shrink-0 lg:block">
+              <div className="fixed inset-y-0 left-0 w-52">
+                <AppSidebar currentPath={currentPath} />
+              </div>
+            </div>
+            {/* Main column */}
+            <div className="flex min-w-0 flex-1 flex-col">
+              <div className="sticky top-0 z-10 bg-background">
                 <AppHeader
                   title="Application tracker"
                   description="Protected area for managing applications, interview progress, reminders, and resume assets."
@@ -49,7 +55,11 @@ export default async function AppLayout({
                   userEmail={user.email}
                   planLabel={user.plan}
                 />
-                {children}
+              </div>
+              <main className="flex-1 px-8 py-8">
+                <div className="mx-auto max-w-5xl">
+                  {children}
+                </div>
               </main>
             </div>
           </div>

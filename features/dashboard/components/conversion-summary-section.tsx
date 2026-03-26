@@ -1,5 +1,3 @@
-import { SectionHeader } from "@/components/design/section-header";
-import { StatsCard } from "@/components/design/stats-card";
 import { DashboardSectionEmpty } from "@/features/dashboard/components/dashboard-section-empty";
 
 type ConversionSummarySectionProps = {
@@ -16,30 +14,33 @@ export function ConversionSummarySection({
   isEmpty,
 }: ConversionSummarySectionProps) {
   return (
-    <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-card/80 p-6 shadow-lg">
-      <SectionHeader
-        eyebrow="Conversion summary"
-        title="Funnel snapshot"
-      />
-      <div className="mt-6">
-        {!isEmpty ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {items.map((item) => (
-              <StatsCard
-                key={item.label}
-                label={item.label}
-                value={item.value}
-                helper={item.helper}
-              />
-            ))}
-          </div>
-        ) : (
-          <DashboardSectionEmpty
-            title="No conversion data yet"
-            description="Once applications move through the pipeline, the dashboard will summarize response, interview, and offer rates here."
-          />
-        )}
-      </div>
+    <section className="rounded-lg border border-border bg-card p-6">
+      <h2 className="mb-1 text-sm font-medium text-foreground">Funnel snapshot</h2>
+      <p className="mb-5 text-xs text-muted-foreground">
+        Response, interview, and offer conversion rates.
+      </p>
+
+      {!isEmpty ? (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((item) => (
+            <div
+              key={item.label}
+              className="flex flex-col gap-2 rounded-md border border-border bg-background p-4"
+            >
+              <p className="text-xs text-muted-foreground">{item.label}</p>
+              <p className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+                {item.value}
+              </p>
+              <p className="text-xs text-muted-foreground">{item.helper}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <DashboardSectionEmpty
+          title="No conversion data yet"
+          description="Once applications move through the pipeline, the dashboard will summarize response, interview, and offer rates here."
+        />
+      )}
     </section>
   );
 }

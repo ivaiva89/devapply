@@ -10,7 +10,7 @@ type DashboardStatsProps = {
 
 export function DashboardStats({ items }: DashboardStatsProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
         <StatsCard
           key={item.label}

@@ -37,9 +37,16 @@ type DashboardApplicationsOverTimeItem = {
   count: number;
 };
 
+type DashboardStatusItem = {
+  status: ApplicationStatus;
+  count: number;
+  percentage: number;
+};
+
 export type DashboardData = {
   kpis: DashboardKpi[];
   applicationsOverTime: DashboardApplicationsOverTimeItem[];
+  statuses: DashboardStatusItem[];
   recentApplications: DashboardRecentApplication[];
   reminders: DashboardReminder[];
   conversions: DashboardConversionItem[];
@@ -231,6 +238,16 @@ export async function getDashboardDataForUser(
       },
     ],
     applicationsOverTime: applicationsOverTimeByMonth,
+    statuses: (
+      ["WISHLIST", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"] as ApplicationStatus[]
+    ).map((status) => ({
+      status,
+      count: countsByStatus[status],
+      percentage:
+        totalApplications === 0
+          ? 0
+          : (countsByStatus[status] / totalApplications) * 100,
+    })),
     recentApplications: recentApplications.map((application) => ({
       id: application.id,
       company: application.company,
