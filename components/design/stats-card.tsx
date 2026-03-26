@@ -1,33 +1,30 @@
+import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 type StatsCardProps = {
   label: string;
   value: ReactNode;
   helper?: string;
+  icon?: LucideIcon;
 };
 
-export function StatsCard({ label, value, helper }: StatsCardProps) {
+export function StatsCard({ label, value, helper, icon: Icon }: StatsCardProps) {
   return (
     <Card size="sm">
-      <CardHeader>
-        <CardDescription className="text-xs">{label}</CardDescription>
-        <CardTitle className="text-3xl font-semibold tabular-nums tracking-tight">
+      <CardContent className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium text-muted-foreground">{label}</p>
+          {Icon ? <Icon className="size-3.5 text-muted-foreground/50" /> : null}
+        </div>
+        <p className="text-3xl font-semibold tabular-nums tracking-tight text-foreground">
           {value}
-        </CardTitle>
-      </CardHeader>
-      {helper ? (
-        <CardContent>
+        </p>
+        {helper ? (
           <p className="text-xs text-muted-foreground">{helper}</p>
-        </CardContent>
-      ) : null}
+        ) : null}
+      </CardContent>
     </Card>
   );
 }
