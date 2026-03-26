@@ -1,5 +1,13 @@
 import type { ReactNode } from "react";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 type StatsCardProps = {
   label: string;
   value: ReactNode;
@@ -8,14 +16,18 @@ type StatsCardProps = {
 
 export function StatsCard({ label, value, helper }: StatsCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:border-border/80 hover:bg-muted/30">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="text-3xl font-semibold tracking-tight text-foreground">
-        {value}
-      </p>
+    <Card size="sm">
+      <CardHeader>
+        <CardDescription className="text-xs">{label}</CardDescription>
+        <CardTitle className="text-3xl font-semibold tabular-nums tracking-tight">
+          {value}
+        </CardTitle>
+      </CardHeader>
       {helper ? (
-        <p className="text-xs text-muted-foreground">{helper}</p>
+        <CardContent>
+          <p className="text-xs text-muted-foreground">{helper}</p>
+        </CardContent>
       ) : null}
-    </div>
+    </Card>
   );
 }

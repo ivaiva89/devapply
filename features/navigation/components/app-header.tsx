@@ -1,5 +1,7 @@
 import { UserButton } from "@clerk/nextjs";
 
+import { Badge } from "@/components/ui/badge";
+
 type AppHeaderProps = {
   title: string;
   description: string;
@@ -22,9 +24,9 @@ export function AppHeader({
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">{userEmail}</p>
         </div>
-        <span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-muted-foreground">
           {planLabel}
-        </span>
+        </Badge>
         <UserButton />
       </div>
     </header>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { cn } from "@/lib/utils";
 import { appNavigation } from "@/features/navigation/config";
 
 type AppSidebarProps = {
@@ -25,12 +26,12 @@ export function AppSidebar({ currentPath }: AppSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={[
+              className={cn(
                 "flex items-center rounded-md px-2 py-1.5 text-sm transition-colors duration-150",
                 isActive
                   ? "bg-muted font-medium text-foreground"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
-              ].join(" ")}
+              )}
             >
               {item.label}
             </Link>

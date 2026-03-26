@@ -1,15 +1,3 @@
-import { EmptyState } from "@/components/design/empty-state";
-
-type DashboardSectionEmptyProps = {
-  title: string;
-  description: string;
-};
-
-export function DashboardSectionEmpty({
-  title,
-  description,
-}: DashboardSectionEmptyProps) {
-  return (
-    <EmptyState compact title={title} description={description} />
-  );
-}
+// Thin alias kept for backwards-compatibility.
+// Prefer importing EmptyState directly with the `compact` prop.
+export { EmptyState as DashboardSectionEmpty } from "@/components/design/empty-state";

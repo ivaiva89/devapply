@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 type EmptyStateProps = {
   eyebrow?: string;
   title: string;
@@ -17,10 +19,10 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={[
+      className={cn(
         "flex flex-col items-center justify-center rounded-lg border border-dashed border-border text-center",
         compact ? "py-8" : "py-16",
-      ].join(" ")}
+      )}
     >
       {eyebrow ? (
         <p className="mb-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
