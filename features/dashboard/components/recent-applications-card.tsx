@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
 import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
 
@@ -32,13 +33,14 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
         <CardTitle>Recent applications</CardTitle>
         <CardDescription className="text-xs">Latest tracked roles.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <Separator />
+      <CardContent className="pt-0">
         {items.length > 0 ? (
           <div className="divide-y divide-border">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                className="-mx-4 flex items-center justify-between px-4 py-2.5 transition-colors hover:bg-muted/40"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">
@@ -46,11 +48,11 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
                   </p>
                   <p className="truncate text-xs text-muted-foreground">{item.role}</p>
                 </div>
-                <div className="ml-4 flex shrink-0 flex-col items-end gap-1">
-                  <ApplicationStatusBadge status={item.status} />
-                  <span className="text-[10px] text-muted-foreground">
+                <div className="ml-4 flex shrink-0 items-center gap-3">
+                  <span className="text-xs tabular-nums text-muted-foreground">
                     {formatDate(item.updatedAt)}
                   </span>
+                  <ApplicationStatusBadge status={item.status} />
                 </div>
               </div>
             ))}
