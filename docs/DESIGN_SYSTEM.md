@@ -11,6 +11,10 @@ The UI layer is organized as:
 
 Use `app/(v0)/preview/page.tsx` for mock in-app compositions and Storybook for isolated component work.
 
+Reference:
+
+- `docs/STORYBOOK_PREVIEW_PLAN.md`
+
 ## Philosophy
 
 DevApply UI should feel:
@@ -56,6 +60,9 @@ Rules:
 - design-system components must not import Prisma, Clerk, auth server modules, or `server-only`
 - feature components may compose design components, but backend wiring should stay in thin wrappers
 - new reusable UI should be storyable with mock props
+- new reusable UI should ship with Storybook coverage in the same task
+- when major screen presentation changes, update both Storybook and
+  `/preview`
 
 ## Buttons
 

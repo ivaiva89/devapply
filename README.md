@@ -60,6 +60,8 @@ Configure environment variables
 - Add `POLAR_WEBHOOK_SECRET` to verify incoming Polar webhooks
 - Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
 - Restart `npm run dev` after changing Clerk environment variables
+- For local Polar billing setup, follow
+  `docs/polar-sandbox-setup.md`
 
 Run database migrations
 
@@ -72,6 +74,16 @@ npx prisma db seed
 Start development
 
 npm run dev
+
+Build for Vercel
+
+```bash
+npm run build:vercel
+```
+
+Deployment reference:
+
+- `docs/vercel-build.md`
 
 Start Storybook
 
@@ -89,6 +101,8 @@ npm run storybook:build
 
 - Use Storybook for isolated component work in `stories/ui`, `stories/design`, and `stories/features`
 - Use `app/(v0)/preview/page.tsx` for in-app mock compositions
+- Reuse shared placeholder data from `lib/mocks/ui-fixtures.ts`
+- Review `docs/STORYBOOK_PREVIEW_PLAN.md` when adding or auditing UI coverage
 - Keep stories backend-agnostic: no Prisma, Clerk, auth server modules, or `server-only` imports
 
 ## Authentication setup
@@ -143,17 +157,30 @@ Billing architecture for the MVP should follow this pattern:
 - application entitlements read normalized internal plan state, not
   client redirect params
 - provider-specific code stays isolated inside `features/billing`
+- signed-in pricing CTAs can reuse the same hosted checkout entry point
+- signed-in users with an existing Polar customer can open the hosted
+  billing portal from settings
 
 Integration note:
 
 - Polar provides official Next.js integration guidance for hosted
   checkout and webhook handling
 - sandbox and production billing configs should be kept separate
+- local sandbox checkout and webhook testing steps are documented in
+  `docs/polar-sandbox-setup.md`
 
 Plan model:
 
 - `FREE` is the default plan
 - `PRO` unlocks premium features
+
+Billing persistence:
+
+- `User.plan` remains the normalized app-level entitlement state
+- provider linkage is stored separately on the `User` record for the
+  current Polar integration
+- existing users remain compatible if those provider-specific fields are
+  still null until a later billing webhook updates them
 
 Implementation note:
 
@@ -169,3 +196,25 @@ Resume uploads use Vercel Blob. Local and deployed environments need:
 
 Uploaded resume metadata stays in Prisma, while the stored file URL comes from Blob.
 Resume downloads stay user-scoped through an authenticated app route.
+
+## Vercel deployment
+
+The repo includes `vercel.json` with `npm run build:vercel` as the
+project build command.
+
+Production deployment requirements:
+
+- `DATABASE_URL` for the app runtime Prisma Neon adapter
+- `DIRECT_URL` and `SHADOW_DATABASE_URL` for Prisma CLI and migration
+  workflows
+- Clerk production keys and redirect URLs
+- `BLOB_READ_WRITE_TOKEN` for resume upload and download routes
+- `NEXT_PUBLIC_APP_URL` for Polar return URLs
+- `POLAR_ACCESS_TOKEN`, `POLAR_PRODUCT_ID_PRO`,
+  `POLAR_WEBHOOK_SECRET`, and `POLAR_ENVIRONMENT`
+
+Known limitation:
+
+- current layouts use `next/font/google` for Geist, so restricted-network
+  builds can still fail until the fonts are made local or otherwise
+  bundled
