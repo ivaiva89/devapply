@@ -25,7 +25,7 @@ export function RecentApplicationsSection({
   items,
 }: RecentApplicationsSectionProps) {
   return (
-    <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+    <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-card/80 p-6 shadow-lg">
       <SectionHeader eyebrow="Recent applications" title="Latest activity" />
       <div className="mt-6">
         {items.length > 0 ? (
@@ -33,7 +33,7 @@ export function RecentApplicationsSection({
             {items.map((item) => (
               <Card
                 key={item.id}
-                className="rounded-2xl border border-border bg-muted/40 shadow-none"
+                className="group rounded-xl border border-primary/15 bg-secondary/40 shadow-none transition-all duration-300 hover:border-primary/40 hover:bg-secondary/60 hover:shadow-lg hover:shadow-primary/5"
               >
                 <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>

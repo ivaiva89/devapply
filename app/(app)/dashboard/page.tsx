@@ -13,15 +13,17 @@ export default async function DashboardPage() {
   const data = await getDashboardDataForUser(user.id);
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+    <div className="space-y-8">
+      <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-card/80 p-8 shadow-lg">
         <SectionHeader
           eyebrow="Dashboard"
           title="Job search overview"
           description="Track current pipeline volume, recent application activity, and follow-ups without leaving the authenticated workspace."
         />
       </section>
-      <DashboardStats items={data.kpis} />
+      <div>
+        <DashboardStats items={data.kpis} />
+      </div>
       {data.isEmpty ? <DashboardEmptyState /> : null}
       <ApplicationsOverTimeChartSection
         items={data.applicationsOverTime}

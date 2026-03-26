@@ -16,14 +16,14 @@ export function ConversionSummarySection({
   isEmpty,
 }: ConversionSummarySectionProps) {
   return (
-    <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+    <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-card to-card/80 p-6 shadow-lg">
       <SectionHeader
         eyebrow="Conversion summary"
         title="Funnel snapshot"
       />
       <div className="mt-6">
         {!isEmpty ? (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {items.map((item) => (
               <StatsCard
                 key={item.label}

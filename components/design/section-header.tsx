@@ -24,14 +24,14 @@ export function SectionHeader({
         className,
       )}
     >
-      <div className="space-y-2">
+      <div className="space-y-3">
         {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary/80">
             {eyebrow}
           </p>
         ) : null}
-        <div className="space-y-2">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+        <div className="space-y-3">
+          <h2 className="bg-gradient-to-r from-primary to-accent bg-clip-text text-3xl font-bold tracking-tight text-transparent">
             {title}
           </h2>
           {description ? (
