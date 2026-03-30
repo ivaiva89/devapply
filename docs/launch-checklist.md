@@ -86,7 +86,7 @@ Local verification reference:
 ## Trust
 
 - [x] Privacy policy available
-- [ ] Terms of service available
+- [x] Terms of service available
 - [x] Support/contact email visible
 
 ## Post-launch

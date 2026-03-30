@@ -72,6 +72,9 @@ export default async function MarketingLayout({
                   <Link href="/privacy" className="transition hover:text-stone-950">
                     Privacy policy
                   </Link>
+                  <Link href="/terms" className="transition hover:text-stone-950">
+                    Terms of service
+                  </Link>
                 </div>
               </footer>
             </div>
