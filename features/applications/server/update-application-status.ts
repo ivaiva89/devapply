@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { applicationStatusValues, type ApplicationStatusValue } from "@/features/applications/config";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -10,22 +11,38 @@ type UpdateApplicationStatusResult =
   | { status: "success" }
   | { status: "error"; message: string };
 
+const updateApplicationStatusSchema = z.object({
+  applicationId: z
+    .string()
+    .trim()
+    .min(1, "That application could not be found."),
+  nextStatus: z.enum(applicationStatusValues),
+});
+
 export async function updateApplicationStatus(
   applicationId: string,
   nextStatus: ApplicationStatusValue,
 ): Promise<UpdateApplicationStatusResult> {
-  if (!applicationStatusValues.includes(nextStatus)) {
+  const result = updateApplicationStatusSchema.safeParse({
+    applicationId,
+    nextStatus,
+  });
+
+  if (!result.success) {
     return {
       status: "error",
-      message: "The selected status is not valid.",
+      message:
+        result.error.issues[0]?.message ?? "The selected status is not valid.",
     };
   }
+
+  const input = result.data;
 
   const user = await requireCurrentUser();
 
   const application = await prisma.application.findFirst({
     where: {
-      id: applicationId,
+      id: input.applicationId,
       userId: user.id,
     },
     select: {
@@ -45,7 +62,7 @@ export async function updateApplicationStatus(
       id: application.id,
     },
     data: {
-      status: nextStatus,
+      status: input.nextStatus,
     },
   });
 

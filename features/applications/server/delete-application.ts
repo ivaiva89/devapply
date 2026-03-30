@@ -1,10 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import type { DeleteApplicationActionState } from "@/features/applications/application-delete";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/lib/prisma";
+
+const deleteApplicationSchema = z.object({
+  applicationId: z
+    .string()
+    .trim()
+    .min(1, "That application could not be found."),
+});
 
 export async function deleteApplication(
   applicationId: string,
@@ -14,11 +22,22 @@ export async function deleteApplication(
   void _prevState;
   void _formData;
 
+  const result = deleteApplicationSchema.safeParse({ applicationId });
+
+  if (!result.success) {
+    return {
+      status: "error",
+      error:
+        result.error.issues[0]?.message ??
+        "That application could not be found.",
+    };
+  }
+
   try {
     const user = await requireCurrentUser();
     const deleted = await prisma.application.deleteMany({
       where: {
-        id: applicationId,
+        id: result.data.applicationId,
         userId: user.id,
       },
     });
