@@ -42,6 +42,7 @@ export function RemindersList({
               reminder={{
                 applicationId: reminder.application?.id,
                 id: reminder.id,
+                notes: reminder.notes,
                 remindAt: reminder.remindAt,
                 title: reminder.title,
               }}

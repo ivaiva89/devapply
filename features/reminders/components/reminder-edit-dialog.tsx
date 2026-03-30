@@ -26,6 +26,7 @@ type ReminderEditDialogProps = {
   reminder: {
     applicationId?: string | null;
     id: string;
+    notes?: string | null;
     remindAt: string;
     title: string;
   };
@@ -40,6 +41,7 @@ export function ReminderEditDialog({
   const formRef = useRef<HTMLFormElement>(null);
   const initialValues = createEditReminderValues({
     applicationId: reminder.applicationId,
+    notes: reminder.notes,
     remindAt: reminder.remindAt,
     title: reminder.title,
   });

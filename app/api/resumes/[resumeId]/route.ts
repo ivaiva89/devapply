@@ -40,10 +40,17 @@ export async function GET(
     return NextResponse.json({ error: "Resume not found." }, { status: 404 });
   }
 
-  const blob = await get(resume.storageKey, {
-    access: "private",
-    token: blobToken,
-  });
+  let blob;
+
+  try {
+    blob = await get(resume.storageKey, {
+      access: "private",
+      token: blobToken,
+    });
+  } catch (error) {
+    console.error("Failed to fetch resume from blob storage", { resumeId, error });
+    return NextResponse.json({ error: "Resume file could not be retrieved." }, { status: 500 });
+  }
 
   if (!blob || blob.statusCode !== 200) {
     return NextResponse.json({ error: "Resume file not found." }, { status: 404 });

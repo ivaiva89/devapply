@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import type {
   ReminderApplicationOption,
   ReminderFormValues,
@@ -32,6 +33,7 @@ export function ReminderFormFields({
   const titleId = `${idPrefix}-title`;
   const remindAtId = `${idPrefix}-remind-at`;
   const applicationId = `${idPrefix}-application-id`;
+  const notesId = `${idPrefix}-notes`;
 
   return (
     <div className="space-y-4">
@@ -81,6 +83,21 @@ export function ReminderFormFields({
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor={notesId} className="text-sm font-medium text-foreground">
+          Notes <span className="font-normal text-muted-foreground">(optional)</span>
+        </label>
+        <Textarea
+          id={notesId}
+          name="notes"
+          placeholder="Any context, links, or follow-up details"
+          defaultValue={values.notes}
+          disabled={isDisabled || isPending}
+          rows={3}
+          className="resize-none"
+        />
       </div>
 
       {error ? (

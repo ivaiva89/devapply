@@ -24,6 +24,7 @@ export async function getRemindersPageDataForUser(
         id: true,
         title: true,
         dueAt: true,
+        notes: true,
         application: {
           select: {
             id: true,
@@ -69,6 +70,7 @@ export async function getRemindersPageDataForUser(
       id: reminder.id,
       title: reminder.title,
       remindAt: reminder.dueAt.toISOString(),
+      notes: reminder.notes,
       application: reminder.application,
     })),
     applicationOptions: applications.map((application) => ({

@@ -279,6 +279,7 @@ export default function PreviewPage() {
                     isOpen
                     values={{
                       applicationId: "app-1",
+                      notes: "",
                       remindAt: "2026-03-20T10:30",
                       title: "Follow up after interview",
                     }}

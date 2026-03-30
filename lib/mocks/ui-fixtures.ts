@@ -390,6 +390,7 @@ export const mockReminderListItems: ReminderListItem[] = [
     id: "reminder-list-1",
     title: "Follow up after interview",
     remindAt: "2026-03-20T10:30:00.000Z",
+    notes: null,
     application: {
       id: "app-1",
       company: "Vercel",
@@ -400,6 +401,7 @@ export const mockReminderListItems: ReminderListItem[] = [
     id: "reminder-list-2",
     title: "Check in on referral",
     remindAt: "2026-03-24T14:00:00.000Z",
+    notes: null,
     application: null,
   },
 ];

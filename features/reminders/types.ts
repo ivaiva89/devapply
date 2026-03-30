@@ -4,6 +4,7 @@ export type ReminderListItem = {
   id: string;
   title: string;
   remindAt: string;
+  notes: string | null;
   application: {
     id: string;
     company: string;
@@ -38,6 +39,7 @@ export type ReminderFormValues = {
   title: string;
   remindAt: string;
   applicationId: string;
+  notes: string;
 };
 
 export type UpdateReminderActionState = {

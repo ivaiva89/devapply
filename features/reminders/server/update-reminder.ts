@@ -40,6 +40,12 @@ const updateReminderSchema = z.object({
     .string()
     .trim()
     .transform((value) => (value === "" ? undefined : value)),
+  notes: z
+    .string()
+    .trim()
+    .max(1000, "Notes must be 1000 characters or fewer.")
+    .optional()
+    .transform((value) => (value === "" ? undefined : value)),
 });
 
 export async function updateReminder(
@@ -53,6 +59,7 @@ export async function updateReminder(
     remindAt: getFormString(formData, "remindAt"),
     timezoneOffsetMinutes: getFormString(formData, "timezoneOffsetMinutes"),
     applicationId: getFormString(formData, "applicationId"),
+    notes: getFormString(formData, "notes"),
   };
 
   const fallbackValues = toReminderFormValues(rawValues);
@@ -112,6 +119,7 @@ export async function updateReminder(
         title: input.title,
         dueAt,
         applicationId: input.applicationId,
+        notes: input.notes ?? null,
       },
     });
 

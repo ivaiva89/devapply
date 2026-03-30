@@ -11,6 +11,7 @@ export function createEmptyReminderFormValues(): ReminderFormValues {
     title: "",
     remindAt: "",
     applicationId: "",
+    notes: "",
   };
 }
 
@@ -18,11 +19,13 @@ export function toReminderFormValues(input: {
   applicationId?: string | null;
   remindAt?: string;
   title?: string;
+  notes?: string | null;
 }): ReminderFormValues {
   return {
     title: input.title ?? "",
     remindAt: input.remindAt ?? "",
     applicationId: input.applicationId ?? "",
+    notes: input.notes ?? "",
   };
 }
 

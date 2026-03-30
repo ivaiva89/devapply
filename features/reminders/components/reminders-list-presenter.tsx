@@ -55,6 +55,9 @@ export function RemindersListPresenter({
                     ? `${reminder.application.company} - ${reminder.application.role}`
                     : "General reminder"}
                 </p>
+                {reminder.notes ? (
+                  <p className="text-sm text-muted-foreground">{reminder.notes}</p>
+                ) : null}
               </div>
 
               {renderActions ? (

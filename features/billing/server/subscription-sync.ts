@@ -186,8 +186,7 @@ async function updateBillingStateForUser(
   const userId = getPayloadUserId(payload);
 
   if (!userId) {
-    console.warn("billing webhook payload missing user identifier");
-    return;
+    throw new Error("billing webhook payload missing user identifier");
   }
 
   const currentUser = await prisma.user.findUnique({
@@ -201,8 +200,7 @@ async function updateBillingStateForUser(
   });
 
   if (!currentUser) {
-    console.warn("billing webhook payload user could not be found");
-    return;
+    throw new Error(`billing webhook user not found for id: ${userId}`);
   }
 
   await prisma.user.updateMany({

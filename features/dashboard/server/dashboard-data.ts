@@ -289,7 +289,6 @@ export async function getDashboardDataForUser(
     isEmpty:
       totalApplications === 0 &&
       recentApplications.length === 0 &&
-      reminders.length === 0 &&
-      now instanceof Date,
+      reminders.length === 0,
   };
 }
