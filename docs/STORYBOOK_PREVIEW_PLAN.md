@@ -57,6 +57,10 @@ Covered now:
 - `features/billing/components/plan-summary-presenter.tsx`
 - `features/billing/components/billing-action-button-presenter.tsx`
 - `features/applications/components/application-status-badge.tsx`
+- `features/applications/components/applications-filters-presenter.tsx`
+- `features/applications/components/application-form-modal-presenter.tsx`
+- `features/applications/components/application-delete-dialog-presenter.tsx`
+- `features/applications/components/new-application-trigger.tsx`
 - `features/applications/components/application-card.tsx`
 - `features/applications/components/application-kanban-column.tsx`
 - `features/applications/components/applications-empty-state.tsx`
@@ -69,10 +73,6 @@ Covered now:
 Story-safe refactor still needed:
 
 - `features/applications/components/pipeline-board.tsx`
-- `features/applications/components/applications-filters.tsx`
-- `features/applications/components/application-form-modal.tsx`
-- `features/applications/components/new-application-modal.tsx`
-- `features/applications/components/application-delete-dialog.tsx`
 - navigation components that depend on Clerk session state
 
 ## Preview route coverage

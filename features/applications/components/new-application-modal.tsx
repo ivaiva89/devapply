@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ApplicationFormModal } from "@/features/applications/components/application-form-modal";
+import { NewApplicationTrigger } from "@/features/applications/components/new-application-trigger";
 import { createApplicationDefaultValues } from "@/features/applications/create-application-form";
 import { createApplication } from "@/features/applications/server/create-application";
 
@@ -29,14 +30,7 @@ export function NewApplicationModal({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={openModal}
-        disabled={disabled}
-        className="rounded-full bg-stone-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-400"
-      >
-        New application
-      </button>
+      <NewApplicationTrigger onClick={openModal} disabled={disabled} />
       {isOpen ? (
         <ApplicationFormModal
           action={createApplication}

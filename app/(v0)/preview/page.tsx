@@ -3,9 +3,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/design/section-header";
 import { ApplicationsTable } from "@/features/applications/components/applications-table";
 import { ApplicationCard } from "@/features/applications/components/application-card";
+import { ApplicationDeleteDialogPresenter } from "@/features/applications/components/application-delete-dialog-presenter";
+import { ApplicationFormModalPresenter } from "@/features/applications/components/application-form-modal-presenter";
 import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
+import { ApplicationsFiltersPresenter } from "@/features/applications/components/applications-filters-presenter";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
+import { NewApplicationTrigger } from "@/features/applications/components/new-application-trigger";
+import {
+  createApplicationDefaultValues,
+  getCreateApplicationInitialState,
+} from "@/features/applications/create-application-form";
 import { BillingActionButtonPresenter } from "@/features/billing/components/billing-action-button-presenter";
 import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
@@ -132,6 +140,17 @@ export default function PreviewPage() {
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">
+            <ApplicationsFiltersPresenter
+              state={{
+                query: "engineer",
+                status: "INTERVIEW",
+                sort: "updated-desc",
+              }}
+              resetHref="#reset"
+            />
+            <div className="flex justify-end">
+              <NewApplicationTrigger />
+            </div>
             <ApplicationsTable
               title="Applications table"
               description="Search, status, source, and activity coverage with realistic placeholder data."
@@ -152,6 +171,22 @@ export default function PreviewPage() {
             <div className="grid gap-6 lg:grid-cols-2">
               <ApplicationsEmptyState hasFilters={false} />
               <ApplicationsEmptyState hasFilters />
+            </div>
+            <div className="grid gap-6 xl:grid-cols-2">
+              <ApplicationFormModalPresenter
+                description="Preview the shared application form modal presenter with mock validation state."
+                isOpen
+                onCancel={() => undefined}
+                state={getCreateApplicationInitialState(createApplicationDefaultValues)}
+                submitLabel="Create application"
+                submittingLabel="Saving..."
+                title="New application"
+              />
+              <ApplicationDeleteDialogPresenter
+                company="Vercel"
+                isOpen
+                onCancel={() => undefined}
+              />
             </div>
           </TabsContent>
 
