@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import type { BillingPlan } from "@/features/billing/server/provider-config";
 import { prisma } from "@/lib/prisma";
 
@@ -189,12 +190,39 @@ async function updateBillingStateForUser(
     return;
   }
 
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      plan: true,
+    },
+  });
+
+  if (!currentUser) {
+    console.warn("billing webhook payload user could not be found");
+    return;
+  }
+
   await prisma.user.updateMany({
     where: {
       id: userId,
     },
     data,
   });
+
+  if (data.plan === "PRO" && currentUser.plan !== "PRO") {
+    await trackServerEvent({
+      distinctId: userId,
+      event: "checkout_success",
+      properties: {
+        billingProvider: "polar",
+        plan: "PRO",
+        sourceEvent: payload.type ?? "unknown",
+      },
+    });
+  }
 }
 
 export async function syncUserPlanFromBillingPayload(

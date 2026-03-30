@@ -52,7 +52,7 @@ Local verification reference:
 - [x] Reminder created tracked
 - [x] Upgrade click tracked
 - [x] Checkout started tracked
-- [ ] Checkout success tracked
+- [x] Checkout success tracked
 
 ## UX
 

@@ -6,6 +6,7 @@ export const analyticsEventNames = [
   "resume_uploaded",
   "upgrade_clicked",
   "checkout_started",
+  "checkout_success",
 ] as const;
 
 export type AnalyticsEventName = (typeof analyticsEventNames)[number];
