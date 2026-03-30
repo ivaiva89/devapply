@@ -282,8 +282,8 @@ Definition of done:
 
 Goal: give users insight into job search progress.
 
-- [ ] Applications per status chart
-- [ ] Applications over time
+- [x] Applications per status chart
+- [x] Applications over time
 
 Example metrics:
 
