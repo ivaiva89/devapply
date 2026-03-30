@@ -94,5 +94,7 @@ Rules:
 
 - preview data must come from `lib/mocks/ui-fixtures.ts`
 - no server actions, Prisma, Clerk, or authenticated data loading
+- ESLint enforces restricted imports in `stories/`,
+  `app/(v0)/preview`, and `lib/mocks`
 - when a reusable screen section changes materially, update Storybook
   and `/preview` in the same task

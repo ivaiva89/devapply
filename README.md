@@ -104,6 +104,8 @@ npm run storybook:build
 - Reuse shared placeholder data from `lib/mocks/ui-fixtures.ts`
 - Review `docs/STORYBOOK_PREVIEW_PLAN.md` when adding or auditing UI coverage
 - Keep stories backend-agnostic: no Prisma, Clerk, auth server modules, or `server-only` imports
+- ESLint now enforces the backend-import guardrail for `stories/`,
+  `app/(v0)/preview`, and `lib/mocks`
 
 ## Authentication setup
 
@@ -213,8 +215,8 @@ Production deployment requirements:
 - `POLAR_ACCESS_TOKEN`, `POLAR_PRODUCT_ID_PRO`,
   `POLAR_WEBHOOK_SECRET`, and `POLAR_ENVIRONMENT`
 
-Known limitation:
+Typography note:
 
-- current layouts use `next/font/google` for Geist, so restricted-network
-  builds can still fail until the fonts are made local or otherwise
-  bundled
+- app layouts use a bundled system font stack defined in
+  `app/globals.css`, so builds do not depend on live Google font
+  fetching
