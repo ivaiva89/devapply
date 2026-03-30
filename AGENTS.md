@@ -6,13 +6,13 @@ This repository is optimized for AI-assisted development.
 
 Control files:
 
--   AGENTS.md --- implementation rules
--   TASKS.md --- execution backlog
--   NEXT_TASK.md --- single active task
--   AI_WORKFLOW.md --- workflow
--   REPO_CONTEXT.md --- compressed project context
+- AGENTS.md --- implementation rules
+- TASKS.md --- execution backlog
+- NEXT_TASK.md --- single active task
+- AI_WORKFLOW.md --- workflow
+- REPO_CONTEXT.md --- compressed project context
 
-------------------------------------------------------------------------
+---
 
 ## Required reading order
 
@@ -24,16 +24,16 @@ Before implementing any change agents must read:
 
 After completing work agents must:
 
--   update TASKS.md
--   update NEXT_TASK.md
--   add follow-up tasks if necessary
--   reconcile affected setup or workflow docs with the real codebase state
--   if billing-related docs or code change, also review pricing, webhook,
-    env, and entitlement docs in the same pass
--   if reusable UI or major screen-level presentation changes, also
-    review Storybook coverage and `app/(v0)/preview/page.tsx`
+- update TASKS.md
+- update NEXT_TASK.md
+- add follow-up tasks if necessary
+- reconcile affected setup or workflow docs with the real codebase state
+- if billing-related docs or code change, also review pricing, webhook,
+  env, and entitlement docs in the same pass
+- if reusable UI or major screen-level presentation changes, also
+  review Storybook coverage and `app/(v0)/preview/page.tsx`
 
-------------------------------------------------------------------------
+---
 
 ## Product
 
@@ -49,36 +49,36 @@ Current goal:
 
 Ship a production-quality MVP of the Job Application Tracker.
 
-------------------------------------------------------------------------
+---
 
 ## MVP Scope
 
 Build:
 
--   authentication
--   dashboard
--   applications CRUD
--   applications table
--   kanban pipeline
--   reminders
--   resume attachments
--   analytics
--   billing
+- authentication
+- dashboard
+- applications CRUD
+- applications table
+- kanban pipeline
+- reminders
+- resume attachments
+- analytics
+- billing
 
 Do NOT build yet:
 
--   resume builder
--   cover letter generator
--   salary comparison
--   interview prep AI
--   recruiter CRM
--   email sync
--   browser extension
--   mobile app
+- resume builder
+- cover letter generator
+- salary comparison
+- interview prep AI
+- recruiter CRM
+- email sync
+- browser extension
+- mobile app
 
 Prefer smaller scope.
 
-------------------------------------------------------------------------
+---
 
 ## Architecture
 
@@ -90,41 +90,45 @@ features/
 
 Examples:
 
--   features/applications
--   features/reminders
--   features/auth
--   features/billing
+- features/applications
+- features/reminders
+- features/auth
+- features/billing
+
+Server logic should stay feature-local under `features/*/server/`
+rather than a single root `server/` directory unless a new shared server
+layer is explicitly needed.
 
 Billing guidance:
 
--   Polar is the planned MVP billing provider
--   billing code should stay isolated inside `features/billing`
--   entitlements in the app must read normalized internal plan state,
-    not provider redirect params
--   provider-specific checkout and webhook handling must not leak across
-    the rest of the app
+- Polar is the planned MVP billing provider
+- billing code should stay isolated inside `features/billing`
+- entitlements in the app must read normalized internal plan state,
+  not provider redirect params
+- provider-specific checkout and webhook handling must not leak across
+  the rest of the app
 
 UI workflow guidance:
 
--   new reusable UI components must ship with Storybook stories
--   major presentational feature components should have Storybook stories
-    when they are backend-agnostic
--   server-bound components should be split into pure presenters and thin
-    wrappers before Storybook coverage is added
--   presenters render UI only; wrappers handle auth, server actions,
-    mutations, refresh logic, and provider/session wiring
--   Storybook and `/preview` must use mock data only, never auth,
-    Prisma, or server-only modules
--   lint-enforced import restrictions apply to `stories/`,
-    `app/(v0)/preview`, and `lib/mocks`; do not bypass them by moving
-    backend imports into preview-safe files
--   prefer shared fixtures from `lib/mocks/ui-fixtures.ts` over repeated
-    inline mock data
--   use Storybook for isolated reusable component states and `/preview`
-    for composed screen-level mock review; update both when the same UI
-    change affects both layers
+- new reusable UI components must ship with Storybook stories
+- major presentational feature components should have Storybook stories
+  when they are backend-agnostic
+- server-bound components should be split into pure presenters and thin
+  wrappers before Storybook coverage is added
+- presenters render UI only; wrappers handle auth, server actions,
+  mutations, refresh logic, and provider/session wiring
+- Storybook and `/preview` must use mock data only, never auth,
+  Prisma, or server-only modules
+- lint-enforced import restrictions apply to `stories/`,
+  `app/(v0)/preview`, and `lib/mocks`; do not bypass them by moving
+  backend imports into preview-safe files
+- prefer shared fixtures from `lib/mocks/ui-fixtures.ts` over repeated
+  inline mock data
+- use Storybook for isolated reusable component states and `/preview`
+  for composed screen-level mock review; update both when the same UI
+  change affects both layers
 
-------------------------------------------------------------------------
+---
 
 ## Security rule
 
@@ -136,21 +140,21 @@ WHERE userId = authenticatedUserId
 
 Cross-user data exposure is forbidden.
 
-------------------------------------------------------------------------
+---
 
 ## Definition of Done
 
 A task is complete when:
 
--   code compiles
--   TypeScript passes
--   lint passes
--   ownership rules enforced
--   UI loading/empty/error states exist
--   TASKS.md updated
+- code compiles
+- TypeScript passes
+- lint passes
+- ownership rules enforced
+- UI loading/empty/error states exist
+- TASKS.md updated
 
 If implementation is partial:
 
--   document the gap
--   add a follow-up task
--   do not leave billing or env changes undocumented
+- document the gap
+- add a follow-up task
+- do not leave billing or env changes undocumented

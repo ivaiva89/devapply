@@ -146,6 +146,7 @@ Expected structure:
 - components/ui/ → low-level primitives
 - components/design/ → reusable presentational building blocks
 - features/ → domain modules
+- features/\*/server/ → feature-local server actions and services
 - lib/ → shared utilities
 - stories/ → Storybook coverage for ui/design/feature presenters
 
