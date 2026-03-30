@@ -21,6 +21,13 @@ type StatsGridProps = {
 // Ordered to match the four KPIs returned from getDashboardDataForUser.
 const SLOT_ICONS: LucideIcon[] = [Briefcase, CalendarPlus, MessageSquare, Trophy];
 
+const SLOT_VALUE_CLASSNAMES: (string | undefined)[] = [
+  undefined,          // slot 0: total applications — default (primary card handles color)
+  undefined,          // slot 1: applications this month
+  "text-violet-400",  // slot 2: interviews
+  "text-emerald-400", // slot 3: offers
+];
+
 export function StatsGrid({ items }: StatsGridProps) {
   return (
     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
@@ -31,6 +38,8 @@ export function StatsGrid({ items }: StatsGridProps) {
           value={item.value}
           helper={item.helper}
           icon={SLOT_ICONS[index]}
+          highlight={index === 0}
+          valueClassName={SLOT_VALUE_CLASSNAMES[index]}
         />
       ))}
     </div>
