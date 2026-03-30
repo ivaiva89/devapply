@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { applicationStatusValues, type ApplicationStatusValue } from "@/features/applications/config";
+import { updateApplicationStatusForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
 
 type UpdateApplicationStatusResult =
   | { status: "success" }
@@ -39,32 +39,18 @@ export async function updateApplicationStatus(
   const input = result.data;
 
   const user = await requireCurrentUser();
+  const updated = await updateApplicationStatusForUser(
+    user.id,
+    input.applicationId,
+    input.nextStatus,
+  );
 
-  const application = await prisma.application.findFirst({
-    where: {
-      id: input.applicationId,
-      userId: user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!application) {
+  if (updated.count === 0) {
     return {
       status: "error",
       message: "That application could not be found.",
     };
   }
-
-  await prisma.application.update({
-    where: {
-      id: application.id,
-    },
-    data: {
-      status: input.nextStatus,
-    },
-  });
 
   revalidatePath("/applications");
   revalidatePath("/pipeline");

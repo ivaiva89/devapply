@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import type { DeleteApplicationActionState } from "@/features/applications/application-delete";
+import { deleteApplicationForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
 
 const deleteApplicationSchema = z.object({
   applicationId: z
@@ -35,12 +35,7 @@ export async function deleteApplication(
 
   try {
     const user = await requireCurrentUser();
-    const deleted = await prisma.application.deleteMany({
-      where: {
-        id: result.data.applicationId,
-        userId: user.id,
-      },
-    });
+    const deleted = await deleteApplicationForUser(user.id, result.data.applicationId);
 
     if (deleted.count === 0) {
       return {

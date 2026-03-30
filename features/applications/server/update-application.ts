@@ -9,8 +9,8 @@ import {
   getApplicationFormSuccessState,
 } from "@/features/applications/schemas/application-form-schema";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
+import { updateApplicationForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
 import type { CreateApplicationActionState } from "@/features/applications/create-application-form";
 
 export async function updateApplication(
@@ -29,42 +29,14 @@ export async function updateApplication(
 
   try {
     const user = await requireCurrentUser();
-    const ownedApplication = await prisma.application.findFirst({
-      where: {
-        id: applicationId,
-        userId: user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const input = result.data;
+    const updated = await updateApplicationForUser(user.id, applicationId, input);
 
-    if (!ownedApplication) {
+    if (updated.count === 0) {
       return getApplicationFormErrorState(values, {
         formError: "That application could not be found.",
       });
     }
-
-    const input = result.data;
-
-    await prisma.application.update({
-      where: {
-        id: ownedApplication.id,
-      },
-      data: {
-        company: input.company,
-        role: input.role,
-        location: input.location,
-        source: input.source,
-        status: input.status,
-        salaryMin: input.salaryMin,
-        salaryMax: input.salaryMax,
-        currency: input.currency,
-        jobUrl: input.jobUrl,
-        notes: input.notes,
-        appliedDate: input.appliedDate,
-      },
-    });
 
     revalidatePath("/applications");
     revalidatePath("/dashboard");

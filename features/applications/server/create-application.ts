@@ -12,6 +12,7 @@ import {
   getApplicationFormFieldErrors,
   getApplicationFormSuccessState,
 } from "@/features/applications/schemas/application-form-schema";
+import { createApplicationWithCountForUser } from "@/features/applications/server/application-service";
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -47,34 +48,7 @@ export async function createApplication(
     const input = result.data;
 
     const { application, totalApplications } = await prisma.$transaction(
-      async (tx) => {
-        const application = await tx.application.create({
-          data: {
-            userId: user.id,
-            company: input.company,
-            role: input.role,
-            location: input.location,
-            source: input.source,
-            status: input.status,
-            salaryMin: input.salaryMin,
-            salaryMax: input.salaryMax,
-            currency: input.currency,
-            jobUrl: input.jobUrl,
-            notes: input.notes,
-            appliedDate: input.appliedDate,
-          },
-        });
-        const totalApplications = await tx.application.count({
-          where: {
-            userId: user.id,
-          },
-        });
-
-        return {
-          application,
-          totalApplications,
-        };
-      },
+      (tx) => createApplicationWithCountForUser(tx, user.id, input),
     );
 
     await trackServerEvent({

@@ -1,9 +1,9 @@
 import "server-only";
 
-import { ApplicationStatus, Prisma } from "@prisma/client";
+import { ApplicationStatus } from "@prisma/client";
 
 import { getUserPlan } from "@/features/billing/server/plan-enforcement";
-import { prisma } from "@/lib/prisma";
+import { getApplicationListDataForUser } from "@/features/applications/server/application-service";
 import {
   type ApplicationListItem,
   applicationSortOptions,
@@ -47,20 +47,6 @@ function parseSort(value: string | undefined): ApplicationSortOption {
   return applicationSortOptions.find((option) => option === value) ?? DEFAULT_QUERY_STATE.sort;
 }
 
-function getOrderBy(sort: ApplicationSortOption): Prisma.ApplicationOrderByWithRelationInput[] {
-  switch (sort) {
-    case "updated-asc":
-      return [{ updatedAt: "asc" }];
-    case "applied-desc":
-      return [{ appliedDate: "desc" }, { updatedAt: "desc" }];
-    case "applied-asc":
-      return [{ appliedDate: "asc" }, { updatedAt: "desc" }];
-    case "updated-desc":
-    default:
-      return [{ updatedAt: "desc" }];
-  }
-}
-
 export function parseApplicationsQueryState(
   searchParams?: RawSearchParams,
 ): ApplicationsQueryState {
@@ -85,46 +71,8 @@ export async function getApplicationsForUser(
   plan: "FREE" | "PRO";
 }> {
   const state = parseApplicationsQueryState(searchParams);
-  const where: Prisma.ApplicationWhereInput = {
-    userId,
-  };
-
-  if (state.query) {
-    where.OR = [
-      { company: { contains: state.query, mode: "insensitive" } },
-      { role: { contains: state.query, mode: "insensitive" } },
-    ];
-  }
-
-  if (state.status !== "ALL") {
-    where.status = state.status;
-  }
-
-  const [items, totalCount, user] = await Promise.all([
-    prisma.application.findMany({
-      where,
-      orderBy: getOrderBy(state.sort),
-      select: {
-        id: true,
-        company: true,
-        role: true,
-        location: true,
-        status: true,
-        source: true,
-        salaryMin: true,
-        salaryMax: true,
-        currency: true,
-        jobUrl: true,
-        notes: true,
-        appliedDate: true,
-        updatedAt: true,
-      },
-    }),
-    prisma.application.count({
-      where: {
-        userId,
-      },
-    }),
+  const [{ items, totalCount }, user] = await Promise.all([
+    getApplicationListDataForUser(userId, state),
     getUserPlan(userId),
   ]);
 
