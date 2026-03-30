@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { usePathname } from "next/navigation";
 
 import { trackClientEvent } from "@/features/analytics/client/track-event";
+import { BillingActionButtonPresenter } from "@/features/billing/components/billing-action-button-presenter";
 import {
   createCheckoutSession,
   type CreateCheckoutSessionState,
@@ -31,30 +32,23 @@ export function UpgradeButton({
   );
 
   return (
-    <form action={formAction} className="space-y-3">
-      <button
-        type="submit"
-        disabled={isPending}
-        onClick={() => {
-          trackClientEvent({
-            distinctId: userId,
-            event: "upgrade_clicked",
-            properties: {
-              ctaLabel: label,
-              source: pathname,
-            },
-          });
-        }}
-        className={
-          className ??
-          "rounded-full bg-stone-950 px-5 py-3 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-400"
-        }
-      >
-        {isPending ? "Redirecting..." : label}
-      </button>
-      {state.error ? (
-        <p className="text-sm text-red-700">{state.error}</p>
-      ) : null}
-    </form>
+    <BillingActionButtonPresenter
+      action={formAction}
+      className={className}
+      error={state.error}
+      isPending={isPending}
+      label={label}
+      pendingLabel="Redirecting..."
+      onClick={() => {
+        trackClientEvent({
+          distinctId: userId,
+          event: "upgrade_clicked",
+          properties: {
+            ctaLabel: label,
+            source: pathname,
+          },
+        });
+      }}
+    />
   );
 }

@@ -50,8 +50,12 @@ Covered now:
 - `features/dashboard/components/recent-applications-card.tsx`
 - `features/dashboard/components/upcoming-reminders-card.tsx`
 - `features/reminders/components/reminders-list-presenter.tsx`
+- `features/reminders/components/create-reminder-form-presenter.tsx`
 - `features/resumes/components/resume-list-presenter.tsx`
+- `features/resumes/components/upload-resume-form-presenter.tsx`
+- `features/resumes/components/attach-resume-form-presenter.tsx`
 - `features/billing/components/plan-summary-presenter.tsx`
+- `features/billing/components/billing-action-button-presenter.tsx`
 - `features/applications/components/application-status-badge.tsx`
 - `features/applications/components/application-card.tsx`
 - `features/applications/components/application-kanban-column.tsx`
@@ -69,11 +73,6 @@ Story-safe refactor still needed:
 - `features/applications/components/application-form-modal.tsx`
 - `features/applications/components/new-application-modal.tsx`
 - `features/applications/components/application-delete-dialog.tsx`
-- `features/reminders/components/create-reminder-form.tsx`
-- `features/resumes/components/upload-resume-form.tsx`
-- `features/resumes/components/attach-resume-form.tsx`
-- `features/billing/components/upgrade-button.tsx`
-- `features/billing/components/customer-portal-button.tsx`
 - navigation components that depend on Clerk session state
 
 ## Preview route coverage

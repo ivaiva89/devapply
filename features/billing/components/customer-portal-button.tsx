@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 
+import { BillingActionButtonPresenter } from "@/features/billing/components/billing-action-button-presenter";
 import {
   createCustomerPortalSession,
   type CreateCustomerPortalSessionState,
@@ -26,20 +27,14 @@ export function CustomerPortalButton({
   );
 
   return (
-    <form action={formAction} className="space-y-3">
-      <button
-        type="submit"
-        disabled={isPending}
-        className={
-          className ??
-          "rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium text-stone-950 transition hover:bg-stone-50 disabled:cursor-not-allowed disabled:border-stone-200 disabled:text-stone-400"
-        }
-      >
-        {isPending ? "Opening..." : label}
-      </button>
-      {state.error ? (
-        <p className="text-sm text-red-700">{state.error}</p>
-      ) : null}
-    </form>
+    <BillingActionButtonPresenter
+      action={formAction}
+      className={className}
+      error={state.error}
+      isPending={isPending}
+      label={label}
+      pendingLabel="Opening..."
+      variant="outline"
+    />
   );
 }

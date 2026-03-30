@@ -6,8 +6,10 @@ import { ApplicationCard } from "@/features/applications/components/application-
 import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
+import { BillingActionButtonPresenter } from "@/features/billing/components/billing-action-button-presenter";
 import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
+import { CreateReminderFormPresenter } from "@/features/reminders/components/create-reminder-form-presenter";
 import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
@@ -21,8 +23,10 @@ import { StatsGrid } from "@/features/dashboard/components/stats-grid";
 import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
 import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
 import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
+import { AttachResumeFormPresenter } from "@/features/resumes/components/attach-resume-form-presenter";
 import { ResumeListPresenter } from "@/features/resumes/components/resume-list-presenter";
 import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
+import { UploadResumeFormPresenter } from "@/features/resumes/components/upload-resume-form-presenter";
 import {
   mockApplicationsOverTime,
   mockApplicationsStatusDistribution,
@@ -30,8 +34,10 @@ import {
   mockDashboardConversions,
   mockDashboardKpis,
   mockPipelineColumns,
+  mockReminderApplicationOptions,
   mockRecentApplications,
   mockReminderListItems,
+  mockResumeApplicationOptions,
   mockResumeListItems,
   mockUpcomingReminders,
 } from "@/lib/mocks/ui-fixtures";
@@ -180,9 +186,13 @@ export default function PreviewPage() {
                 <SectionHeader
                   eyebrow="Reminders"
                   title="Follow-up list mock"
-                  description="Preview route stays UI-only, so reminder actions stay visual while the presenter matches the production list."
+                  description="Reminder form and list presenters stay previewable without touching server actions."
                 />
-                <div className="mt-6">
+                <div className="mt-6 space-y-6">
+                  <CreateReminderFormPresenter
+                    applicationOptions={mockReminderApplicationOptions}
+                    canCreate
+                  />
                   <RemindersListPresenter
                     reminders={mockReminderListItems}
                     renderActions={() => (
@@ -201,15 +211,17 @@ export default function PreviewPage() {
                 <SectionHeader
                   eyebrow="Resumes"
                   title="Resume library mock"
-                  description="Resume upload and attachment flows stay server-bound in production, but the visual list now reuses the shared presenter."
+                  description="Upload, attach, and list presenters now mirror the production resume surface with static fixtures."
                 />
-                <div className="mt-6">
+                <div className="mt-6 space-y-6">
+                  <UploadResumeFormPresenter canUpload />
                   <ResumeListPresenter
                     resumes={mockResumeListItems}
-                    renderAttachForm={() => (
-                      <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-                        Attach form preview
-                      </div>
+                    renderAttachForm={(resume) => (
+                      <AttachResumeFormPresenter
+                        applicationOptions={mockResumeApplicationOptions}
+                        resumeId={resume.id}
+                      />
                     )}
                   />
                 </div>
@@ -231,15 +243,28 @@ export default function PreviewPage() {
                 plan="FREE"
                 actions={
                   <>
-                    <Button>Upgrade to Pro</Button>
-                    <Button variant="outline">Manage existing billing</Button>
+                    <BillingActionButtonPresenter
+                      label="Upgrade to Pro"
+                      pendingLabel="Redirecting..."
+                    />
+                    <BillingActionButtonPresenter
+                      label="Manage existing billing"
+                      pendingLabel="Opening..."
+                      variant="outline"
+                    />
                   </>
                 }
               />
 
               <PlanSummaryPresenter
                 plan="PRO"
-                actions={<Button variant="outline">Manage billing</Button>}
+                actions={
+                  <BillingActionButtonPresenter
+                    label="Manage billing"
+                    pendingLabel="Opening..."
+                    variant="outline"
+                  />
+                }
               />
             </div>
           </TabsContent>

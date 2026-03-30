@@ -5,7 +5,7 @@ import {
 } from "@/features/applications/config";
 import type { ApplicationCardData } from "@/features/applications/components/application-card";
 import type { ApplicationTableRow } from "@/features/applications/components/applications-table";
-import type { ReminderListItem } from "@/features/reminders/types";
+import type { ReminderApplicationOption, ReminderListItem } from "@/features/reminders/types";
 import type { ResumeApplicationOption, ResumeListItem } from "@/features/resumes/types";
 
 type DashboardKpiItem = {
@@ -305,6 +305,12 @@ export const mockReminderListItems: ReminderListItem[] = [
     remindAt: "2026-03-24T14:00:00.000Z",
     application: null,
   },
+];
+
+export const mockReminderApplicationOptions: ReminderApplicationOption[] = [
+  { id: "app-1", label: "Vercel - Product Engineer" },
+  { id: "app-2", label: "Linear - Frontend Engineer" },
+  { id: "app-3", label: "Ramp - Software Engineer" },
 ];
 
 export const mockResumeApplicationOptions: ResumeApplicationOption[] = [
