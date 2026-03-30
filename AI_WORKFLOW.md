@@ -80,6 +80,19 @@ Agent verifies:
 • Storybook runs for UI-only work\
 • affected docs still match the codebase
 
+If the task changes reusable UI or major presentational feature
+components:
+
+• add or update Storybook stories\
+• review `app/(v0)/preview/page.tsx`\
+• use Storybook for isolated states and `/preview` for composed mock
+screens\
+• reuse shared mock fixtures instead of duplicating demo data\
+• split mixed UI into presenters plus thin wrappers before adding
+coverage when backend wiring is involved\
+• keep `stories/`, `app/(v0)/preview`, and `lib/mocks` free of
+backend-only imports so the ESLint guardrail passes
+
 If the task touches billing:
 
 • review pricing documentation\

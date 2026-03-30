@@ -22,12 +22,43 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  async function syncProAccess(payload: { data: { productId?: string | null } }) {
+  function isProProductPayload(payload: { data: { productId?: string | null } }) {
     if (proProductId && payload.data.productId && payload.data.productId !== proProductId) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async function syncProAccess(payload: { data: { productId?: string | null } }) {
+    if (!isProProductPayload(payload)) {
       return;
     }
 
     await syncUserPlanFromBillingPayload(payload, "PRO");
+  }
+
+  function shouldPromoteSubscriptionStatus(status?: string | null) {
+    return status === "active" || status === "trialing";
+  }
+
+  async function syncSubscriptionState(
+    payload: {
+      data: {
+        productId?: string | null;
+        status?: string | null;
+      };
+    },
+  ) {
+    if (!isProProductPayload(payload)) {
+      return;
+    }
+
+    await syncBillingLinkageFromPayload(payload);
+
+    if (shouldPromoteSubscriptionStatus(payload.data.status)) {
+      await syncUserPlanFromBillingPayload(payload, "PRO");
+    }
   }
 
   return Webhooks({
@@ -39,13 +70,13 @@ export async function POST(request: NextRequest) {
       await syncProAccess(payload);
     },
     onSubscriptionCreated: async (payload) => {
-      await syncBillingLinkageFromPayload(payload);
+      await syncSubscriptionState(payload);
     },
     onSubscriptionUpdated: async (payload) => {
-      await syncBillingLinkageFromPayload(payload);
+      await syncSubscriptionState(payload);
     },
     onSubscriptionCanceled: async (payload) => {
-      await syncBillingLinkageFromPayload(payload);
+      await syncSubscriptionState(payload);
     },
     onSubscriptionUncanceled: async (payload) => {
       await syncProAccess(payload);

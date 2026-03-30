@@ -42,6 +42,42 @@ Notes:
 - `POLAR_WEBHOOK_SECRET` must match the webhook endpoint configured in
   Polar for the local test tunnel target
 
+## Current verification status
+
+Verified on March 30, 2026 from this repository workspace:
+
+- the configured sandbox `POLAR_ACCESS_TOKEN` can read the configured
+  `POLAR_PRODUCT_ID_PRO`
+- direct Polar checkout creation succeeded against the configured
+  sandbox product when using the current token and omitting a prefilled
+  customer email
+- the local app is reachable on `http://localhost:3000`
+- `POLAR_WEBHOOK_SECRET` is configured locally
+- the local webhook route at `/api/webhooks/polar` accepts a correctly
+  signed webhook and rejects an invalid signature
+- the authenticated checkout route at `/api/billing/checkout` correctly
+  redirects signed-out requests to `/sign-in`
+- a real sandbox checkout was reported successful from a signed-in local
+  browser session
+
+Not yet verified in this workspace:
+
+- webhook-driven entitlement sync from a real Polar-delivered event
+  through `/api/webhooks/polar`
+- persisted billing linkage updates in the local database after the real
+  checkout
+- cancel or downgrade behavior
+
+Current blockers for full local verification:
+
+- this CLI session cannot observe the signed-in browser session directly,
+  so checkout completion is only user-reported from the UI side
+- the latest local database read still shows no `billingSyncedAt`,
+  `billingCustomerId`, `billingSubscriptionId`, or
+  `billingSubscriptionStatus` values for the existing users, so a real
+  provider-to-app webhook sync has not yet been proven by persisted
+  state
+
 ## Local checkout verification
 
 1. Start the app with `npm run dev`.
@@ -95,6 +131,23 @@ Local verification flow:
 4. Complete a sandbox checkout or replay a relevant Polar webhook.
 5. Confirm the webhook returns success and the local user's `plan`
    changes in Prisma.
+
+Observed on March 30, 2026:
+
+- locally signed test webhooks hit the route successfully
+- a real sandbox checkout was completed in the browser
+- local persisted billing state still did not show a matching webhook
+  sync afterward
+
+If checkout succeeds but Prisma billing fields stay null:
+
+- inspect Polar event delivery logs for the webhook endpoint
+- verify the active Polar listener is forwarding to the exact local app
+  instance handling `/api/webhooks/polar`
+- verify the checkout created a Polar customer with
+  `externalCustomerId = User.id`
+- verify the delivered event type is one of the mapped sync events
+  listed below
 
 Relevant webhook outcomes in the current implementation:
 

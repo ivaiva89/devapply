@@ -36,6 +36,19 @@ Local verification reference:
 
 - `docs/polar-sandbox-setup.md`
 
+Current note:
+
+- direct Polar sandbox product lookup and checkout creation were
+  exercised on March 30, 2026
+- the local webhook route now has a configured `POLAR_WEBHOOK_SECRET`
+  and was verified to accept a correctly signed request while rejecting
+  an invalid signature
+- a real sandbox checkout was reported successful from a signed-in local
+  browser session on March 30, 2026
+- the local database still does not show a matching webhook-driven
+  billing sync, so entitlement update, subscription sync, and
+  cancel/downgrade verification remain unchecked
+
 ## Uploads
 
 - [x] Resume file types restricted
