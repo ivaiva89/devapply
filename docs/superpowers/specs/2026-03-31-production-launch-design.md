@@ -8,11 +8,12 @@
 
 ## Overview
 
-Three sequential phases:
+Four sequential phases:
 
 1. **Design pass** — targeted visual improvements on `dashboard-uiux-redesign`, then commit pending changes
 2. **Merge** — branch → main after build/lint pass
-3. **Production launch** — infra setup, billing verification, final polish
+3. **Preview verification** — deploy to Vercel preview, verify billing end-to-end against Neon preview branch + Polar sandbox
+4. **Production launch** — swap to production credentials, promote deploy, final polish
 
 ---
 
@@ -80,9 +81,58 @@ No schema changes. No new dependencies.
 
 ---
 
-## Phase 3 — Production launch
+## Phase 3 — Vercel preview verification
 
-### 3a. Vercel environment variables
+This phase closes the biggest open risk: the Polar webhook sync has never been proven end-to-end. A Vercel preview deployment provides a real HTTPS endpoint that Polar can reach, against isolated Neon and Polar sandbox infrastructure.
+
+### 3a. Vercel preview env vars
+
+Set these in the Vercel project dashboard under the **Preview** environment (separate from Production):
+
+**Database (Neon — preview branch)**
+- `DATABASE_URL` — pooled connection for the Neon preview/dev branch
+- `DIRECT_URL` — direct connection for the Neon preview/dev branch
+
+**Auth (Clerk)**
+- Same Clerk keys as production (Clerk dev instance is fine for preview)
+
+**Billing (Polar sandbox)**
+- `POLAR_ACCESS_TOKEN` — sandbox org access token
+- `POLAR_PRODUCT_ID_PRO` — sandbox product ID
+- `POLAR_WEBHOOK_SECRET` — sandbox webhook secret
+- `POLAR_ENVIRONMENT` → `sandbox`
+
+**Storage, Analytics, App URL**
+- `BLOB_READ_WRITE_TOKEN` — can share with production or use separate
+- `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` — dev PostHog project
+- `NEXT_PUBLIC_APP_URL` — set to the Vercel preview URL (e.g. `https://devapply-git-main-xyz.vercel.app`)
+
+### 3b. Polar sandbox webhook endpoint
+
+1. In the Polar sandbox dashboard, register the preview URL as a webhook endpoint: `https://<preview-url>/api/webhooks/polar`
+2. Copy the generated webhook secret into `POLAR_WEBHOOK_SECRET` in Vercel preview env vars
+
+### 3c. End-to-end verification checklist
+
+Run through these flows on the preview deployment:
+
+- [ ] Sign up with a new account → lands on `/dashboard`
+- [ ] Create an application → appears in table and pipeline
+- [ ] Upload a resume → download works
+- [ ] Create a reminder → appears in reminders list
+- [ ] Trigger upgrade → Polar sandbox checkout opens
+- [ ] Complete sandbox checkout → `plan` field updates to `PRO` in Neon preview branch (verify in Prisma Studio or Neon console)
+- [ ] Free plan limits enforced before upgrade (try adding 31st application)
+- [ ] Cancel subscription in Polar sandbox → confirm behavior matches expected downgrade logic
+- [ ] Mobile layout on at least one real device or devtools emulation
+
+Only proceed to Phase 4 once the billing verification step (plan → `PRO` in database) is confirmed.
+
+---
+
+## Phase 4 — Production launch
+
+### 4a. Vercel environment variables
 
 All of these must be set in the Vercel project dashboard before deploying to production:
 
@@ -114,12 +164,12 @@ All of these must be set in the Vercel project dashboard before deploying to pro
 **App**
 - `NEXT_PUBLIC_APP_URL` — production domain (e.g. `https://devapply.co`)
 
-### 3b. Neon production setup
+### 4b. Neon production setup
 
 - Confirm the production branch exists in the Neon project
 - `prisma migrate deploy` runs automatically via `npm run build:vercel` on Vercel production deploys — verify this fires on first deploy
 
-### 3c. Polar production billing verification
+### 4c. Polar production billing verification
 
 This is the highest-risk item. It cannot be automated.
 
@@ -133,13 +183,13 @@ This is the highest-risk item. It cannot be automated.
 
 Only mark billing verified once step 6 is confirmed in the database — not just from the UI.
 
-### 3d. PostHog production project
+### 4d. PostHog production project
 
 - Create a production PostHog project (separate from any local/dev project)
 - Set `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` on Vercel
 - Verify `signup` and `application_created` events appear in PostHog after first real user action
 
-### 3e. Quick code fixes (on main, pre-announce)
+### 4e. Quick code fixes (on main, pre-announce)
 
 **Fix hero CTA link** (`app/(marketing)/page.tsx`)
 - "Sign up free" button currently links to `/sign-in` — change to `/sign-up`
@@ -151,7 +201,7 @@ Only mark billing verified once step 6 is confirmed in the database — not just
 **Remove Resend from launch checklist** (`docs/launch-checklist.md`)
 - Resend is not in the codebase — remove the `Resend sending verified` line to keep the checklist accurate
 
-### 3f. Mobile verification
+### 4f. Mobile verification (production)
 
 - Open the app on a real mobile device (or browser devtools mobile emulation)
 - Verify: applications table, pipeline board, reminder creation form, settings page
@@ -174,9 +224,12 @@ Only mark billing verified once step 6 is confirmed in the database — not just
 - [ ] All Phase 1 design changes committed on `dashboard-uiux-redesign`
 - [ ] Branch builds and lints cleanly
 - [ ] Branch merged to `main`
+- [ ] Vercel preview env vars configured (Neon preview branch + Polar sandbox)
+- [ ] Polar sandbox webhook registered against preview URL
+- [ ] Full preview verification checklist passed (billing confirmed in Neon preview branch)
 - [ ] All production env vars set on Vercel
 - [ ] First production deploy succeeds with migrations applied
-- [ ] One real Polar checkout confirms plan → `PRO` in Neon
+- [ ] One real Polar production checkout confirms plan → `PRO` in Neon production
 - [ ] PostHog receiving production events
 - [ ] Hero CTA fixed, OG metadata added, Resend removed from checklist
-- [ ] Mobile layout verified
+- [ ] Mobile layout verified on production
