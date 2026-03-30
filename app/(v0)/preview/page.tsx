@@ -235,7 +235,10 @@ export default function PreviewPage() {
                 description="The same presenter used by the production pipeline wrapper stays previewable here with static data."
               />
               <div className="mt-6">
-                <PipelineBoardPresenter columns={mockPipelineBoardColumns} />
+                <PipelineBoardPresenter
+                  columns={mockPipelineBoardColumns}
+                  onCardStatusChange={() => undefined}
+                />
               </div>
             </section>
             <PipelineEmptyState />

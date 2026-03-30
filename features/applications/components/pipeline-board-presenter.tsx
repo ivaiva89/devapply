@@ -5,6 +5,10 @@ import {
   type ApplicationCardData,
 } from "@/features/applications/components/application-card";
 import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
+import {
+  applicationStatusLabels,
+  applicationStatusValues,
+} from "@/features/applications/config";
 import type {
   PipelineApplicationCard,
   PipelineColumn,
@@ -17,6 +21,10 @@ type PipelineBoardPresenterProps = {
   isPending?: boolean;
   onCardDragEnd?: () => void;
   onCardDragStart?: (cardId: string) => void;
+  onCardStatusChange?: (
+    cardId: string,
+    nextStatus: ApplicationStatusValue,
+  ) => void;
   onColumnDragOver?: DragEventHandler<HTMLElement>;
   onColumnDrop?: (status: ApplicationStatusValue) => void;
 };
@@ -50,6 +58,7 @@ export function PipelineBoardPresenter({
   isPending = false,
   onCardDragEnd,
   onCardDragStart,
+  onCardStatusChange,
   onColumnDragOver,
   onColumnDrop,
 }: PipelineBoardPresenterProps) {
@@ -82,6 +91,32 @@ export function PipelineBoardPresenter({
                 <ApplicationCard
                   key={item.id}
                   item={card}
+                  footer={
+                    onCardStatusChange ? (
+                      <label className="flex flex-col gap-1 xl:hidden">
+                        <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                          Move to
+                        </span>
+                        <select
+                          defaultValue={column.status}
+                          disabled={isPending}
+                          onChange={(event) =>
+                            onCardStatusChange(
+                              item.id,
+                              event.currentTarget.value as ApplicationStatusValue,
+                            )
+                          }
+                          className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          {applicationStatusValues.map((statusValue) => (
+                            <option key={statusValue} value={statusValue}>
+                              {applicationStatusLabels[statusValue]}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    ) : null
+                  }
                   draggable={onCardDragStart ? !isPending : undefined}
                   onDragStart={
                     onCardDragStart

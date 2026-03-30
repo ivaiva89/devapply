@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { Card, CardContent } from "@/components/ui/card";
 
 export type ApplicationCardData = {
@@ -10,6 +12,7 @@ export type ApplicationCardData = {
 };
 
 type ApplicationCardProps = {
+  footer?: ReactNode;
   item: ApplicationCardData;
   draggable?: boolean;
   onDragStart?: () => void;
@@ -17,6 +20,7 @@ type ApplicationCardProps = {
 };
 
 export function ApplicationCard({
+  footer,
   item,
   draggable,
   onDragStart,
@@ -48,6 +52,7 @@ export function ApplicationCard({
             <dd>{item.updatedAt}</dd>
           </div>
         </dl>
+        {footer ? <div>{footer}</div> : null}
       </CardContent>
     </Card>
   );

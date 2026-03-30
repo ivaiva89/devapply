@@ -8,6 +8,7 @@ const meta = {
   component: PipelineBoardPresenter,
   args: {
     columns: mockPipelineBoardColumns,
+    onCardStatusChange: () => undefined,
   },
 } satisfies Meta<typeof PipelineBoardPresenter>;
 

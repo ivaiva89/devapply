@@ -63,13 +63,9 @@ export function PipelineBoard({ initialColumns }: PipelineBoardProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function handleDrop(nextStatus: ApplicationStatusValue) {
-    if (!draggedCardId) {
-      return;
-    }
-
+  function updateCardStatus(cardId: string, nextStatus: ApplicationStatusValue) {
     const sourceColumn = columns.find((column) =>
-      column.items.some((item) => item.id === draggedCardId),
+      column.items.some((item) => item.id === cardId),
     );
 
     if (!sourceColumn || sourceColumn.status === nextStatus) {
@@ -78,20 +74,28 @@ export function PipelineBoard({ initialColumns }: PipelineBoardProps) {
     }
 
     const previousColumns = columns;
-    const nextColumns = moveCard(columns, draggedCardId, nextStatus);
+    const nextColumns = moveCard(columns, cardId, nextStatus);
 
     setErrorMessage(null);
     setColumns(nextColumns);
     setDraggedCardId(null);
 
     startTransition(async () => {
-      const result = await updateApplicationStatus(draggedCardId, nextStatus);
+      const result = await updateApplicationStatus(cardId, nextStatus);
 
       if (result.status === "error") {
         setColumns(previousColumns);
         setErrorMessage(result.message);
       }
     });
+  }
+
+  function handleDrop(nextStatus: ApplicationStatusValue) {
+    if (!draggedCardId) {
+      return;
+    }
+
+    updateCardStatus(draggedCardId, nextStatus);
   }
 
   return (
@@ -101,6 +105,7 @@ export function PipelineBoard({ initialColumns }: PipelineBoardProps) {
       isPending={isPending}
       onCardDragEnd={() => setDraggedCardId(null)}
       onCardDragStart={setDraggedCardId}
+      onCardStatusChange={updateCardStatus}
       onColumnDragOver={(event) => event.preventDefault()}
       onColumnDrop={handleDrop}
     />
