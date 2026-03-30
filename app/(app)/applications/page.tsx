@@ -62,7 +62,7 @@ export default async function ApplicationsPage({
             title="Upgrade to keep tracking more applications."
             description={`Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to remove the application limit and keep a larger search pipeline active.`}
           />
-          <UpgradeButton userId={user.id} />
+          <UpgradeButton />
         </>
       ) : null}
       <ApplicationsFilters state={state} />

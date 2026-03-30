@@ -13,7 +13,6 @@ import {
 type UpgradeButtonProps = {
   className?: string;
   label?: string;
-  userId?: string;
 };
 
 const initialState: CreateCheckoutSessionState = {
@@ -23,7 +22,6 @@ const initialState: CreateCheckoutSessionState = {
 export function UpgradeButton({
   className,
   label = "Upgrade to Pro",
-  userId,
 }: UpgradeButtonProps) {
   const pathname = usePathname();
   const [state, formAction, isPending] = useActionState(
@@ -41,7 +39,6 @@ export function UpgradeButton({
       pendingLabel="Redirecting..."
       onClick={() => {
         trackClientEvent({
-          distinctId: userId,
           event: "upgrade_clicked",
           properties: {
             ctaLabel: label,

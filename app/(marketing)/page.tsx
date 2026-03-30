@@ -436,7 +436,6 @@ export default async function MarketingHomePage() {
                 <div className="mt-6">
                   {tier.name === "Pro" && user?.plan === "FREE" ? (
                     <UpgradeButton
-                      userId={user.id}
                       label="Upgrade to Pro"
                       className={cn(
                         buttonVariants({

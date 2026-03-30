@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   }
 
   const user = await getCurrentUser();
-  const distinctId = result.data.distinctId ?? user?.id;
+  const distinctId = user?.id ?? result.data.distinctId;
 
   if (!distinctId) {
     return NextResponse.json({}, { status: 202 });
