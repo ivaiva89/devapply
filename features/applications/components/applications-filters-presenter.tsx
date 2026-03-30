@@ -2,8 +2,10 @@ import type { ComponentProps } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { applicationStatusFilterOptions } from "@/features/applications/config";
-import { applicationSortSelectOptions } from "@/features/applications/server/application-list";
+import {
+  applicationSortSelectOptions,
+  applicationStatusFilterOptions,
+} from "@/features/applications/config";
 import type { ApplicationsQueryState } from "@/features/applications/types";
 
 type ApplicationsFiltersPresenterProps = {

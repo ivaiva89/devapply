@@ -69,7 +69,11 @@ export function PipelineBoardPresenter({
             status={column.status}
             items={column.items.map(toApplicationCardData)}
             onDragOver={onColumnDragOver}
-            onDrop={() => onColumnDrop?.(column.status)}
+            onDrop={
+              onColumnDrop
+                ? () => onColumnDrop(column.status)
+                : undefined
+            }
           >
             {column.items.map((item) => {
               const card = toApplicationCardData(item);
@@ -78,8 +82,12 @@ export function PipelineBoardPresenter({
                 <ApplicationCard
                   key={item.id}
                   item={card}
-                  draggable={!isPending}
-                  onDragStart={() => onCardDragStart?.(item.id)}
+                  draggable={onCardDragStart ? !isPending : undefined}
+                  onDragStart={
+                    onCardDragStart
+                      ? () => onCardDragStart(item.id)
+                      : undefined
+                  }
                   onDragEnd={onCardDragEnd}
                 />
               );

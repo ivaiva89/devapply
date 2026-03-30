@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
 
 import "@/app/globals.css";
@@ -9,16 +8,6 @@ import "@/app/globals.css";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { AppHeader } from "@/features/navigation/components/app-header";
 import { AppSidebar } from "@/features/navigation/components/app-sidebar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "DevApply",
@@ -34,9 +23,7 @@ export default async function AppLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
-      >
+      <body className="bg-background text-foreground antialiased">
         <ClerkProvider>
           <div className="flex min-h-screen">
             {/* Sidebar — fixed width, full height */}

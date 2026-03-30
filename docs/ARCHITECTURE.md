@@ -55,8 +55,9 @@ Deployment notes:
 -   Vercel builds use `npm run build:vercel`
 -   Prisma runtime uses `DATABASE_URL`
 -   Prisma CLI and migrations use `DIRECT_URL` and `SHADOW_DATABASE_URL`
--   current layouts still use `next/font/google`, so restricted-network
-    builds can fail until fonts are bundled locally
+-   app typography uses a bundled system font stack from
+    `app/globals.css`, so builds do not depend on live Google font
+    fetching
 
 ## Folder Structure
 

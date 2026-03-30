@@ -211,7 +211,6 @@ export default function PreviewPage() {
               <ApplicationFormModalPresenter
                 description="Preview the shared application form modal presenter with mock validation state."
                 isOpen
-                onCancel={() => undefined}
                 state={getCreateApplicationInitialState(createApplicationDefaultValues)}
                 submitLabel="Create application"
                 submittingLabel="Saving..."
@@ -220,7 +219,6 @@ export default function PreviewPage() {
               <ApplicationDeleteDialogPresenter
                 company="Vercel"
                 isOpen
-                onCancel={() => undefined}
               />
             </div>
           </TabsContent>

@@ -70,3 +70,10 @@ export const applicationSourceOptions: ReadonlyArray<{
   value,
   label: applicationSourceLabels[value],
 }));
+
+export const applicationSortSelectOptions = [
+  { value: "updated-desc", label: "Recently updated" },
+  { value: "updated-asc", label: "Least recently updated" },
+  { value: "applied-desc", label: "Newest applied date" },
+  { value: "applied-asc", label: "Oldest applied date" },
+] as const;

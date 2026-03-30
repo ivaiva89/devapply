@@ -66,10 +66,8 @@ Optional analytics and email:
 - `POSTHOG_HOST`
 - Resend env vars if transactional email is enabled later
 
-## Current deployment risks
+## Typography build assumption
 
-- Both `app/(app)/layout.tsx` and `app/(marketing)/layout.tsx` use
-  `next/font/google` with Geist fonts. Production builds currently
-  depend on fetching those fonts at build time.
-- Restricted-network builds can fail until the fonts are replaced with a
-  local or bundled alternative.
+- Both app layouts now use the shared system font stack from
+  `app/globals.css`.
+- Production builds no longer depend on fetching live Google fonts.

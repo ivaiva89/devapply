@@ -4,6 +4,7 @@ import { ApplicationStatus, Prisma } from "@prisma/client";
 
 import { getUserPlan } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
+import { applicationSortSelectOptions } from "@/features/applications/config";
 import {
   type ApplicationListItem,
   applicationSortOptions,
@@ -135,10 +136,3 @@ export async function getApplicationsForUser(
     plan: user?.plan ?? "FREE",
   };
 }
-
-export const applicationSortSelectOptions = [
-  { value: "updated-desc", label: "Recently updated" },
-  { value: "updated-asc", label: "Least recently updated" },
-  { value: "applied-desc", label: "Newest applied date" },
-  { value: "applied-asc", label: "Oldest applied date" },
-] as const;

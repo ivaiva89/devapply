@@ -25,7 +25,7 @@ type ApplicationFormModalPresenterProps = {
   idPrefix?: string;
   isOpen: boolean;
   isPending?: boolean;
-  onCancel: () => void;
+  onCancel?: () => void;
   state: CreateApplicationActionState;
   submitLabel: string;
   submittingLabel: string;
@@ -111,7 +111,14 @@ export function ApplicationFormModalPresenter({
   const formValues: CreateApplicationFormValues = state.values;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => (!open ? onCancel() : undefined)}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={
+        onCancel
+          ? (open) => (!open ? onCancel() : undefined)
+          : undefined
+      }
+    >
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-[2rem] p-6 sm:p-8">
         <DialogHeader>
           <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
