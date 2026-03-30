@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { ClerkProvider, UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
 import Link from "next/link";
 
 import "@/app/globals.css";
@@ -27,7 +28,14 @@ export default async function MarketingLayout({
             <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6">
               <header className="flex flex-col gap-3 rounded-[2rem] border border-black/10 bg-white/80 px-5 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
                 <Link href="/" className="text-sm font-semibold tracking-tight text-stone-950">
-                  <img src="/devapply-logo-optimized.svg" alt="DevApply logo" className="inline-block h-10 w-auto" />
+                  <Image
+                    src="/devapply-logo-optimized.svg"
+                    alt="DevApply logo"
+                    width={1200}
+                    height={360}
+                    priority
+                    className="inline-block h-10 w-auto"
+                  />
                 </Link>
                 <nav className="flex flex-wrap items-center gap-4 text-sm text-stone-600 sm:justify-end">
                   {marketingNavigation.map((item) => (
