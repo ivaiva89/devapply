@@ -13,11 +13,11 @@ This project evolves in three stages:
 
 The final platform connects:
 
--   Job Application Tracker
--   Resume Builder
--   Cover Letter Generator
--   Interview Preparation Tracker
--   Salary Comparison Tool
+- Job Application Tracker
+- Resume Builder
+- Cover Letter Generator
+- Interview Preparation Tracker
+- Salary Comparison Tool
 
 ## Current Focus
 
@@ -25,15 +25,15 @@ The current milestone is **Stage 1: Job Application Tracker MVP**.
 
 Features included:
 
--   authentication
--   dashboard
--   application CRUD
--   applications table
--   kanban pipeline
--   reminders
--   resume attachments
--   analytics basics
--   billing and plan limits
+- authentication
+- dashboard
+- application CRUD
+- applications table
+- kanban pipeline
+- reminders
+- resume attachments
+- analytics basics
+- billing and plan limits
 
 ## Tech Stack
 
@@ -74,6 +74,18 @@ npx prisma db seed
 Start development
 
 npm run dev
+
+Check formatting
+
+```bash
+npm run format:check
+```
+
+Apply formatting
+
+```bash
+npm run format
+```
 
 Build for Vercel
 
