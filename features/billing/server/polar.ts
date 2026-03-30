@@ -77,7 +77,10 @@ export function getPolarPortalConfigError(config: BillingConfig) {
 
 export function getPolarPortalHandlerConfig(
   config: BillingConfig,
-): Omit<CustomerPortalConfig, "getExternalCustomerId" | "getCustomerId"> | null {
+): Omit<
+  CustomerPortalConfig,
+  "getExternalCustomerId" | "getCustomerId"
+> | null {
   const error = getPolarPortalConfigError(config);
 
   if (error || !config.appUrl || !config.polar.accessToken) {

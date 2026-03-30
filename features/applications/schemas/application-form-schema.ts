@@ -117,13 +117,16 @@ export const applicationFormSchema = z
     }
   });
 
-export type ParsedApplicationFormValues = z.output<typeof applicationFormSchema>;
+export type ParsedApplicationFormValues = z.output<
+  typeof applicationFormSchema
+>;
 
 export function getApplicationFormFieldErrors(
   error: z.ZodError,
 ): CreateApplicationFieldErrors {
-  const flattened = error.flatten()
-    .fieldErrors as Partial<Record<(typeof createApplicationFieldNames)[number], string[]>>;
+  const flattened = error.flatten().fieldErrors as Partial<
+    Record<(typeof createApplicationFieldNames)[number], string[]>
+  >;
   const fieldErrors: CreateApplicationFieldErrors = {};
 
   for (const fieldName of createApplicationFieldNames) {

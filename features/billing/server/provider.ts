@@ -1,7 +1,10 @@
 import "server-only";
 
 import type { AuthenticatedAppUser } from "@/features/auth/server/session";
-import { getBillingConfig, type BillingPlan } from "@/features/billing/server/provider-config";
+import {
+  getBillingConfig,
+  type BillingPlan,
+} from "@/features/billing/server/provider-config";
 import {
   getPolarCheckoutConfigError,
   getPolarCheckoutUrl,

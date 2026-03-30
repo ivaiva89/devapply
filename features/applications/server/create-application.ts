@@ -47,8 +47,8 @@ export async function createApplication(
 
     const input = result.data;
 
-    const { application, totalApplications } = await prisma.$transaction(
-      (tx) => createApplicationWithCountForUser(tx, user.id, input),
+    const { application, totalApplications } = await prisma.$transaction((tx) =>
+      createApplicationWithCountForUser(tx, user.id, input),
     );
 
     await trackServerEvent({

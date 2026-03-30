@@ -80,11 +80,7 @@ function getMonthBuckets(monthCount: number) {
       }).format(bucketDate),
       start: bucketDate,
       end: new Date(
-        Date.UTC(
-          bucketDate.getUTCFullYear(),
-          bucketDate.getUTCMonth() + 1,
-          1,
-        ),
+        Date.UTC(bucketDate.getUTCFullYear(), bucketDate.getUTCMonth() + 1, 1),
       ),
     };
   });
@@ -210,7 +206,8 @@ export async function getDashboardDataForUser(
     label: bucket.label,
     count: applicationsOverTime.filter(
       (application) =>
-        application.createdAt >= bucket.start && application.createdAt < bucket.end,
+        application.createdAt >= bucket.start &&
+        application.createdAt < bucket.end,
     ).length,
   }));
 
@@ -239,7 +236,13 @@ export async function getDashboardDataForUser(
     ],
     applicationsOverTime: applicationsOverTimeByMonth,
     statuses: (
-      ["WISHLIST", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"] as ApplicationStatus[]
+      [
+        "WISHLIST",
+        "APPLIED",
+        "INTERVIEW",
+        "OFFER",
+        "REJECTED",
+      ] as ApplicationStatus[]
     ).map((status) => ({
       status,
       count: countsByStatus[status],

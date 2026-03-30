@@ -7,11 +7,7 @@ type PageShellProps = {
   children?: ReactNode;
 };
 
-export function PageShell({
-  title,
-  description,
-  children,
-}: PageShellProps) {
+export function PageShell({ title, description, children }: PageShellProps) {
   return (
     <div className="space-y-6">
       <div>

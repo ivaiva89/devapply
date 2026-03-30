@@ -20,7 +20,10 @@ const initialState: UploadResumeActionState = {
 export function UploadResumeForm({ canUpload }: UploadResumeFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, formAction, isPending] = useActionState(uploadResume, initialState);
+  const [state, formAction, isPending] = useActionState(
+    uploadResume,
+    initialState,
+  );
 
   useEffect(() => {
     if (state.status !== "success") {

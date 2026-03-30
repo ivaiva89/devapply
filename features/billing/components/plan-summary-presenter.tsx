@@ -53,7 +53,9 @@ export function PlanSummaryPresenter({
         ) : null}
 
         {actions ? (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">{actions}</div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            {actions}
+          </div>
         ) : null}
       </CardContent>
     </Card>

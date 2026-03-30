@@ -7,7 +7,7 @@ The repository is structured so that AI coding agents (Codex CLI,
 Copilot, Cursor, etc.) can reliably implement features while maintaining
 project structure and documentation integrity.
 
-------------------------------------------------------------------------
+---
 
 # Core Principle
 
@@ -19,7 +19,7 @@ All work must originate from:
 
 NEXT_TASK.md
 
-------------------------------------------------------------------------
+---
 
 # Workflow Overview
 
@@ -35,7 +35,7 @@ Purpose:
 
 Understand system architecture and constraints.
 
-------------------------------------------------------------------------
+---
 
 Step 2 --- Read the active task
 
@@ -45,14 +45,14 @@ NEXT_TASK.md
 
 This file contains:
 
--   exact task
--   requirements
--   definition of done
--   files expected to change
+- exact task
+- requirements
+- definition of done
+- files expected to change
 
 Agent must **only implement this task**.
 
-------------------------------------------------------------------------
+---
 
 Step 3 --- Implement the task
 
@@ -62,12 +62,12 @@ AGENTS.md
 
 Guidelines:
 
--   minimal scope changes
--   follow modular monolith architecture
--   maintain user ownership rules
--   maintain type safety
+- minimal scope changes
+- follow modular monolith architecture
+- maintain user ownership rules
+- maintain type safety
 
-------------------------------------------------------------------------
+---
 
 Step 4 --- Validate implementation
 
@@ -101,7 +101,7 @@ If the task touches billing:
 • review entitlement logic docs\
 • update all affected billing docs in the same change
 
-------------------------------------------------------------------------
+---
 
 Step 5 --- Update TASKS.md
 
@@ -119,11 +119,11 @@ TASKS_AUDIT_FOLLOWUPS.md for audit-specific findings
 
 Examples:
 
--   missing index
--   missing validation
--   UI state improvements
+- missing index
+- missing validation
+- UI state improvements
 
-------------------------------------------------------------------------
+---
 
 Step 6 --- Advance workflow
 
@@ -137,7 +137,7 @@ The repository must always contain:
 
 exactly one active task.
 
-------------------------------------------------------------------------
+---
 
 # Safety Rules
 
@@ -154,7 +154,7 @@ Add them to:
 
 TASKS.md → Technical debt
 
-------------------------------------------------------------------------
+---
 
 # Repository AI Control Files
 
@@ -165,7 +165,7 @@ TASKS.md --- implementation backlog\
 NEXT_TASK.md --- active task pointer\
 AI_WORKFLOW.md --- AI workflow definition
 
-------------------------------------------------------------------------
+---
 
 # Benefits of this workflow
 
@@ -176,7 +176,7 @@ This structure enables:
 • automatic backlog maintenance\
 • easier collaboration between humans and AI agents
 
-------------------------------------------------------------------------
+---
 
 # Human Developer Responsibilities
 
@@ -201,7 +201,7 @@ subscription synchronization\
 • normalized app plan state remains the source of truth for feature
 gating inside the product
 
-------------------------------------------------------------------------
+---
 
 # Long-term scaling
 

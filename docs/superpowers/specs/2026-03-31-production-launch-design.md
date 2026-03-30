@@ -50,13 +50,13 @@ Four sequential phases:
 
 Each status maps to a color family. All use `rounded-full px-2.5 py-0.5 text-[11px] font-medium`:
 
-| Status | Background | Text |
-|--------|-----------|------|
-| WISHLIST | `bg-slate-800/60` | `text-slate-400` |
-| APPLIED | `bg-blue-950/60` | `text-blue-300` |
-| INTERVIEW | `bg-violet-950/60` | `text-violet-300` |
-| OFFER | `bg-emerald-950/60` | `text-emerald-300` |
-| REJECTED | `bg-red-950/60` | `text-red-300` |
+| Status    | Background          | Text               |
+| --------- | ------------------- | ------------------ |
+| WISHLIST  | `bg-slate-800/60`   | `text-slate-400`   |
+| APPLIED   | `bg-blue-950/60`    | `text-blue-300`    |
+| INTERVIEW | `bg-violet-950/60`  | `text-violet-300`  |
+| OFFER     | `bg-emerald-950/60` | `text-emerald-300` |
+| REJECTED  | `bg-red-950/60`     | `text-red-300`     |
 
 ### 1d. Commit pending uncommitted changes
 
@@ -90,19 +90,23 @@ This phase closes the biggest open risk: the Polar webhook sync has never been p
 Set these in the Vercel project dashboard under the **Preview** environment (separate from Production):
 
 **Database (Neon — preview branch)**
+
 - `DATABASE_URL` — pooled connection for the Neon preview/dev branch
 - `DIRECT_URL` — direct connection for the Neon preview/dev branch
 
 **Auth (Clerk)**
+
 - Same Clerk keys as production (Clerk dev instance is fine for preview)
 
 **Billing (Polar sandbox)**
+
 - `POLAR_ACCESS_TOKEN` — sandbox org access token
 - `POLAR_PRODUCT_ID_PRO` — sandbox product ID
 - `POLAR_WEBHOOK_SECRET` — sandbox webhook secret
 - `POLAR_ENVIRONMENT` → `sandbox`
 
 **Storage, Analytics, App URL**
+
 - `BLOB_READ_WRITE_TOKEN` — can share with production or use separate
 - `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` — dev PostHog project
 - `NEXT_PUBLIC_APP_URL` — set to the Vercel preview URL (e.g. `https://devapply-git-main-xyz.vercel.app`)
@@ -137,10 +141,12 @@ Only proceed to Phase 4 once the billing verification step (plan → `PRO` in da
 All of these must be set in the Vercel project dashboard before deploying to production:
 
 **Database (Neon)**
+
 - `DATABASE_URL` — pooled connection string (Neon)
 - `DIRECT_URL` — direct connection string (for Prisma CLI / migrations)
 
 **Auth (Clerk)**
+
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - `CLERK_SECRET_KEY`
 - `NEXT_PUBLIC_CLERK_SIGN_IN_URL` → `/sign-in`
@@ -149,19 +155,23 @@ All of these must be set in the Vercel project dashboard before deploying to pro
 - `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` → `/dashboard`
 
 **Billing (Polar)**
+
 - `POLAR_ACCESS_TOKEN` — production org access token
 - `POLAR_PRODUCT_ID_PRO` — production product ID
 - `POLAR_WEBHOOK_SECRET` — production webhook secret
 - `POLAR_ENVIRONMENT` → `production`
 
 **Storage (Vercel Blob)**
+
 - `BLOB_READ_WRITE_TOKEN`
 
 **Analytics (PostHog)**
+
 - `NEXT_PUBLIC_POSTHOG_KEY`
 - `NEXT_PUBLIC_POSTHOG_HOST`
 
 **App**
+
 - `NEXT_PUBLIC_APP_URL` — production domain (e.g. `https://devapply.co`)
 
 ### 4b. Neon production setup
@@ -173,7 +183,7 @@ All of these must be set in the Vercel project dashboard before deploying to pro
 
 This is the highest-risk item. It cannot be automated.
 
-1. Create a Polar *production* organization and product (separate from sandbox)
+1. Create a Polar _production_ organization and product (separate from sandbox)
 2. Register production webhook endpoint: `https://<domain>/api/webhooks/polar`
 3. Copy the production webhook secret into `POLAR_WEBHOOK_SECRET` on Vercel
 4. Deploy to production
@@ -192,13 +202,16 @@ Only mark billing verified once step 6 is confirmed in the database — not just
 ### 4e. Quick code fixes (on main, pre-announce)
 
 **Fix hero CTA link** (`app/(marketing)/page.tsx`)
+
 - "Sign up free" button currently links to `/sign-in` — change to `/sign-up`
 
 **Add OG metadata** (`app/layout.tsx` and `app/(marketing)/page.tsx`)
+
 - Add `openGraph` fields to Next.js metadata: `title`, `description`, `url`, `siteName`, `type: "website"`
 - This ensures LinkedIn/Twitter link previews render correctly at launch
 
 **Remove Resend from launch checklist** (`docs/launch-checklist.md`)
+
 - Resend is not in the codebase — remove the `Resend sending verified` line to keep the checklist accurate
 
 ### 4f. Mobile verification (production)

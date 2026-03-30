@@ -101,7 +101,9 @@ function buildApplicationListWhere(
   return where;
 }
 
-function toPipelineCard(application: PipelineApplicationRecord): PipelineApplicationCard {
+function toPipelineCard(
+  application: PipelineApplicationRecord,
+): PipelineApplicationCard {
   return {
     id: application.id,
     company: application.company,

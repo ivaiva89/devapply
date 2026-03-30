@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 
-import { ApplicationsTable, type ApplicationTableRow } from "@/features/applications/components/applications-table";
+import {
+  ApplicationsTable,
+  type ApplicationTableRow,
+} from "@/features/applications/components/applications-table";
 import { ApplicationDeleteDialog } from "@/features/applications/components/application-delete-dialog";
 import { ApplicationFormModal } from "@/features/applications/components/application-form-modal";
 import { ApplicationRowActionsMenu } from "@/features/applications/components/application-row-actions-menu";
@@ -69,7 +72,9 @@ export function ApplicationsTableClient({
     appliedDate: formatDate(application.appliedDate),
     sourceLabel: applicationSourceLabels[application.source],
     source: application.source,
-    lastActivity: formatDate(application.lastActivityAt ?? application.updatedAt),
+    lastActivity: formatDate(
+      application.lastActivityAt ?? application.updatedAt,
+    ),
     actions: (
       <RowActionsMenu
         application={application}

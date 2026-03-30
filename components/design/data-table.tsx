@@ -1,11 +1,7 @@
 import type { ReactNode } from "react";
 
 import { EmptyState } from "@/components/design/empty-state";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,

@@ -38,7 +38,10 @@ export function ReminderFormFields({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <label htmlFor={titleId} className="text-sm font-medium text-foreground">
+        <label
+          htmlFor={titleId}
+          className="text-sm font-medium text-foreground"
+        >
           Title
         </label>
         <Input
@@ -52,7 +55,10 @@ export function ReminderFormFields({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={remindAtId} className="text-sm font-medium text-foreground">
+        <label
+          htmlFor={remindAtId}
+          className="text-sm font-medium text-foreground"
+        >
           Remind at
         </label>
         <Input
@@ -66,7 +72,10 @@ export function ReminderFormFields({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={applicationId} className="text-sm font-medium text-foreground">
+        <label
+          htmlFor={applicationId}
+          className="text-sm font-medium text-foreground"
+        >
           Linked application
         </label>
         <select
@@ -86,8 +95,12 @@ export function ReminderFormFields({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor={notesId} className="text-sm font-medium text-foreground">
-          Notes <span className="font-normal text-muted-foreground">(optional)</span>
+        <label
+          htmlFor={notesId}
+          className="text-sm font-medium text-foreground"
+        >
+          Notes{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
         </label>
         <Textarea
           id={notesId}

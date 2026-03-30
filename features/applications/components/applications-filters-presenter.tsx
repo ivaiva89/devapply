@@ -89,7 +89,10 @@ export function ApplicationsFiltersPresenter({
 
         <div className="flex gap-3">
           <Button type="submit">Apply</Button>
-          <a href={resetHref} className={buttonVariants({ variant: "outline" })}>
+          <a
+            href={resetHref}
+            className={buttonVariants({ variant: "outline" })}
+          >
             Reset
           </a>
         </div>

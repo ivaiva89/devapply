@@ -12,18 +12,18 @@
 
 ## File Map
 
-| File | Change |
-|------|--------|
-| `features/navigation/config.ts` | Add `icon: LucideIcon` field to each `appNavigation` entry |
-| `features/navigation/components/app-sidebar-presenter.tsx` | Render icon + logo mark in sidebar |
-| `components/design/stats-card.tsx` | Add `highlight` and `valueClassName` props |
-| `features/dashboard/components/stats-grid.tsx` | Apply per-slot highlight and value color |
-| `components/design/status-badge.tsx` | Replace tone classes with dark pill styles |
-| `app/(marketing)/page.tsx` | Fix hero CTA href + add OG metadata |
-| `app/(app)/layout.tsx` | Add OG metadata |
-| `docs/launch-checklist.md` | Remove Resend line |
-| `app/api/webhooks/polar/route.ts` | Commit existing uncommitted improvement |
-| `docs/polar-sandbox-setup.md` | Commit existing uncommitted update |
+| File                                                       | Change                                                     |
+| ---------------------------------------------------------- | ---------------------------------------------------------- |
+| `features/navigation/config.ts`                            | Add `icon: LucideIcon` field to each `appNavigation` entry |
+| `features/navigation/components/app-sidebar-presenter.tsx` | Render icon + logo mark in sidebar                         |
+| `components/design/stats-card.tsx`                         | Add `highlight` and `valueClassName` props                 |
+| `features/dashboard/components/stats-grid.tsx`             | Apply per-slot highlight and value color                   |
+| `components/design/status-badge.tsx`                       | Replace tone classes with dark pill styles                 |
+| `app/(marketing)/page.tsx`                                 | Fix hero CTA href + add OG metadata                        |
+| `app/(app)/layout.tsx`                                     | Add OG metadata                                            |
+| `docs/launch-checklist.md`                                 | Remove Resend line                                         |
+| `app/api/webhooks/polar/route.ts`                          | Commit existing uncommitted improvement                    |
+| `docs/polar-sandbox-setup.md`                              | Commit existing uncommitted update                         |
 
 ---
 
@@ -32,6 +32,7 @@
 ### Task 1: Add icons to navigation config
 
 **Files:**
+
 - Modify: `features/navigation/config.ts`
 
 - [ ] **Update the config to include a Lucide icon per nav item:**
@@ -87,6 +88,7 @@ git commit -m "feat(navigation): add icon field to appNavigation config"
 ### Task 2: Update sidebar presenter — icons + logo mark
 
 **Files:**
+
 - Modify: `features/navigation/components/app-sidebar-presenter.tsx`
 
 The logo mark SVG is at `public/devapply-logo-optimized.svg`. Use Next.js `<Image>` to render it at `width={20} height={20}` beside the "DevApply" wordmark. Render each nav item's `icon` from the config.
@@ -112,9 +114,7 @@ function isItemActive(currentPath: string, href: string) {
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
 
-export function AppSidebarPresenter({
-  currentPath,
-}: AppSidebarPresenterProps) {
+export function AppSidebarPresenter({ currentPath }: AppSidebarPresenterProps) {
   return (
     <aside className="flex h-full flex-col border-r border-border bg-sidebar">
       {/* Logo — same height as header (h-10) so it aligns across the shell */}
@@ -131,7 +131,10 @@ export function AppSidebarPresenter({
         </span>
       </div>
 
-      <nav aria-label="Primary navigation" className="flex flex-col gap-px p-2 pt-3">
+      <nav
+        aria-label="Primary navigation"
+        className="flex flex-col gap-px p-2 pt-3"
+      >
         {appNavigation.map((item) => {
           const isActive = isItemActive(currentPath, item.href);
           const Icon = item.icon;
@@ -184,10 +187,12 @@ git commit -m "feat(navigation): add icon + logo mark to sidebar"
 ### Task 3: Update StatsCard + StatsGrid for accent highlights
 
 **Files:**
+
 - Modify: `components/design/stats-card.tsx`
 - Modify: `features/dashboard/components/stats-grid.tsx`
 
 The four KPI slots (in order from `getDashboardDataForUser`) are:
+
 - Slot 0: "Total applications" → indigo highlight (`bg-primary/5 border-primary/20`, label `text-primary/70`)
 - Slot 1: "Applications this month" → default
 - Slot 2: "Interviews" → default card, value in `text-violet-400`
@@ -222,11 +227,7 @@ export function StatsCard({
   valueClassName,
 }: StatsCardProps) {
   return (
-    <Card
-      className={cn(
-        highlight && "border-primary/20 bg-primary/5",
-      )}
-    >
+    <Card className={cn(highlight && "border-primary/20 bg-primary/5")}>
       <CardContent className="flex flex-col gap-2 p-4">
         <div className="flex items-center justify-between">
           <p
@@ -266,12 +267,7 @@ export function StatsCard({
 - [ ] **Update `features/dashboard/components/stats-grid.tsx`:**
 
 ```tsx
-import {
-  Briefcase,
-  CalendarPlus,
-  MessageSquare,
-  Trophy,
-} from "lucide-react";
+import { Briefcase, CalendarPlus, MessageSquare, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { StatsCard } from "@/components/design/stats-card";
@@ -287,11 +283,16 @@ type StatsGridProps = {
 };
 
 // Ordered to match the four KPIs returned from getDashboardDataForUser.
-const SLOT_ICONS: LucideIcon[] = [Briefcase, CalendarPlus, MessageSquare, Trophy];
+const SLOT_ICONS: LucideIcon[] = [
+  Briefcase,
+  CalendarPlus,
+  MessageSquare,
+  Trophy,
+];
 
 const SLOT_VALUE_CLASSNAMES: (string | undefined)[] = [
-  undefined,        // slot 0: total applications — default (primary card handles color)
-  undefined,        // slot 1: applications this month
+  undefined, // slot 0: total applications — default (primary card handles color)
+  undefined, // slot 1: applications this month
   "text-violet-400", // slot 2: interviews
   "text-emerald-400", // slot 3: offers
 ];
@@ -335,6 +336,7 @@ git commit -m "feat(dashboard): add accent highlights to stats grid"
 ### Task 4: Update StatusBadge to colored pill style
 
 **Files:**
+
 - Modify: `components/design/status-badge.tsx`
 
 The app is dark-mode only (`:root` in `globals.css` uses near-black colors). Replace the light/dark tone classes with dark-appropriate pill colors. Change shape from `rounded-md` to `rounded-full`. The `ApplicationStatusBadge` and all consumers pass a `tone` prop — the tone keys stay the same, only the visual classes change.
@@ -347,10 +349,10 @@ import { cn } from "@/lib/utils";
 
 const toneClasses = {
   neutral: "border-transparent bg-slate-800/60 text-slate-400",
-  info:    "border-transparent bg-blue-950/60 text-blue-300",
+  info: "border-transparent bg-blue-950/60 text-blue-300",
   warning: "border-transparent bg-violet-950/60 text-violet-300",
   success: "border-transparent bg-emerald-950/60 text-emerald-300",
-  danger:  "border-transparent bg-red-950/60 text-red-300",
+  danger: "border-transparent bg-red-950/60 text-red-300",
 } as const;
 
 type StatusBadgeProps = {
@@ -492,24 +494,24 @@ This task is entirely manual — no code changes. Follow each step in order.
 
 Go to the Vercel project dashboard → Settings → Environment Variables. For each variable below, set the environment to **Preview** only (not Production):
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Neon pooled connection string for your **preview/dev branch** |
-| `DIRECT_URL` | Neon direct connection string for your **preview/dev branch** |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Your Clerk publishable key |
-| `CLERK_SECRET_KEY` | Your Clerk secret key |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL` | `/dashboard` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | `/dashboard` |
-| `POLAR_ACCESS_TOKEN` | Polar **sandbox** org access token |
-| `POLAR_PRODUCT_ID_PRO` | Polar **sandbox** product ID |
-| `POLAR_WEBHOOK_SECRET` | Will be set in step 8b |
-| `POLAR_ENVIRONMENT` | `sandbox` |
-| `BLOB_READ_WRITE_TOKEN` | Your Vercel Blob token |
-| `NEXT_PUBLIC_POSTHOG_KEY` | Your PostHog project API key |
-| `NEXT_PUBLIC_POSTHOG_HOST` | `https://app.posthog.com` (or your self-hosted host) |
-| `NEXT_PUBLIC_APP_URL` | Your Vercel preview URL (see 8b) |
+| Variable                                       | Value                                                         |
+| ---------------------------------------------- | ------------------------------------------------------------- |
+| `DATABASE_URL`                                 | Neon pooled connection string for your **preview/dev branch** |
+| `DIRECT_URL`                                   | Neon direct connection string for your **preview/dev branch** |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`            | Your Clerk publishable key                                    |
+| `CLERK_SECRET_KEY`                             | Your Clerk secret key                                         |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL`                | `/sign-in`                                                    |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL`                | `/sign-up`                                                    |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL` | `/dashboard`                                                  |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | `/dashboard`                                                  |
+| `POLAR_ACCESS_TOKEN`                           | Polar **sandbox** org access token                            |
+| `POLAR_PRODUCT_ID_PRO`                         | Polar **sandbox** product ID                                  |
+| `POLAR_WEBHOOK_SECRET`                         | Will be set in step 8b                                        |
+| `POLAR_ENVIRONMENT`                            | `sandbox`                                                     |
+| `BLOB_READ_WRITE_TOKEN`                        | Your Vercel Blob token                                        |
+| `NEXT_PUBLIC_POSTHOG_KEY`                      | Your PostHog project API key                                  |
+| `NEXT_PUBLIC_POSTHOG_HOST`                     | `https://app.posthog.com` (or your self-hosted host)          |
+| `NEXT_PUBLIC_APP_URL`                          | Your Vercel preview URL (see 8b)                              |
 
 **8b. Get the preview URL and register Polar webhook**
 
@@ -540,6 +542,7 @@ Run all of these on the preview deployment. Do not proceed to Phase 4 until the 
 - [ ] Mobile layout: open on a real device or Chrome DevTools iPhone 14 emulation and verify dashboard, applications table, and reminder creation form are usable
 
 If the billing step fails (plan doesn't update), check:
+
 1. Polar event delivery logs for the webhook endpoint — did Polar actually send it?
 2. Vercel function logs for `/api/webhooks/polar` — did it receive and process the event?
 3. Whether the Polar checkout created a customer with `externalCustomerId` matching the DevApply `User.id`
@@ -551,6 +554,7 @@ If the billing step fails (plan doesn't update), check:
 ### Task 9: Pre-announce code fixes (on main)
 
 **Files:**
+
 - Modify: `app/(marketing)/page.tsx` — fix hero CTA href + add OG metadata
 - Modify: `app/(app)/layout.tsx` — add OG metadata
 - Modify: `docs/launch-checklist.md` — remove Resend line
@@ -562,10 +566,7 @@ Find the "Sign up free" link in the hero section (around line 189) and change `/
 ```tsx
 <Link
   href="/sign-up"
-  className={cn(
-    buttonVariants({ size: "lg" }),
-    "rounded-full px-5",
-  )}
+  className={cn(buttonVariants({ size: "lg" }), "rounded-full px-5")}
 >
   Sign up free
 </Link>
@@ -664,24 +665,24 @@ This task is entirely manual.
 
 Go to Vercel → Settings → Environment Variables. Set each variable for the **Production** environment:
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Neon pooled connection string for your **production branch** |
-| `DIRECT_URL` | Neon direct connection string for your **production branch** |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Production Clerk key |
-| `CLERK_SECRET_KEY` | Production Clerk secret |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL` | `/dashboard` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | `/dashboard` |
-| `POLAR_ACCESS_TOKEN` | Polar **production** org access token |
-| `POLAR_PRODUCT_ID_PRO` | Polar **production** product ID |
-| `POLAR_WEBHOOK_SECRET` | Polar **production** webhook secret (from step 10b) |
-| `POLAR_ENVIRONMENT` | `production` |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token |
-| `NEXT_PUBLIC_POSTHOG_KEY` | Production PostHog API key |
-| `NEXT_PUBLIC_POSTHOG_HOST` | `https://app.posthog.com` |
-| `NEXT_PUBLIC_APP_URL` | Your production domain e.g. `https://devapply.co` |
+| Variable                                       | Value                                                        |
+| ---------------------------------------------- | ------------------------------------------------------------ |
+| `DATABASE_URL`                                 | Neon pooled connection string for your **production branch** |
+| `DIRECT_URL`                                   | Neon direct connection string for your **production branch** |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`            | Production Clerk key                                         |
+| `CLERK_SECRET_KEY`                             | Production Clerk secret                                      |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL`                | `/sign-in`                                                   |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL`                | `/sign-up`                                                   |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL` | `/dashboard`                                                 |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | `/dashboard`                                                 |
+| `POLAR_ACCESS_TOKEN`                           | Polar **production** org access token                        |
+| `POLAR_PRODUCT_ID_PRO`                         | Polar **production** product ID                              |
+| `POLAR_WEBHOOK_SECRET`                         | Polar **production** webhook secret (from step 10b)          |
+| `POLAR_ENVIRONMENT`                            | `production`                                                 |
+| `BLOB_READ_WRITE_TOKEN`                        | Vercel Blob token                                            |
+| `NEXT_PUBLIC_POSTHOG_KEY`                      | Production PostHog API key                                   |
+| `NEXT_PUBLIC_POSTHOG_HOST`                     | `https://app.posthog.com`                                    |
+| `NEXT_PUBLIC_APP_URL`                          | Your production domain e.g. `https://devapply.co`            |
 
 **10b. Polar production webhook**
 

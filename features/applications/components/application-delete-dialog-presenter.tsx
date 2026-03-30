@@ -31,9 +31,7 @@ export function ApplicationDeleteDialogPresenter({
     <Dialog
       open={isOpen}
       onOpenChange={
-        onCancel
-          ? (open) => (!open ? onCancel() : undefined)
-          : undefined
+        onCancel ? (open) => (!open ? onCancel() : undefined) : undefined
       }
     >
       <DialogContent className="max-w-lg rounded-[2rem] p-6 sm:p-8">
@@ -45,8 +43,9 @@ export function ApplicationDeleteDialogPresenter({
             Delete application
           </DialogTitle>
           <DialogDescription className="mt-1 text-sm leading-6">
-            Delete <span className="font-medium text-foreground">{company}</span>?
-            This action cannot be undone.
+            Delete{" "}
+            <span className="font-medium text-foreground">{company}</span>? This
+            action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 

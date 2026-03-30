@@ -10,7 +10,8 @@ const meta = {
   title: "Features/Applications/ApplicationFormModalPresenter",
   component: ApplicationFormModalPresenter,
   args: {
-    description: "Add a new application without leaving the current list and filters.",
+    description:
+      "Add a new application without leaving the current list and filters.",
     isOpen: true,
     onCancel: () => undefined,
     state: getCreateApplicationInitialState(createApplicationDefaultValues),

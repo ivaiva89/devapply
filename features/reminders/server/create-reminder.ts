@@ -67,7 +67,10 @@ export async function createReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: getValidationErrorMessage(result.error, "Reminder could not be created."),
+      error: getValidationErrorMessage(
+        result.error,
+        "Reminder could not be created.",
+      ),
     };
   }
 

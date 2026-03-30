@@ -31,9 +31,7 @@ export function ReminderDeleteDialogPresenter({
     <Dialog
       open={isOpen}
       onOpenChange={
-        onCancel
-          ? (open) => (!open ? onCancel() : undefined)
-          : undefined
+        onCancel ? (open) => (!open ? onCancel() : undefined) : undefined
       }
     >
       <DialogContent className="max-w-lg rounded-[2rem] p-6 sm:p-8">

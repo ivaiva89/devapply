@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "storybook-static/**",
     "next-env.d.ts",
+    // Git worktrees and their build artifacts:
+    ".claude/worktrees/**",
+    ".tools/**",
   ]),
   {
     files: [

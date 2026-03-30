@@ -23,13 +23,17 @@ function DemoTable() {
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell className="font-medium text-foreground">Vercel</TableCell>
+            <TableCell className="font-medium text-foreground">
+              Vercel
+            </TableCell>
             <TableCell>Product Engineer</TableCell>
             <TableCell>Interview</TableCell>
             <TableCell className="text-right">Mar 18</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium text-foreground">Linear</TableCell>
+            <TableCell className="font-medium text-foreground">
+              Linear
+            </TableCell>
             <TableCell>Frontend Engineer</TableCell>
             <TableCell>Applied</TableCell>
             <TableCell className="text-right">Mar 16</TableCell>

@@ -35,7 +35,9 @@ export function ApplicationCard({
     >
       <CardContent className="space-y-3">
         <div>
-          <p className="text-sm font-semibold text-foreground">{item.company}</p>
+          <p className="text-sm font-semibold text-foreground">
+            {item.company}
+          </p>
           <p className="text-sm text-muted-foreground">{item.role}</p>
         </div>
         <dl className="space-y-1 text-xs text-muted-foreground">

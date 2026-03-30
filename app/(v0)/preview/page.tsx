@@ -179,9 +179,7 @@ export default function PreviewPage() {
                   description="Error card uses the same near-black and indigo system."
                 />
                 <div className="mt-6">
-                  <DashboardErrorState
-                    description="Previewing the dashboard error state without a retry handler."
-                  />
+                  <DashboardErrorState description="Previewing the dashboard error state without a retry handler." />
                 </div>
               </section>
             </div>
@@ -215,15 +213,14 @@ export default function PreviewPage() {
               <ApplicationFormModalPresenter
                 description="Preview the shared application form modal presenter with mock validation state."
                 isOpen
-                state={getCreateApplicationInitialState(createApplicationDefaultValues)}
+                state={getCreateApplicationInitialState(
+                  createApplicationDefaultValues,
+                )}
                 submitLabel="Create application"
                 submittingLabel="Saving..."
                 title="New application"
               />
-              <ApplicationDeleteDialogPresenter
-                company="Vercel"
-                isOpen
-              />
+              <ApplicationDeleteDialogPresenter company="Vercel" isOpen />
             </div>
           </TabsContent>
 

@@ -31,7 +31,8 @@ function getPrimaryEmailAddress(
   }
 
   const primaryEmail =
-    user.primaryEmailAddress?.emailAddress ?? user.emailAddresses[0]?.emailAddress;
+    user.primaryEmailAddress?.emailAddress ??
+    user.emailAddresses[0]?.emailAddress;
 
   return primaryEmail?.trim().toLowerCase() ?? null;
 }
@@ -41,7 +42,10 @@ function getDisplayName(user: Awaited<ReturnType<typeof currentUser>>) {
     return null;
   }
 
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  const fullName = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
   if (fullName.length > 0) {
     return fullName;

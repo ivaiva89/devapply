@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { DataTable, type DataTableColumn } from "@/components/design/data-table";
+import {
+  DataTable,
+  type DataTableColumn,
+} from "@/components/design/data-table";
 
 type Row = {
   id: string;
@@ -10,7 +13,12 @@ type Row = {
 };
 
 const rows: Row[] = [
-  { id: "1", company: "Stripe", role: "Frontend Engineer", status: "Interview" },
+  {
+    id: "1",
+    company: "Stripe",
+    role: "Frontend Engineer",
+    status: "Interview",
+  },
   { id: "2", company: "Linear", role: "Software Engineer", status: "Applied" },
 ];
 

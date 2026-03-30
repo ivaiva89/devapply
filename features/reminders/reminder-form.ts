@@ -3,8 +3,7 @@ import type {
   UpdateReminderActionState,
 } from "@/features/reminders/types";
 
-const DATE_TIME_LOCAL_PATTERN =
-  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
+const DATE_TIME_LOCAL_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
 
 export function createEmptyReminderFormValues(): ReminderFormValues {
   return {
@@ -56,7 +55,9 @@ function parseDateTimeLocalValue(value: string) {
   };
 }
 
-function isValidDateParts(parts: NonNullable<ReturnType<typeof parseDateTimeLocalValue>>) {
+function isValidDateParts(
+  parts: NonNullable<ReturnType<typeof parseDateTimeLocalValue>>,
+) {
   const date = new Date(
     parts.year,
     parts.month - 1,
@@ -111,13 +112,7 @@ export function toUtcDateFromLocalInput(
   }
 
   return new Date(
-    Date.UTC(
-      parts.year,
-      parts.month - 1,
-      parts.day,
-      parts.hour,
-      parts.minute,
-    ) +
+    Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute) +
       timezoneOffsetMinutes * 60_000,
   );
 }

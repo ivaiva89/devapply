@@ -11,7 +11,8 @@ import { AppSidebar } from "@/features/navigation/components/app-sidebar";
 
 export const metadata: Metadata = {
   title: "DevApply",
-  description: "Production-quality foundation for a developer job application tracker SaaS.",
+  description:
+    "Production-quality foundation for a developer job application tracker SaaS.",
 };
 
 export default async function AppLayout({
@@ -44,9 +45,7 @@ export default async function AppLayout({
                 />
               </div>
               <main className="flex-1 px-6 py-6">
-                <div className="mx-auto max-w-5xl">
-                  {children}
-                </div>
+                <div className="mx-auto max-w-5xl">{children}</div>
               </main>
             </div>
           </div>

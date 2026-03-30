@@ -46,7 +46,7 @@ export default async function ApplicationsPage({
           <SectionHeader
             eyebrow="Applications"
             title="Applications table"
-            description="Search, filter, and sort the authenticated user&apos;s applications without exposing any cross-user data."
+            description="Search, filter, and sort the authenticated user's applications without exposing any cross-user data."
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">

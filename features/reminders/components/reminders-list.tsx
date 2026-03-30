@@ -47,7 +47,10 @@ export function RemindersList({
                 title: reminder.title,
               }}
             />
-            <ReminderDeleteDialog reminderId={reminder.id} title={reminder.title} />
+            <ReminderDeleteDialog
+              reminderId={reminder.id}
+              title={reminder.title}
+            />
           </>
         );
       }}

@@ -1,8 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
 
@@ -23,7 +19,9 @@ export function ApplicationsOverTimeChartSection({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">Applications over time</p>
+        <p className="text-xs font-medium text-foreground">
+          Applications over time
+        </p>
         <p className="text-xs text-muted-foreground">
           Monthly volume — last 6 months.
         </p>
@@ -36,7 +34,10 @@ export function ApplicationsOverTimeChartSection({
               const heightPct =
                 maxCount === 0
                   ? 0
-                  : Math.max((item.count / maxCount) * 100, item.count > 0 ? 6 : 0);
+                  : Math.max(
+                      (item.count / maxCount) * 100,
+                      item.count > 0 ? 6 : 0,
+                    );
 
               return (
                 <div
@@ -55,7 +56,9 @@ export function ApplicationsOverTimeChartSection({
                     <span className="text-xs tabular-nums text-foreground">
                       {item.count}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">{item.label}</span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {item.label}
+                    </span>
                   </div>
                 </div>
               );

@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { applicationStatusValues, type ApplicationStatusValue } from "@/features/applications/config";
+import {
+  applicationStatusValues,
+  type ApplicationStatusValue,
+} from "@/features/applications/config";
 import { updateApplicationStatusForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { getValidationErrorMessage } from "@/lib/server-action-validation";

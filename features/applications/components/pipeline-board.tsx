@@ -4,7 +4,10 @@ import { useState, useTransition } from "react";
 
 import { PipelineBoardPresenter } from "@/features/applications/components/pipeline-board-presenter";
 import { updateApplicationStatus } from "@/features/applications/server/update-application-status";
-import type { PipelineApplicationCard, PipelineColumn } from "@/features/applications/server/pipeline-board";
+import type {
+  PipelineApplicationCard,
+  PipelineColumn,
+} from "@/features/applications/server/pipeline-board";
 import type { ApplicationStatusValue } from "@/features/applications/config";
 
 type PipelineBoardProps = {
@@ -63,7 +66,10 @@ export function PipelineBoard({ initialColumns }: PipelineBoardProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function updateCardStatus(cardId: string, nextStatus: ApplicationStatusValue) {
+  function updateCardStatus(
+    cardId: string,
+    nextStatus: ApplicationStatusValue,
+  ) {
     const sourceColumn = columns.find((column) =>
       column.items.some((item) => item.id === cardId),
     );

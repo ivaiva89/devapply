@@ -58,10 +58,7 @@ export const applicationFormStatusOptions: ReadonlyArray<{
 export const applicationStatusFilterOptions: ReadonlyArray<{
   value: ApplicationStatusValue | "ALL";
   label: string;
-}> = [
-  { value: "ALL", label: "All statuses" },
-  ...applicationFormStatusOptions,
-];
+}> = [{ value: "ALL", label: "All statuses" }, ...applicationFormStatusOptions];
 
 export const applicationSourceOptions: ReadonlyArray<{
   value: ApplicationSourceValue;

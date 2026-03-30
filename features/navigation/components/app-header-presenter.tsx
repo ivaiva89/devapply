@@ -29,9 +29,7 @@ export function AppHeaderPresenter({
             </p>
           ) : null}
           {description ? (
-            <p className="mt-1 text-xs text-muted-foreground">
-              {description}
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
           ) : null}
         </div>
 

@@ -1,8 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
 import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
@@ -28,7 +24,9 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">Recent applications</p>
+        <p className="text-xs font-medium text-foreground">
+          Recent applications
+        </p>
         <p className="text-xs text-muted-foreground">Latest tracked roles.</p>
       </CardHeader>
       <Separator />
@@ -44,7 +42,9 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
                   <p className="truncate text-sm font-medium text-foreground">
                     {item.company}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground">{item.role}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {item.role}
+                  </p>
                 </div>
                 <div className="ml-4 flex shrink-0 items-center gap-3">
                   <span className="text-xs tabular-nums text-muted-foreground">

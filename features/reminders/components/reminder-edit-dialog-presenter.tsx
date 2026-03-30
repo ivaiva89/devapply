@@ -42,9 +42,7 @@ export function ReminderEditDialogPresenter({
     <Dialog
       open={isOpen}
       onOpenChange={
-        onCancel
-          ? (open) => (!open ? onCancel() : undefined)
-          : undefined
+        onCancel ? (open) => (!open ? onCancel() : undefined) : undefined
       }
     >
       <DialogContent className="max-w-lg rounded-[2rem] p-6 sm:p-8">
@@ -60,7 +58,12 @@ export function ReminderEditDialogPresenter({
           </DialogDescription>
         </DialogHeader>
 
-        <form ref={formRef} action={action} onSubmit={onSubmit} className="space-y-5">
+        <form
+          ref={formRef}
+          action={action}
+          onSubmit={onSubmit}
+          className="space-y-5"
+        >
           <input type="hidden" name="timezoneOffsetMinutes" defaultValue="" />
           <ReminderFormFields
             applicationOptions={applicationOptions}

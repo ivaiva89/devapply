@@ -13,7 +13,9 @@ function DemoTooltip() {
     <TooltipProvider delay={100}>
       <div className="flex min-h-40 items-center justify-center">
         <Tooltip>
-          <TooltipTrigger render={<Button variant="outline">Hover me</Button>} />
+          <TooltipTrigger
+            render={<Button variant="outline">Hover me</Button>}
+          />
           <TooltipContent>
             Upgrade prompts should feel helpful, not noisy.
           </TooltipContent>

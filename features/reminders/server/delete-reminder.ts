@@ -25,7 +25,10 @@ export async function deleteReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: getValidationErrorMessage(result.error, "That reminder could not be found."),
+      error: getValidationErrorMessage(
+        result.error,
+        "That reminder could not be found.",
+      ),
     };
   }
 

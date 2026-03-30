@@ -48,12 +48,21 @@ export async function GET(
       token: blobToken,
     });
   } catch (error) {
-    console.error("Failed to fetch resume from blob storage", { resumeId, error });
-    return NextResponse.json({ error: "Resume file could not be retrieved." }, { status: 500 });
+    console.error("Failed to fetch resume from blob storage", {
+      resumeId,
+      error,
+    });
+    return NextResponse.json(
+      { error: "Resume file could not be retrieved." },
+      { status: 500 },
+    );
   }
 
   if (!blob || blob.statusCode !== 200) {
-    return NextResponse.json({ error: "Resume file not found." }, { status: 404 });
+    return NextResponse.json(
+      { error: "Resume file not found." },
+      { status: 404 },
+    );
   }
 
   return new Response(blob.stream, {

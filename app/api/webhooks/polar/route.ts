@@ -22,15 +22,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  function isProProductPayload(payload: { data: { productId?: string | null } }) {
-    if (proProductId && payload.data.productId && payload.data.productId !== proProductId) {
+  function isProProductPayload(payload: {
+    data: { productId?: string | null };
+  }) {
+    if (
+      proProductId &&
+      payload.data.productId &&
+      payload.data.productId !== proProductId
+    ) {
       return false;
     }
 
     return true;
   }
 
-  async function syncProAccess(payload: { data: { productId?: string | null } }) {
+  async function syncProAccess(payload: {
+    data: { productId?: string | null };
+  }) {
     if (!isProProductPayload(payload)) {
       return;
     }
@@ -42,14 +50,12 @@ export async function POST(request: NextRequest) {
     return status === "active" || status === "trialing";
   }
 
-  async function syncSubscriptionState(
-    payload: {
-      data: {
-        productId?: string | null;
-        status?: string | null;
-      };
-    },
-  ) {
+  async function syncSubscriptionState(payload: {
+    data: {
+      productId?: string | null;
+      status?: string | null;
+    };
+  }) {
     if (!isProProductPayload(payload)) {
       return;
     }

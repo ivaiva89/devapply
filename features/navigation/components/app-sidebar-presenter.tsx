@@ -16,9 +16,7 @@ function isItemActive(currentPath: string, href: string) {
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
 
-export function AppSidebarPresenter({
-  currentPath,
-}: AppSidebarPresenterProps) {
+export function AppSidebarPresenter({ currentPath }: AppSidebarPresenterProps) {
   return (
     <aside className="flex h-full flex-col border-r border-border bg-sidebar">
       {/* Logo — same height as header (h-10) so it aligns across the shell */}
@@ -35,7 +33,10 @@ export function AppSidebarPresenter({
         </span>
       </div>
 
-      <nav aria-label="Primary navigation" className="flex flex-col gap-px p-2 pt-3">
+      <nav
+        aria-label="Primary navigation"
+        className="flex flex-col gap-px p-2 pt-3"
+      >
         {appNavigation.map((item) => {
           const isActive = isItemActive(currentPath, item.href);
           const Icon = item.icon;

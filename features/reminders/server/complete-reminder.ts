@@ -11,10 +11,7 @@ const completeReminderSchema = z.object({
   actionType: z.enum(["done", "sent"]),
 });
 
-export async function completeReminder(
-  reminderId: string,
-  formData: FormData,
-) {
+export async function completeReminder(reminderId: string, formData: FormData) {
   const user = await requireCurrentUser();
   const result = completeReminderSchema.safeParse({
     reminderId,

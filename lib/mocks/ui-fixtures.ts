@@ -5,8 +5,14 @@ import {
 } from "@/features/applications/config";
 import type { ApplicationCardData } from "@/features/applications/components/application-card";
 import type { ApplicationTableRow } from "@/features/applications/components/applications-table";
-import type { ReminderApplicationOption, ReminderListItem } from "@/features/reminders/types";
-import type { ResumeApplicationOption, ResumeListItem } from "@/features/resumes/types";
+import type {
+  ReminderApplicationOption,
+  ReminderListItem,
+} from "@/features/reminders/types";
+import type {
+  ResumeApplicationOption,
+  ResumeListItem,
+} from "@/features/resumes/types";
 
 type DashboardKpiItem = {
   label: string;
@@ -88,7 +94,11 @@ function createApplicationRow(input: {
 }
 
 export const mockDashboardKpis: DashboardKpiItem[] = [
-  { label: "Total applications", value: 42, helper: "All tracked applications" },
+  {
+    label: "Total applications",
+    value: 42,
+    helper: "All tracked applications",
+  },
   {
     label: "Applications this month",
     value: 11,

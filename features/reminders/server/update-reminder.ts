@@ -68,7 +68,10 @@ export async function updateReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: getValidationErrorMessage(result.error, "Reminder could not be updated."),
+      error: getValidationErrorMessage(
+        result.error,
+        "Reminder could not be updated.",
+      ),
       values: fallbackValues,
     };
   }

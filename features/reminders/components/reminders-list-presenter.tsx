@@ -56,12 +56,16 @@ export function RemindersListPresenter({
                     : "General reminder"}
                 </p>
                 {reminder.notes ? (
-                  <p className="text-sm text-muted-foreground">{reminder.notes}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {reminder.notes}
+                  </p>
                 ) : null}
               </div>
 
               {renderActions ? (
-                <div className="flex flex-wrap gap-2">{renderActions(reminder)}</div>
+                <div className="flex flex-wrap gap-2">
+                  {renderActions(reminder)}
+                </div>
               ) : null}
             </CardContent>
           </Card>

@@ -33,7 +33,9 @@ type BillingPayload = {
 };
 
 function getStringValue(value: unknown) {
-  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : null;
 }
 
 function getPayloadUserId(payload: BillingPayload) {
@@ -72,8 +74,7 @@ function getPayloadSubscriptionId(payload: BillingPayload) {
   }
 
   return getStringValue(
-    payload.data.metadata?.subscriptionId ??
-      payload.metadata?.subscriptionId,
+    payload.data.metadata?.subscriptionId ?? payload.metadata?.subscriptionId,
   );
 }
 

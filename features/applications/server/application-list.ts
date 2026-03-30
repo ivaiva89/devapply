@@ -27,7 +27,9 @@ function getSingleValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function parseStatus(value: string | undefined): ApplicationsQueryState["status"] {
+function parseStatus(
+  value: string | undefined,
+): ApplicationsQueryState["status"] {
   if (!value || value === "ALL") {
     return "ALL";
   }
@@ -44,7 +46,10 @@ function parseSort(value: string | undefined): ApplicationSortOption {
     return DEFAULT_QUERY_STATE.sort;
   }
 
-  return applicationSortOptions.find((option) => option === value) ?? DEFAULT_QUERY_STATE.sort;
+  return (
+    applicationSortOptions.find((option) => option === value) ??
+    DEFAULT_QUERY_STATE.sort
+  );
 }
 
 export function parseApplicationsQueryState(

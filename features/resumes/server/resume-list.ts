@@ -64,7 +64,11 @@ export async function getResumePageDataForUser(
   }
 
   const resumeCount = resumes.length;
-  const canUpload = getPlanGateFromUsage(user.plan, resumeCount, "resumes").allowed;
+  const canUpload = getPlanGateFromUsage(
+    user.plan,
+    resumeCount,
+    "resumes",
+  ).allowed;
 
   return {
     plan: user.plan,

@@ -34,16 +34,21 @@ export function UploadResumeFormPresenter({
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
           Upload resume
         </p>
-        <CardTitle className="text-xl tracking-tight">Add a resume version</CardTitle>
+        <CardTitle className="text-xl tracking-tight">
+          Add a resume version
+        </CardTitle>
         <p className="text-sm leading-6 text-muted-foreground">
-          Upload PDF, DOC, or DOCX files to Blob storage and keep a title you can
-          recognize later.
+          Upload PDF, DOC, or DOCX files to Blob storage and keep a title you
+          can recognize later.
         </p>
       </CardHeader>
 
       <CardContent className="mt-6 space-y-4 px-0">
         <div className="space-y-2">
-          <label htmlFor={titleId} className="text-sm font-medium text-foreground">
+          <label
+            htmlFor={titleId}
+            className="text-sm font-medium text-foreground"
+          >
             Title
           </label>
           <Input
@@ -56,7 +61,10 @@ export function UploadResumeFormPresenter({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor={fileId} className="text-sm font-medium text-foreground">
+          <label
+            htmlFor={fileId}
+            className="text-sm font-medium text-foreground"
+          >
             File
           </label>
           <Input

@@ -41,7 +41,9 @@ function formatDate(value: string | null) {
   }).format(new Date(value));
 }
 
-function toApplicationCardData(item: PipelineApplicationCard): ApplicationCardData {
+function toApplicationCardData(
+  item: PipelineApplicationCard,
+): ApplicationCardData {
   return {
     id: item.id,
     company: item.company,
@@ -79,9 +81,7 @@ export function PipelineBoardPresenter({
             items={column.items.map(toApplicationCardData)}
             onDragOver={onColumnDragOver}
             onDrop={
-              onColumnDrop
-                ? () => onColumnDrop(column.status)
-                : undefined
+              onColumnDrop ? () => onColumnDrop(column.status) : undefined
             }
           >
             {column.items.map((item) => {
@@ -103,7 +103,8 @@ export function PipelineBoardPresenter({
                           onChange={(event) =>
                             onCardStatusChange(
                               item.id,
-                              event.currentTarget.value as ApplicationStatusValue,
+                              event.currentTarget
+                                .value as ApplicationStatusValue,
                             )
                           }
                           className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
@@ -119,9 +120,7 @@ export function PipelineBoardPresenter({
                   }
                   draggable={onCardDragStart ? !isPending : undefined}
                   onDragStart={
-                    onCardDragStart
-                      ? () => onCardDragStart(item.id)
-                      : undefined
+                    onCardDragStart ? () => onCardDragStart(item.id) : undefined
                   }
                   onDragEnd={onCardDragEnd}
                 />

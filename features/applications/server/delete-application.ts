@@ -28,13 +28,19 @@ export async function deleteApplication(
   if (!result.success) {
     return {
       status: "error",
-      error: getValidationErrorMessage(result.error, "That application could not be found."),
+      error: getValidationErrorMessage(
+        result.error,
+        "That application could not be found.",
+      ),
     };
   }
 
   try {
     const user = await requireCurrentUser();
-    const deleted = await deleteApplicationForUser(user.id, result.data.applicationId);
+    const deleted = await deleteApplicationForUser(
+      user.id,
+      result.data.applicationId,
+    );
 
     if (deleted.count === 0) {
       return {

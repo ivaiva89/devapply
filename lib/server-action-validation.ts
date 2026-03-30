@@ -5,9 +5,6 @@ export function getFormString(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export function getValidationErrorMessage(
-  error: z.ZodError,
-  fallback: string,
-) {
+export function getValidationErrorMessage(error: z.ZodError, fallback: string) {
   return error.issues[0]?.message ?? fallback;
 }

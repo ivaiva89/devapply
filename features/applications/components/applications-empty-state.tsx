@@ -11,7 +11,9 @@ export function ApplicationsEmptyState({
     <EmptyState
       eyebrow="Applications"
       title={
-        hasFilters ? "No applications match these filters." : "No applications yet."
+        hasFilters
+          ? "No applications match these filters."
+          : "No applications yet."
       }
       description={
         hasFilters

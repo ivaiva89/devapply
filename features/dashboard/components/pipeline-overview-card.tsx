@@ -1,8 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
 import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
@@ -21,11 +17,16 @@ function formatPercentage(value: number) {
   return `${Math.round(value)}%`;
 }
 
-export function PipelineOverviewCard({ items, isEmpty }: PipelineOverviewCardProps) {
+export function PipelineOverviewCard({
+  items,
+  isEmpty,
+}: PipelineOverviewCardProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">Pipeline distribution</p>
+        <p className="text-xs font-medium text-foreground">
+          Pipeline distribution
+        </p>
         <p className="text-xs text-muted-foreground">
           Applications by current status.
         </p>
@@ -50,7 +51,9 @@ export function PipelineOverviewCard({ items, isEmpty }: PipelineOverviewCardPro
                     className="h-full bg-primary/60 transition-all"
                     style={{
                       width:
-                        item.percentage === 0 ? "0%" : `${Math.max(item.percentage, 3)}%`,
+                        item.percentage === 0
+                          ? "0%"
+                          : `${Math.max(item.percentage, 3)}%`,
                       opacity: item.percentage === 0 ? 0 : 1,
                     }}
                   />

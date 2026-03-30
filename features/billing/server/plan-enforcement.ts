@@ -8,12 +8,9 @@ import { prisma } from "@/lib/prisma";
 export type LimitResource = keyof typeof FREE_PLAN_LIMITS;
 
 const PLAN_LIMIT_REACHED_MESSAGES: Record<LimitResource, string> = {
-  applications:
-    `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
-  resumes:
-    `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
-  reminders:
-    `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
+  applications: `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
+  resumes: `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
+  reminders: `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
 };
 
 type SupportedPlan = Plan | "FREE" | "PRO";

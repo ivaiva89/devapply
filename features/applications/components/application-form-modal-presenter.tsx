@@ -114,9 +114,7 @@ export function ApplicationFormModalPresenter({
     <Dialog
       open={isOpen}
       onOpenChange={
-        onCancel
-          ? (open) => (!open ? onCancel() : undefined)
-          : undefined
+        onCancel ? (open) => (!open ? onCancel() : undefined) : undefined
       }
     >
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-[2rem] p-6 sm:p-8">
@@ -188,7 +186,9 @@ export function ApplicationFormModalPresenter({
                 name="source"
                 defaultValue={formValues.source}
                 aria-describedby={
-                  state.fieldErrors.source ? `${idPrefix}-source-error` : undefined
+                  state.fieldErrors.source
+                    ? `${idPrefix}-source-error`
+                    : undefined
                 }
                 aria-invalid={Boolean(state.fieldErrors.source)}
                 className={getInputClassName(state.fieldErrors.source)}
@@ -207,7 +207,9 @@ export function ApplicationFormModalPresenter({
                 name="status"
                 defaultValue={formValues.status}
                 aria-describedby={
-                  state.fieldErrors.status ? `${idPrefix}-status-error` : undefined
+                  state.fieldErrors.status
+                    ? `${idPrefix}-status-error`
+                    : undefined
                 }
                 aria-invalid={Boolean(state.fieldErrors.status)}
                 className={getInputClassName(state.fieldErrors.status)}
@@ -311,7 +313,9 @@ export function ApplicationFormModalPresenter({
                   name="notes"
                   defaultValue={formValues.notes}
                   aria-describedby={
-                    state.fieldErrors.notes ? `${idPrefix}-notes-error` : undefined
+                    state.fieldErrors.notes
+                      ? `${idPrefix}-notes-error`
+                      : undefined
                   }
                   aria-invalid={Boolean(state.fieldErrors.notes)}
                   className={`${getInputClassName(

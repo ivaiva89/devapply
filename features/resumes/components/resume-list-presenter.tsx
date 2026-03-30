@@ -43,7 +43,9 @@ export function ResumeListPresenter({
                   <p className="text-lg font-semibold tracking-tight text-foreground">
                     {resume.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">{resume.fileName}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {resume.fileName}
+                  </p>
                 </div>
 
                 <dl className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -63,7 +65,9 @@ export function ResumeListPresenter({
               </div>
 
               {renderAttachForm ? (
-                <div className="w-full max-w-sm">{renderAttachForm(resume)}</div>
+                <div className="w-full max-w-sm">
+                  {renderAttachForm(resume)}
+                </div>
               ) : null}
             </div>
 

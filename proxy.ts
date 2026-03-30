@@ -10,10 +10,7 @@ const isProtectedRoute = createRouteMatcher([
   "/settings(.*)",
 ]);
 
-const isAuthRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-]);
+const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;

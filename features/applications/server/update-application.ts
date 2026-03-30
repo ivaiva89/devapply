@@ -30,7 +30,11 @@ export async function updateApplication(
   try {
     const user = await requireCurrentUser();
     const input = result.data;
-    const updated = await updateApplicationForUser(user.id, applicationId, input);
+    const updated = await updateApplicationForUser(
+      user.id,
+      applicationId,
+      input,
+    );
 
     if (updated.count === 0) {
       return getApplicationFormErrorState(values, {

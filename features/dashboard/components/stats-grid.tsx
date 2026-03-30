@@ -1,9 +1,4 @@
-import {
-  Briefcase,
-  CalendarPlus,
-  MessageSquare,
-  Trophy,
-} from "lucide-react";
+import { Briefcase, CalendarPlus, MessageSquare, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { StatsCard } from "@/components/design/stats-card";
@@ -26,15 +21,10 @@ const SLOT_ICONS: [LucideIcon, LucideIcon, LucideIcon, LucideIcon] = [
   Trophy,
 ];
 
-const SLOT_VALUE_CLASSNAMES: [
-  undefined,
-  undefined,
-  string,
-  string,
-] = [
-  undefined,          // slot 0: total applications — default (primary card handles color)
-  undefined,          // slot 1: applications this month
-  "text-violet-400",  // slot 2: interviews
+const SLOT_VALUE_CLASSNAMES: [undefined, undefined, string, string] = [
+  undefined, // slot 0: total applications — default (primary card handles color)
+  undefined, // slot 1: applications this month
+  "text-violet-400", // slot 2: interviews
   "text-emerald-400", // slot 3: offers
 ];
 

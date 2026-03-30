@@ -50,38 +50,38 @@ Goal: stable development environment and infrastructure.
 - [x] Initialize Next.js App Router project
 - [x] Configure TypeScript
 - [ ] Configure ESLint + Prettier
-  Priority: P1
+      Priority: P1
 
 - [ ] Configure project folder structure
-  Priority: P0
-  Definition of done:
-    - app/
-    - components/
-    - features/
-    - lib/
-    - server/
+      Priority: P0
+      Definition of done:
+  - app/
+  - components/
+  - features/
+  - lib/
+  - server/
 
 ## UI foundation
 
 - [x] Install Tailwind CSS
-  Priority: P0
+      Priority: P0
 
 - [x] Install shadcn/ui
-  Priority: P0
+      Priority: P0
 
 - [x] Configure base layout
-  Definition of done:
-    - navigation shell
-    - responsive layout
-    - sidebar navigation
+      Definition of done:
+  - navigation shell
+  - responsive layout
+  - sidebar navigation
 
 ## Infrastructure
 
 - [x] Setup Prisma
-  Priority: P0
+      Priority: P0
 
 - [x] Setup Neon database
-  Priority: P0
+      Priority: P0
 
 - [x] Setup Prisma migrations
 
@@ -96,7 +96,7 @@ Goal: users can securely access their personal dashboard.
 ## Authentication system
 
 - [x] Integrate Clerk authentication
-  Priority: P0
+      Priority: P0
 
 - [x] Configure sign-in page
 - [x] Configure sign-up page
@@ -307,9 +307,11 @@ Pro
 Limits example:
 
 Free:
+
 - 50 applications
 
 Pro:
+
 - unlimited applications
 
 Tasks:

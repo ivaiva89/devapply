@@ -1,8 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
@@ -31,7 +27,9 @@ export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">Upcoming reminders</p>
+        <p className="text-xs font-medium text-foreground">
+          Upcoming reminders
+        </p>
         <p className="text-xs text-muted-foreground">Scheduled follow-ups.</p>
       </CardHeader>
       <Separator />

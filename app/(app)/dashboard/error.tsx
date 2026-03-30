@@ -8,14 +8,12 @@ type DashboardErrorProps = {
   reset: () => void;
 };
 
-export default function DashboardError({
-  error,
-  reset,
-}: DashboardErrorProps) {
+export default function DashboardError({ error, reset }: DashboardErrorProps) {
   return (
     <DashboardErrorState
       description={
-        error.message || "An unexpected error occurred while loading the dashboard."
+        error.message ||
+        "An unexpected error occurred while loading the dashboard."
       }
       action={
         <Button type="button" onClick={reset}>

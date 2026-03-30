@@ -22,11 +22,7 @@ export function StatsCard({
   valueClassName,
 }: StatsCardProps) {
   return (
-    <Card
-      className={cn(
-        highlight && "border-primary/20 bg-primary/5",
-      )}
-    >
+    <Card className={cn(highlight && "border-primary/20 bg-primary/5")}>
       <CardContent className="flex flex-col gap-2 p-4">
         <div className="flex items-center justify-between">
           <p

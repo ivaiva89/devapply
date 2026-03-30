@@ -67,8 +67,9 @@ export function ReminderEditDialog({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const remindAtField = event.currentTarget.elements.namedItem("remindAt");
-    const timezoneOffsetField =
-      event.currentTarget.elements.namedItem("timezoneOffsetMinutes");
+    const timezoneOffsetField = event.currentTarget.elements.namedItem(
+      "timezoneOffsetMinutes",
+    );
 
     if (
       !(remindAtField instanceof HTMLInputElement) ||
