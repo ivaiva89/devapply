@@ -229,12 +229,6 @@ Billing persistence:
   still null until a later billing webhook or the operator backfill path
   updates them
 
-Implementation note:
-
-- the repository may still contain legacy Stripe-oriented scaffolding in
-  code while billing is migrated
-- documentation and planning should treat Polar as the primary target
-
 ## Resume uploads
 
 Resume uploads use Vercel Blob. Local and deployed environments need:
