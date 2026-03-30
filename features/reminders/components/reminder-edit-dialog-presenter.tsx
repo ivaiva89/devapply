@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, RefObject } from "react";
 
 import {
   Dialog,
@@ -17,10 +17,12 @@ type ReminderEditDialogPresenterProps = {
   action?: ComponentProps<"form">["action"];
   applicationOptions: ReminderApplicationOption[];
   error?: string;
+  formRef?: RefObject<HTMLFormElement | null>;
   idPrefix?: string;
   isOpen: boolean;
   isPending?: boolean;
   onCancel?: () => void;
+  onSubmit?: ComponentProps<"form">["onSubmit"];
   values: ReminderFormValues;
 };
 
@@ -28,10 +30,12 @@ export function ReminderEditDialogPresenter({
   action,
   applicationOptions,
   error,
+  formRef,
   idPrefix = "edit-reminder",
   isOpen,
   isPending = false,
   onCancel,
+  onSubmit,
   values,
 }: ReminderEditDialogPresenterProps) {
   return (
@@ -56,7 +60,8 @@ export function ReminderEditDialogPresenter({
           </DialogDescription>
         </DialogHeader>
 
-        <form action={action} className="space-y-5">
+        <form ref={formRef} action={action} onSubmit={onSubmit} className="space-y-5">
+          <input type="hidden" name="timezoneOffsetMinutes" defaultValue="" />
           <ReminderFormFields
             applicationOptions={applicationOptions}
             error={error}

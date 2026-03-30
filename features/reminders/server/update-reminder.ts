@@ -6,7 +6,9 @@ import { z } from "zod";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import {
   createEmptyReminderFormValues,
+  isValidDateTimeLocalValue,
   toReminderFormValues,
+  toUtcDateFromLocalInput,
 } from "@/features/reminders/reminder-form";
 import type { UpdateReminderActionState } from "@/features/reminders/types";
 import { prisma } from "@/lib/prisma";
@@ -22,9 +24,14 @@ const updateReminderSchema = z.object({
     .string()
     .trim()
     .min(1, "Choose when to remind yourself.")
-    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
+    .refine((value) => isValidDateTimeLocalValue(value), {
       message: "Choose a valid reminder date and time.",
     }),
+  timezoneOffsetMinutes: z.coerce
+    .number()
+    .int()
+    .min(-840, "Choose a valid reminder date and time.")
+    .max(840, "Choose a valid reminder date and time."),
   applicationId: z
     .string()
     .trim()
@@ -38,11 +45,14 @@ export async function updateReminder(
 ): Promise<UpdateReminderActionState> {
   const titleValue = formData.get("title");
   const remindAtValue = formData.get("remindAt");
+  const timezoneOffsetMinutesValue = formData.get("timezoneOffsetMinutes");
   const applicationIdValue = formData.get("applicationId");
   const rawValues = {
     reminderId,
     title: typeof titleValue === "string" ? titleValue : "",
     remindAt: typeof remindAtValue === "string" ? remindAtValue : "",
+    timezoneOffsetMinutes:
+      typeof timezoneOffsetMinutesValue === "string" ? timezoneOffsetMinutesValue : "",
     applicationId: typeof applicationIdValue === "string" ? applicationIdValue : "",
   };
 
@@ -60,6 +70,18 @@ export async function updateReminder(
   try {
     const user = await requireCurrentUser();
     const input = result.data;
+    const dueAt = toUtcDateFromLocalInput(
+      input.remindAt,
+      input.timezoneOffsetMinutes,
+    );
+
+    if (!dueAt) {
+      return {
+        status: "error",
+        error: "Choose a valid reminder date and time.",
+        values: fallbackValues,
+      };
+    }
 
     if (input.applicationId) {
       const application = await prisma.application.findFirst({
@@ -89,7 +111,7 @@ export async function updateReminder(
       },
       data: {
         title: input.title,
-        dueAt: new Date(input.remindAt),
+        dueAt,
         applicationId: input.applicationId,
       },
     });

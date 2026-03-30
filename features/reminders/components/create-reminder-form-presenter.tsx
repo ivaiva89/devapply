@@ -16,6 +16,7 @@ type CreateReminderFormPresenterProps = {
   formRef?: RefObject<HTMLFormElement | null>;
   idPrefix?: string;
   isPending?: boolean;
+  onSubmit?: ComponentProps<"form">["onSubmit"];
 };
 
 export function CreateReminderFormPresenter({
@@ -26,6 +27,7 @@ export function CreateReminderFormPresenter({
   formRef,
   idPrefix = "create-reminder",
   isPending = false,
+  onSubmit,
 }: CreateReminderFormPresenterProps) {
   const values = canCreate
     ? createEmptyReminderFormValues()
@@ -39,8 +41,10 @@ export function CreateReminderFormPresenter({
     <form
       ref={formRef}
       action={action}
+      onSubmit={onSubmit}
       className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm"
     >
+      <input type="hidden" name="timezoneOffsetMinutes" defaultValue="" />
       <CardHeader className="space-y-2 px-0">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
           New reminder
