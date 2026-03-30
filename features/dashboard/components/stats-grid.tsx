@@ -23,7 +23,7 @@ const SLOT_ICONS: LucideIcon[] = [Briefcase, CalendarPlus, MessageSquare, Trophy
 
 export function StatsGrid({ items }: StatsGridProps) {
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item, index) => (
         <StatsCard
           key={item.label}

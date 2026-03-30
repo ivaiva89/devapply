@@ -19,14 +19,15 @@ export function AppSidebarPresenter({
   currentPath,
 }: AppSidebarPresenterProps) {
   return (
-    <aside className="flex h-full flex-col border-r border-border bg-sidebar px-4 py-6">
-      <div className="mb-8 px-2">
+    <aside className="flex h-full flex-col border-r border-border bg-sidebar">
+      {/* Wordmark — same height as header (h-10) so it aligns across the shell */}
+      <div className="flex h-10 items-center border-b border-border px-4">
         <span className="text-sm font-semibold tracking-tight text-foreground">
           DevApply
         </span>
       </div>
 
-      <nav aria-label="Primary navigation" className="flex flex-col gap-0.5">
+      <nav aria-label="Primary navigation" className="flex flex-col gap-px p-2 pt-3">
         {appNavigation.map((item) => {
           const isActive = isItemActive(currentPath, item.href);
 
@@ -36,10 +37,10 @@ export function AppSidebarPresenter({
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex items-center rounded-md px-2 py-1.5 text-sm transition-colors duration-150",
+                "flex items-center rounded-sm px-2 py-1.5 text-sm transition-colors duration-100",
                 isActive
                   ? "bg-muted font-medium text-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
               )}
             >
               {item.label}

@@ -26,9 +26,9 @@ export default async function AppLayout({
       <body className="bg-background text-foreground antialiased">
         <ClerkProvider>
           <div className="flex min-h-screen">
-            {/* Sidebar — fixed width, full height */}
-            <div className="hidden w-52 shrink-0 lg:block">
-              <div className="fixed inset-y-0 left-0 w-52">
+            {/* Sidebar — fixed, aligned to header height */}
+            <div className="hidden w-48 shrink-0 lg:block">
+              <div className="fixed inset-y-0 left-0 w-48">
                 <AppSidebar currentPath={currentPath} />
               </div>
             </div>
@@ -36,14 +36,14 @@ export default async function AppLayout({
             <div className="flex min-w-0 flex-1 flex-col">
               <div className="sticky top-0 z-10 bg-background">
                 <AppHeader
-                  title="Application tracker"
-                  description="Protected area for managing applications, interview progress, reminders, and resume assets."
+                  title="DevApply"
+                  description=""
                   userName={user.name ?? "Developer"}
                   userEmail={user.email}
                   planLabel={user.plan}
                 />
               </div>
-              <main className="flex-1 px-8 py-8">
+              <main className="flex-1 px-6 py-6">
                 <div className="mx-auto max-w-5xl">
                   {children}
                 </div>

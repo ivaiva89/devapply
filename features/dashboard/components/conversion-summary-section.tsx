@@ -1,12 +1,10 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
-import { StatsCard } from "@/components/design/stats-card";
 
 type ConversionSummarySectionProps = {
   items: Array<{
@@ -23,22 +21,24 @@ export function ConversionSummarySection({
 }: ConversionSummarySectionProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Funnel snapshot</CardTitle>
-        <CardDescription className="text-xs">
+      <CardHeader className="pb-3">
+        <p className="text-xs font-medium text-foreground">Funnel snapshot</p>
+        <p className="text-xs text-muted-foreground">
           Response, interview, and offer conversion rates.
-        </CardDescription>
+        </p>
       </CardHeader>
-      <CardContent>
+      <Separator />
+      <CardContent className="pt-4">
         {!isEmpty ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
             {items.map((item) => (
-              <StatsCard
-                key={item.label}
-                label={item.label}
-                value={item.value}
-                helper={item.helper}
-              />
+              <div key={item.label} className="flex flex-col gap-1 px-4 py-3 first:pl-0 last:pr-0">
+                <p className="text-xs text-muted-foreground">{item.label}</p>
+                <p className="text-2xl font-semibold tabular-nums tracking-tight text-foreground">
+                  {item.value}
+                </p>
+                <p className="text-xs text-muted-foreground">{item.helper}</p>
+              </div>
             ))}
           </div>
         ) : (

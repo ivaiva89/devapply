@@ -1,9 +1,7 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -28,9 +26,9 @@ function formatDate(value: string) {
 export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Upcoming reminders</CardTitle>
-        <CardDescription className="text-xs">Scheduled follow-ups.</CardDescription>
+      <CardHeader className="pb-3">
+        <p className="text-xs font-medium text-foreground">Upcoming reminders</p>
+        <p className="text-xs text-muted-foreground">Scheduled follow-ups.</p>
       </CardHeader>
       <Separator />
       <CardContent className="pt-0">

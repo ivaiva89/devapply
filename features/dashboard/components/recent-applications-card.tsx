@@ -1,9 +1,7 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { EmptyState } from "@/components/design/empty-state";
@@ -29,9 +27,9 @@ function formatDate(value: string) {
 export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Recent applications</CardTitle>
-        <CardDescription className="text-xs">Latest tracked roles.</CardDescription>
+      <CardHeader className="pb-3">
+        <p className="text-xs font-medium text-foreground">Recent applications</p>
+        <p className="text-xs text-muted-foreground">Latest tracked roles.</p>
       </CardHeader>
       <Separator />
       <CardContent className="pt-0">
