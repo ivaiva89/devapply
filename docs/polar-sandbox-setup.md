@@ -128,7 +128,34 @@ If webhook delivery succeeds but `plan` does not change:
 - app entitlements still use normalized app plan state only: `FREE` /
   `PRO`
 - provider-specific linkage is persisted on `User`, but existing users
-  may keep null billing-linkage fields until a later billing webhook
-  populates them
+  may keep null billing-linkage fields until a later billing webhook or
+  an operator-run backfill populates them
 - customer portal availability depends on Polar resolving the customer by
   external customer ID
+
+## Backfill older Pro users
+
+If an existing user already has `User.plan = PRO` but still has null
+Polar linkage fields, run the explicit backfill script from the app
+repository:
+
+```bash
+npm run billing:backfill-polar-linkage -- --user-id <userId>
+npm run billing:backfill-polar-linkage -- --user-id <userId> --write
+```
+
+Bulk mode is intentionally gated and should be used carefully:
+
+```bash
+npm run billing:backfill-polar-linkage -- --all-pro-missing
+npm run billing:backfill-polar-linkage -- --all-pro-missing --write --confirm-all-pro-missing
+```
+
+Operational notes:
+
+- dry run is the default
+- the script does not change `User.plan`
+- the script queries Polar customer state by `externalCustomerId =
+User.id`
+- the script only backfills stored provider linkage and latest synced
+  subscription metadata

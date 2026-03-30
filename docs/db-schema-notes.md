@@ -3,13 +3,16 @@
 ## Main entities
 
 ### User
+
 Represents authenticated product user.
 
 ### Application
+
 Main record for job tracking.
 Each application belongs to one user.
 
 Fields:
+
 - company
 - role
 - location
@@ -24,18 +27,23 @@ Fields:
 - lastActivityAt
 
 ### Interview
+
 Represents interview stages tied to an application.
 
 ### Resume
+
 Represents uploaded resume versions.
 
 ### ApplicationAttachment
+
 Allows attaching resumes or other files to applications.
 
 ### Reminder
+
 Represents follow-up reminders for a user, optionally tied to an application.
 
 ## Status lifecycle
+
 - WISHLIST
 - APPLIED
 - INTERVIEW
@@ -43,6 +51,7 @@ Represents follow-up reminders for a user, optionally tied to an application.
 - REJECTED
 
 ## Source values
+
 - LINKEDIN
 - COMPANY_SITE
 - REFERRAL
@@ -51,6 +60,7 @@ Represents follow-up reminders for a user, optionally tied to an application.
 - OTHER
 
 ## Important rules
+
 - every row must be scoped to authenticated user
 - all queries must filter by user ownership
 - free plan limits must be enforced server-side
@@ -73,4 +83,5 @@ Represents follow-up reminders for a user, optionally tied to an application.
   - `billingCurrentPeriodEnd`
   - `billingSyncedAt`
 - existing users remain compatible with null billing-linkage fields
-  until checkout or a later webhook populates them
+  until checkout, a later webhook, or an operator-run backfill
+  populates them

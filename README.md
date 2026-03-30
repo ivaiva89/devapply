@@ -93,6 +93,13 @@ Build for Vercel
 npm run build:vercel
 ```
 
+Backfill missing Polar linkage for older Pro users
+
+```bash
+npm run billing:backfill-polar-linkage -- --user-id <userId>
+npm run billing:backfill-polar-linkage -- --user-id <userId> --write
+```
+
 Deployment reference:
 
 - `docs/vercel-build.md`
@@ -219,7 +226,8 @@ Billing persistence:
 - provider linkage is stored separately on the `User` record for the
   current Polar integration
 - existing users remain compatible if those provider-specific fields are
-  still null until a later billing webhook updates them
+  still null until a later billing webhook or the operator backfill path
+  updates them
 
 Implementation note:
 

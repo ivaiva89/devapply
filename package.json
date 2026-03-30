@@ -17,6 +17,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:deploy": "prisma migrate deploy",
+    "billing:backfill-polar-linkage": "jiti scripts/backfill-polar-linkage.ts",
     "db:studio": "prisma studio",
     "neon-local:up": "docker compose -f docker-compose.neon-local.yml up -d",
     "neon-local:down": "docker compose -f docker-compose.neon-local.yml down",
