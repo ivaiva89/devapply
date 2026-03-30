@@ -17,6 +17,36 @@ import { prisma } from "@/lib/prisma";
 
 type ApplicationClient = typeof prisma | Prisma.TransactionClient;
 
+const applicationListSelect = Prisma.validator<Prisma.ApplicationSelect>()({
+  id: true,
+  company: true,
+  role: true,
+  location: true,
+  status: true,
+  source: true,
+  salaryMin: true,
+  salaryMax: true,
+  currency: true,
+  jobUrl: true,
+  notes: true,
+  appliedDate: true,
+  updatedAt: true,
+});
+
+const pipelineApplicationSelect = Prisma.validator<Prisma.ApplicationSelect>()({
+  id: true,
+  company: true,
+  role: true,
+  source: true,
+  status: true,
+  appliedDate: true,
+  updatedAt: true,
+});
+
+type PipelineApplicationRecord = Prisma.ApplicationGetPayload<{
+  select: typeof pipelineApplicationSelect;
+}>;
+
 export type PipelineApplicationCard = {
   id: string;
   company: string;
@@ -70,14 +100,7 @@ function buildApplicationListWhere(
   return where;
 }
 
-function toPipelineCard(application: {
-  id: string;
-  company: string;
-  role: string;
-  source: keyof typeof applicationSourceLabels;
-  appliedDate: Date | null;
-  updatedAt: Date;
-}): PipelineApplicationCard {
+function toPipelineCard(application: PipelineApplicationRecord): PipelineApplicationCard {
   return {
     id: application.id,
     company: application.company,
@@ -98,21 +121,7 @@ export async function getApplicationListDataForUser(
     prisma.application.findMany({
       where,
       orderBy: getApplicationOrderBy(state.sort),
-      select: {
-        id: true,
-        company: true,
-        role: true,
-        location: true,
-        status: true,
-        source: true,
-        salaryMin: true,
-        salaryMax: true,
-        currency: true,
-        jobUrl: true,
-        notes: true,
-        appliedDate: true,
-        updatedAt: true,
-      },
+      select: applicationListSelect,
     }),
     prisma.application.count({
       where: {
@@ -122,7 +131,7 @@ export async function getApplicationListDataForUser(
   ]);
 
   return {
-    items: items as ApplicationListItem[],
+    items: items satisfies ApplicationListItem[],
     totalCount,
   };
 }
@@ -138,15 +147,7 @@ export async function getPipelineColumnsForUser(
       },
     },
     orderBy: [{ updatedAt: "desc" }],
-    select: {
-      id: true,
-      company: true,
-      role: true,
-      source: true,
-      status: true,
-      appliedDate: true,
-      updatedAt: true,
-    },
+    select: pipelineApplicationSelect,
   });
 
   return applicationStatusValues.map((status) => ({

@@ -1,22 +1,28 @@
+import type { Application } from "@prisma/client";
+
 import type {
   ApplicationSourceValue,
   ApplicationStatusValue,
 } from "@/features/applications/config";
 
-export type ApplicationListItem = {
-  id: string;
-  company: string;
-  role: string;
-  location: string | null;
+export type ApplicationListItem = Pick<
+  Application,
+  | "id"
+  | "company"
+  | "role"
+  | "location"
+  | "status"
+  | "source"
+  | "salaryMin"
+  | "salaryMax"
+  | "currency"
+  | "jobUrl"
+  | "notes"
+  | "appliedDate"
+  | "updatedAt"
+> & {
   status: ApplicationStatusValue;
   source: ApplicationSourceValue;
-  salaryMin: number | null;
-  salaryMax: number | null;
-  currency: string;
-  jobUrl: string | null;
-  notes: string | null;
-  appliedDate: Date | null;
-  updatedAt: Date;
 };
 
 export const applicationSortOptions = [
