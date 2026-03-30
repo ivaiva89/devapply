@@ -19,57 +19,60 @@ export default async function SettingsPage({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Settings
         </p>
         <div className="mt-3 space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-stone-950">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             Account and billing
           </h1>
-          <p className="max-w-2xl text-sm leading-6 text-stone-600">
-            Review your current plan, understand the MVP limits, start hosted checkout to upgrade, or manage an existing Polar subscription.
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+            Review your current plan, understand the MVP limits, start hosted
+            checkout to upgrade, or manage an existing Polar subscription.
           </p>
         </div>
       </section>
       {billingState === "success" ? (
-        <section className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
+        <section className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 shadow-sm">
           <p className="text-sm text-emerald-800">
-            Checkout completed. Plan changes take effect after Polar webhook delivery updates your account.
+            Checkout completed. Plan changes take effect after Polar webhook
+            delivery updates your account.
           </p>
         </section>
       ) : null}
       {billingState === "cancelled" ? (
-        <section className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm">
-          <p className="text-sm text-stone-700">
+        <section className="rounded-3xl border border-border bg-muted/40 p-6 shadow-sm">
+          <p className="text-sm text-foreground/80">
             Checkout was cancelled. You can restart it whenever you are ready.
           </p>
         </section>
       ) : null}
       {billingState === "portal_return" ? (
-        <section className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm">
-          <p className="text-sm text-stone-700">
+        <section className="rounded-3xl border border-border bg-muted/40 p-6 shadow-sm">
+          <p className="text-sm text-foreground/80">
             Returned from the billing portal.
           </p>
         </section>
       ) : null}
       {billingState === "portal_unavailable" ? (
-        <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+        <section className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 shadow-sm">
           <p className="text-sm text-amber-900">
-            Billing portal is not available for this account yet. Complete a Pro checkout first or verify the Polar customer linkage for this user.
+            Billing portal is not available for this account yet. Complete a Pro
+            checkout first or verify the Polar customer linkage for this user.
           </p>
         </section>
       ) : null}
       <PlanSummary plan={user.plan} />
-      <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+      <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Support
         </p>
         <div className="mt-3 space-y-2">
-          <h2 className="text-xl font-semibold tracking-tight text-stone-950">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
             Need account or billing help?
           </h2>
-          <p className="text-sm leading-6 text-stone-600">
+          <p className="text-sm leading-6 text-muted-foreground">
             Contact the DevApply team directly for billing questions, access
             issues, or support requests.
           </p>

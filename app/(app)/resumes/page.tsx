@@ -13,20 +13,21 @@ export default async function ResumesPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Resumes
         </p>
         <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-stone-950">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
               Resume library
             </h1>
-            <p className="max-w-2xl text-sm leading-6 text-stone-600">
-              Upload resume versions, keep file links in one place, and attach them to the right applications.
+            <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+              Upload resume versions, keep file links in one place, and attach
+              them to the right applications.
             </p>
           </div>
-          <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-600">
+          <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
             {data.resumeCount} {data.resumeCount === 1 ? "resume" : "resumes"}
           </div>
         </div>
