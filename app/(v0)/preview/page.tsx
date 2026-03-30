@@ -2,13 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/design/section-header";
 import { ApplicationsTable } from "@/features/applications/components/applications-table";
-import { ApplicationCard } from "@/features/applications/components/application-card";
 import { ApplicationDeleteDialogPresenter } from "@/features/applications/components/application-delete-dialog-presenter";
 import { ApplicationFormModalPresenter } from "@/features/applications/components/application-form-modal-presenter";
-import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
+import { ApplicationRowActionsMenu } from "@/features/applications/components/application-row-actions-menu";
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFiltersPresenter } from "@/features/applications/components/applications-filters-presenter";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
+import { PipelineBoardPresenter } from "@/features/applications/components/pipeline-board-presenter";
 import { NewApplicationTrigger } from "@/features/applications/components/new-application-trigger";
 import {
   createApplicationDefaultValues,
@@ -41,7 +41,7 @@ import {
   mockApplicationTableRows,
   mockDashboardConversions,
   mockDashboardKpis,
-  mockPipelineColumns,
+  mockPipelineBoardColumns,
   mockReminderApplicationOptions,
   mockRecentApplications,
   mockReminderListItems,
@@ -156,16 +156,7 @@ export default function PreviewPage() {
               description="Search, status, source, and activity coverage with realistic placeholder data."
               applications={mockApplicationTableRows.map((row) => ({
                 ...row,
-                actions: (
-                  <div className="flex justify-end gap-2">
-                    <Button size="xs" variant="outline">
-                      Edit
-                    </Button>
-                    <Button size="xs" variant="ghost">
-                      Delete
-                    </Button>
-                  </div>
-                ),
+                actions: <ApplicationRowActionsMenu />,
               }))}
             />
             <div className="grid gap-6 lg:grid-cols-2">
@@ -195,21 +186,10 @@ export default function PreviewPage() {
               <SectionHeader
                 eyebrow="Pipeline"
                 title="Kanban composition preview"
-                description="The interactive production board is server-wired, but the visual pipeline building blocks stay previewable here with static data."
+                description="The same presenter used by the production pipeline wrapper stays previewable here with static data."
               />
-              <div className="mt-6 grid gap-4 xl:grid-cols-5">
-                {mockPipelineColumns.map((column) => (
-                  <ApplicationKanbanColumn
-                    key={column.status}
-                    label={column.label}
-                    status={column.status}
-                    items={column.items}
-                  >
-                    {column.items.map((item) => (
-                      <ApplicationCard key={item.id} item={item} />
-                    ))}
-                  </ApplicationKanbanColumn>
-                ))}
+              <div className="mt-6">
+                <PipelineBoardPresenter columns={mockPipelineBoardColumns} />
               </div>
             </section>
             <PipelineEmptyState />

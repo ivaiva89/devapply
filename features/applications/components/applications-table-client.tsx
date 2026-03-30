@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useState } from "react";
 
 import { ApplicationsTable, type ApplicationTableRow } from "@/features/applications/components/applications-table";
 import { ApplicationDeleteDialog } from "@/features/applications/components/application-delete-dialog";
 import { ApplicationFormModal } from "@/features/applications/components/application-form-modal";
+import { ApplicationRowActionsMenu } from "@/features/applications/components/application-row-actions-menu";
 import { applicationSourceLabels } from "@/features/applications/config";
 import { getApplicationFormValues } from "@/features/applications/create-application-form";
 import { updateApplication } from "@/features/applications/server/update-application";
@@ -31,14 +32,6 @@ function formatDate(value: Date | null) {
   }).format(value);
 }
 
-function closeActionsMenu(event: MouseEvent<HTMLButtonElement>) {
-  const menu = event.currentTarget.closest("details");
-
-  if (menu instanceof HTMLDetailsElement) {
-    menu.open = false;
-  }
-}
-
 type RowActionsMenuProps = {
   application: ApplicationListItem;
   onDelete: (application: ApplicationListItem) => void;
@@ -51,33 +44,10 @@ function RowActionsMenu({
   onEdit,
 }: RowActionsMenuProps) {
   return (
-    <details className="relative">
-      <summary className="list-none rounded-full border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition hover:border-foreground hover:text-foreground">
-        Actions
-      </summary>
-      <div className="absolute right-0 top-full z-10 mt-2 w-40 rounded-2xl border border-border bg-card p-2 shadow-lg">
-        <button
-          type="button"
-          onClick={(event) => {
-            closeActionsMenu(event);
-            onEdit(application);
-          }}
-          className="w-full rounded-xl px-3 py-2 text-left text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          onClick={(event) => {
-            closeActionsMenu(event);
-            onDelete(application);
-          }}
-          className="mt-1 w-full rounded-xl px-3 py-2 text-left text-sm text-destructive transition hover:bg-destructive/10"
-        >
-          Delete
-        </button>
-      </div>
-    </details>
+    <ApplicationRowActionsMenu
+      onEdit={() => onEdit(application)}
+      onDelete={() => onDelete(application)}
+    />
   );
 }
 

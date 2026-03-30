@@ -5,6 +5,7 @@ import {
 } from "@/features/applications/config";
 import type { ApplicationCardData } from "@/features/applications/components/application-card";
 import type { ApplicationTableRow } from "@/features/applications/components/applications-table";
+import type { PipelineColumn } from "@/features/applications/server/pipeline-board";
 import type { ReminderApplicationOption, ReminderListItem } from "@/features/reminders/types";
 import type { ResumeApplicationOption, ResumeListItem } from "@/features/resumes/types";
 
@@ -278,6 +279,78 @@ export const mockPipelineColumns: PipelineColumnFixture[] = [
         appliedDate: "Feb 27, 2026",
         sourceLabel: "Other",
         updatedAt: "Mar 14, 2026",
+      },
+    ],
+  },
+  {
+    label: "Rejected",
+    status: "REJECTED",
+    items: [],
+  },
+];
+
+export const mockPipelineBoardColumns: PipelineColumn[] = [
+  {
+    label: "Wishlist",
+    status: "WISHLIST",
+    items: [
+      {
+        id: "wishlist-1",
+        company: "Ramp",
+        role: "Product Engineer",
+        appliedDate: null,
+        source: "Referral",
+        updatedAt: "2026-03-15T12:00:00.000Z",
+      },
+    ],
+  },
+  {
+    label: "Applied",
+    status: "APPLIED",
+    items: [
+      {
+        id: "applied-1",
+        company: "Linear",
+        role: "Frontend Engineer",
+        appliedDate: "2026-03-08T12:00:00.000Z",
+        source: "Company site",
+        updatedAt: "2026-03-16T12:00:00.000Z",
+      },
+      {
+        id: "applied-2",
+        company: "Figma",
+        role: "Design Engineer",
+        appliedDate: "2026-03-06T12:00:00.000Z",
+        source: "LinkedIn",
+        updatedAt: "2026-03-13T12:00:00.000Z",
+      },
+    ],
+  },
+  {
+    label: "Interview",
+    status: "INTERVIEW",
+    items: [
+      {
+        id: "interview-1",
+        company: "Vercel",
+        role: "Product Engineer",
+        appliedDate: "2026-03-10T12:00:00.000Z",
+        source: "Company site",
+        updatedAt: "2026-03-18T12:00:00.000Z",
+      },
+    ],
+  },
+  {
+    label: "Offer",
+    status: "OFFER",
+    items: [
+      {
+        id: "offer-1",
+        company: "PostHog",
+        role: "Fullstack Engineer",
+        appliedDate: "2026-02-27T12:00:00.000Z",
+        source: "Other",
+        updatedAt: "2026-03-14T12:00:00.000Z",
       },
     ],
   },

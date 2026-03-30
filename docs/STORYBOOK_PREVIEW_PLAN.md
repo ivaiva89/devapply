@@ -61,10 +61,12 @@ Covered now:
 - `features/applications/components/application-form-modal-presenter.tsx`
 - `features/applications/components/application-delete-dialog-presenter.tsx`
 - `features/applications/components/new-application-trigger.tsx`
+- `features/applications/components/application-row-actions-menu.tsx`
 - `features/applications/components/application-card.tsx`
 - `features/applications/components/application-kanban-column.tsx`
 - `features/applications/components/applications-empty-state.tsx`
 - `features/applications/components/applications-table.tsx`
+- `features/applications/components/pipeline-board-presenter.tsx`
 - `features/applications/components/pipeline-empty-state.tsx`
 - `features/billing/components/upgrade-prompt.tsx`
 - `features/reminders/components/reminders-empty-state.tsx`
@@ -72,7 +74,6 @@ Covered now:
 
 Story-safe refactor still needed:
 
-- `features/applications/components/pipeline-board.tsx`
 - navigation components that depend on Clerk session state
 
 ## Preview route coverage
@@ -82,7 +83,7 @@ The preview route should keep static showcase coverage for:
 - dashboard analytics and list sections
 - dashboard empty, loading, and error states
 - applications table states
-- pipeline composition
+- pipeline composition and row actions
 - reminders and resumes screen composition
 - billing and upgrade states
 
