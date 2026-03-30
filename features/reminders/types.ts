@@ -33,3 +33,15 @@ export type DeleteReminderActionState = {
   status: "idle" | "error" | "success";
   error?: string;
 };
+
+export type ReminderFormValues = {
+  title: string;
+  remindAt: string;
+  applicationId: string;
+};
+
+export type UpdateReminderActionState = {
+  status: "idle" | "error" | "success";
+  error?: string;
+  values: ReminderFormValues;
+};

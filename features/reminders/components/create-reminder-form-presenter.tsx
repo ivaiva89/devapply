@@ -1,8 +1,11 @@
 import type { ComponentProps, RefObject } from "react";
 
-import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  createEmptyReminderFormValues,
+  toReminderFormValues,
+} from "@/features/reminders/reminder-form";
+import { ReminderFormFields } from "@/features/reminders/components/reminder-form-fields";
 import type { ReminderApplicationOption } from "@/features/reminders/types";
 
 type CreateReminderFormPresenterProps = {
@@ -15,9 +18,6 @@ type CreateReminderFormPresenterProps = {
   isPending?: boolean;
 };
 
-const selectInputClasses =
-  "flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 dark:bg-input/30 dark:disabled:bg-input/80";
-
 export function CreateReminderFormPresenter({
   action,
   applicationOptions,
@@ -27,9 +27,13 @@ export function CreateReminderFormPresenter({
   idPrefix = "create-reminder",
   isPending = false,
 }: CreateReminderFormPresenterProps) {
-  const titleId = `${idPrefix}-title`;
-  const remindAtId = `${idPrefix}-remind-at`;
-  const applicationId = `${idPrefix}-application-id`;
+  const values = canCreate
+    ? createEmptyReminderFormValues()
+    : toReminderFormValues({
+        applicationId: "",
+        remindAt: "",
+        title: "",
+      });
 
   return (
     <form
@@ -49,62 +53,17 @@ export function CreateReminderFormPresenter({
         </p>
       </CardHeader>
 
-      <CardContent className="mt-6 space-y-4 px-0">
-        <div className="space-y-2">
-          <label htmlFor={titleId} className="text-sm font-medium text-foreground">
-            Title
-          </label>
-          <Input
-            id={titleId}
-            name="title"
-            placeholder="Follow up with hiring manager"
-            disabled={!canCreate || isPending}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor={remindAtId} className="text-sm font-medium text-foreground">
-            Remind at
-          </label>
-          <Input
-            id={remindAtId}
-            name="remindAt"
-            type="datetime-local"
-            disabled={!canCreate || isPending}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor={applicationId} className="text-sm font-medium text-foreground">
-            Linked application
-          </label>
-          <select
-            id={applicationId}
-            name="applicationId"
-            disabled={!canCreate || isPending}
-            defaultValue=""
-            className={selectInputClasses}
-          >
-            <option value="">No linked application</option>
-            {applicationOptions.map((application) => (
-              <option key={application.id} value={application.id}>
-                {application.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {error ? (
-          <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {error}
-          </p>
-        ) : null}
-
-        <Button type="submit" disabled={!canCreate || isPending}>
-          {isPending ? "Saving..." : "Create reminder"}
-        </Button>
+      <CardContent className="mt-6 px-0">
+        <ReminderFormFields
+          applicationOptions={applicationOptions}
+          error={error}
+          idPrefix={idPrefix}
+          isDisabled={!canCreate}
+          isPending={isPending}
+          submitLabel="Create reminder"
+          submittingLabel="Saving..."
+          values={values}
+        />
       </CardContent>
     </form>
   );

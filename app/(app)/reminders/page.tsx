@@ -48,7 +48,10 @@ export default async function RemindersPage() {
         />
         <div className="space-y-4">
           {data.reminders.length > 0 ? (
-            <RemindersList reminders={data.reminders} />
+            <RemindersList
+              applicationOptions={data.applicationOptions}
+              reminders={data.reminders}
+            />
           ) : (
             <RemindersEmptyState canCreate={data.canCreate} />
           )}

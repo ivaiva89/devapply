@@ -10,7 +10,7 @@ setup, or missing implementation work.
 - [ ] Pipeline view works correctly
 - [ ] Dashboard shows useful metrics
 - [ ] Resume upload works
-- [ ] Reminders creation/edit/delete works
+- [x] Reminders creation/edit/delete works
 - [ ] Free vs Pro feature gating works
 
 ## Reliability

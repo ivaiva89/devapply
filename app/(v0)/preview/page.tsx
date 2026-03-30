@@ -21,6 +21,7 @@ import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { CreateReminderFormPresenter } from "@/features/reminders/components/create-reminder-form-presenter";
 import { ReminderDeleteDialogPresenter } from "@/features/reminders/components/reminder-delete-dialog-presenter";
+import { ReminderEditDialogPresenter } from "@/features/reminders/components/reminder-edit-dialog-presenter";
 import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
@@ -262,10 +263,22 @@ export default function PreviewPage() {
                         </Button>
                         <Button size="sm">Mark sent</Button>
                         <Button size="sm" variant="ghost">
+                          Edit
+                        </Button>
+                        <Button size="sm" variant="ghost">
                           Delete
                         </Button>
                       </>
                     )}
+                  />
+                  <ReminderEditDialogPresenter
+                    applicationOptions={mockReminderApplicationOptions}
+                    isOpen
+                    values={{
+                      applicationId: "app-1",
+                      remindAt: "2026-03-20T10:30",
+                      title: "Follow up after interview",
+                    }}
                   />
                   <ReminderDeleteDialogPresenter
                     isOpen

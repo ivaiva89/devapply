@@ -1,14 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { ReminderDeleteDialog } from "@/features/reminders/components/reminder-delete-dialog";
+import { ReminderEditDialog } from "@/features/reminders/components/reminder-edit-dialog";
 import { completeReminder } from "@/features/reminders/server/complete-reminder";
 import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
-import type { ReminderListItem } from "@/features/reminders/types";
+import type {
+  ReminderApplicationOption,
+  ReminderListItem,
+} from "@/features/reminders/types";
 
 type RemindersListProps = {
+  applicationOptions: ReminderApplicationOption[];
   reminders: ReminderListItem[];
 };
 
-export function RemindersList({ reminders }: RemindersListProps) {
+export function RemindersList({
+  applicationOptions,
+  reminders,
+}: RemindersListProps) {
   return (
     <RemindersListPresenter
       reminders={reminders}
@@ -29,6 +37,15 @@ export function RemindersList({ reminders }: RemindersListProps) {
                 Mark sent
               </Button>
             </form>
+            <ReminderEditDialog
+              applicationOptions={applicationOptions}
+              reminder={{
+                applicationId: reminder.application?.id,
+                id: reminder.id,
+                remindAt: reminder.remindAt,
+                title: reminder.title,
+              }}
+            />
             <ReminderDeleteDialog reminderId={reminder.id} title={reminder.title} />
           </>
         );
