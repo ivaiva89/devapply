@@ -1,5 +1,6 @@
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { PlanSummary } from "@/features/billing/components/plan-summary";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support";
 
 type SettingsPageProps = {
   searchParams?: Promise<{
@@ -60,6 +61,26 @@ export default async function SettingsPage({
         </section>
       ) : null}
       <PlanSummary plan={user.plan} />
+      <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+          Support
+        </p>
+        <div className="mt-3 space-y-2">
+          <h2 className="text-xl font-semibold tracking-tight text-stone-950">
+            Need account or billing help?
+          </h2>
+          <p className="text-sm leading-6 text-stone-600">
+            Contact the DevApply team directly for billing questions, access
+            issues, or support requests.
+          </p>
+          <a
+            href={SUPPORT_MAILTO}
+            className="inline-flex text-sm font-medium text-primary underline underline-offset-4"
+          >
+            {SUPPORT_EMAIL}
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

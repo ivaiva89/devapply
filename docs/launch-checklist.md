@@ -87,7 +87,7 @@ Local verification reference:
 
 - [ ] Privacy policy available
 - [ ] Terms of service available
-- [ ] Support/contact email visible
+- [x] Support/contact email visible
 
 ## Post-launch
 

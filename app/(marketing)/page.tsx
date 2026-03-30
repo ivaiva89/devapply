@@ -26,6 +26,7 @@ import {
 } from "@/features/billing/config";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { getCurrentUser } from "@/features/auth/server/session";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -534,6 +535,29 @@ export default async function MarketingHomePage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      <section className="rounded-[1.75rem] border border-black/10 bg-white/90 p-6 shadow-sm">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+              Support
+            </p>
+            <h2 className="text-xl font-semibold tracking-tight text-stone-950">
+              Need help before or after signup?
+            </h2>
+            <p className="max-w-2xl text-sm leading-7 text-stone-600">
+              Reach the DevApply team directly for billing questions, account
+              issues, or launch feedback.
+            </p>
+          </div>
+          <a
+            href={SUPPORT_MAILTO}
+            className="text-sm font-medium text-primary underline underline-offset-4"
+          >
+            {SUPPORT_EMAIL}
+          </a>
+        </div>
       </section>
     </div>
   );
