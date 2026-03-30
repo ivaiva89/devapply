@@ -20,6 +20,7 @@ import { BillingActionButtonPresenter } from "@/features/billing/components/bill
 import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { CreateReminderFormPresenter } from "@/features/reminders/components/create-reminder-form-presenter";
+import { ReminderDeleteDialogPresenter } from "@/features/reminders/components/reminder-delete-dialog-presenter";
 import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
@@ -260,8 +261,15 @@ export default function PreviewPage() {
                           Mark done
                         </Button>
                         <Button size="sm">Mark sent</Button>
+                        <Button size="sm" variant="ghost">
+                          Delete
+                        </Button>
                       </>
                     )}
+                  />
+                  <ReminderDeleteDialogPresenter
+                    isOpen
+                    title="Follow up after interview"
                   />
                 </div>
               </section>

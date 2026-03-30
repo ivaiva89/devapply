@@ -15,6 +15,9 @@ const meta = {
           Mark done
         </Button>
         <Button size="sm">Mark sent</Button>
+        <Button size="sm" variant="ghost">
+          Delete
+        </Button>
       </>
     ),
   },

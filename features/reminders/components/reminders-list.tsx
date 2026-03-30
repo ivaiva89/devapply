@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ReminderDeleteDialog } from "@/features/reminders/components/reminder-delete-dialog";
 import { completeReminder } from "@/features/reminders/server/complete-reminder";
 import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
 import type { ReminderListItem } from "@/features/reminders/types";
@@ -28,6 +29,7 @@ export function RemindersList({ reminders }: RemindersListProps) {
                 Mark sent
               </Button>
             </form>
+            <ReminderDeleteDialog reminderId={reminder.id} title={reminder.title} />
           </>
         );
       }}

@@ -28,3 +28,8 @@ export type CreateReminderActionState = {
   status: "idle" | "error" | "success";
   error?: string;
 };
+
+export type DeleteReminderActionState = {
+  status: "idle" | "error" | "success";
+  error?: string;
+};
