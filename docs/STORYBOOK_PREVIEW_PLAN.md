@@ -12,6 +12,31 @@ Use:
   mock data
 - `lib/mocks/ui-fixtures.ts` as the shared fixture source
 
+## Presenter vs wrapper rule
+
+For feature UI that needs Storybook or `/preview` coverage:
+
+- presenters render the visual surface and stay backend-agnostic
+- wrappers handle auth, server actions, mutations, refresh logic, and
+  provider/session wiring
+- presenters live beside wrappers in `features/*/components/`
+- preview and Storybook should import presenters or already-pure
+  presentational components, not wrappers that depend on backend state
+
+Use a presenter split when a component would otherwise import:
+
+- feature `server/` modules
+- Clerk or auth helpers
+- Prisma helpers
+- storage or billing integrations
+
+Keep wrappers thin:
+
+- map real data into presenter props
+- call mutations
+- handle optimistic UI or refresh behavior
+- avoid adding extra visual logic when the presenter can own it
+
 ## Reusable UI components
 
 Covered now:

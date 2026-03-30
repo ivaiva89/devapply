@@ -4,7 +4,6 @@ import { ApplicationStatus, Prisma } from "@prisma/client";
 
 import { getUserPlan } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/lib/prisma";
-import { applicationSortSelectOptions } from "@/features/applications/config";
 import {
   type ApplicationListItem,
   applicationSortOptions,

@@ -5,7 +5,6 @@ import {
 } from "@/features/applications/config";
 import type { ApplicationCardData } from "@/features/applications/components/application-card";
 import type { ApplicationTableRow } from "@/features/applications/components/applications-table";
-import type { PipelineColumn } from "@/features/applications/server/pipeline-board";
 import type { ReminderApplicationOption, ReminderListItem } from "@/features/reminders/types";
 import type { ResumeApplicationOption, ResumeListItem } from "@/features/resumes/types";
 
@@ -57,6 +56,19 @@ type PipelineColumnFixture = {
   label: string;
   status: ApplicationStatusValue;
   items: ApplicationCardData[];
+};
+
+type PipelineBoardColumnFixture = {
+  label: string;
+  status: ApplicationStatusValue;
+  items: Array<{
+    id: string;
+    company: string;
+    role: string;
+    appliedDate: string | null;
+    source: string;
+    updatedAt: string;
+  }>;
 };
 
 function createApplicationRow(input: {
@@ -301,7 +313,7 @@ export const mockPipelineColumns: PipelineColumnFixture[] = [
   },
 ];
 
-export const mockPipelineBoardColumns: PipelineColumn[] = [
+export const mockPipelineBoardColumns: PipelineBoardColumnFixture[] = [
   {
     label: "Wishlist",
     status: "WISHLIST",

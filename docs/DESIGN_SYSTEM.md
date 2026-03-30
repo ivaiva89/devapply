@@ -64,6 +64,44 @@ Rules:
 - when major screen presentation changes, update both Storybook and
   `/preview`
 
+## Presenter and wrapper split
+
+Use this split for Storybook-safe feature UI:
+
+- `*-presenter.tsx` files hold visual rendering only
+- wrapper components keep auth, server actions, mutations, refresh
+  logic, route params, and provider/session wiring
+- presenters belong in `features/*/components/` beside their wrappers
+- server logic stays in `features/*/server/`, never in presenters
+
+Create a presenter when:
+
+- the UI should appear in Storybook
+- the same visual surface should appear in `/preview`
+- the current component mixes rendering with server or session wiring
+
+A wrapper is enough when:
+
+- the component is only a thin adapter around a presenter
+- it exists to call server actions, route handlers, `router.refresh()`,
+  Clerk, or billing/storage integrations
+
+Presenter rules:
+
+- accept serializable props or render slots
+- do not import Prisma, Clerk, auth server modules, feature `server/`
+  modules, or `server-only`
+- do not fetch data
+- do not read secrets, cookies, headers, or authenticated user state
+
+Wrapper rules:
+
+- read data from server modules or hooks
+- enforce auth and ownership outside the presenter
+- map server/domain types into presenter props
+- stay small; if wrapper logic grows, move business rules back into
+  feature `server/` modules
+
 ## Buttons
 
 Primary

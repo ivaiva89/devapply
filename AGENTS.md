@@ -111,8 +111,13 @@ UI workflow guidance:
     when they are backend-agnostic
 -   server-bound components should be split into pure presenters and thin
     wrappers before Storybook coverage is added
+-   presenters render UI only; wrappers handle auth, server actions,
+    mutations, refresh logic, and provider/session wiring
 -   Storybook and `/preview` must use mock data only, never auth,
     Prisma, or server-only modules
+-   lint-enforced import restrictions apply to `stories/`,
+    `app/(v0)/preview`, and `lib/mocks`; do not bypass them by moving
+    backend imports into preview-safe files
 -   prefer shared fixtures from `lib/mocks/ui-fixtures.ts` over repeated
     inline mock data
 
