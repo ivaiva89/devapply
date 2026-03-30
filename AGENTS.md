@@ -30,6 +30,8 @@ After completing work agents must:
 -   reconcile affected setup or workflow docs with the real codebase state
 -   if billing-related docs or code change, also review pricing, webhook,
     env, and entitlement docs in the same pass
+-   if reusable UI or major screen-level presentation changes, also
+    review Storybook coverage and `app/(v0)/preview/page.tsx`
 
 ------------------------------------------------------------------------
 
@@ -101,6 +103,18 @@ Billing guidance:
     not provider redirect params
 -   provider-specific checkout and webhook handling must not leak across
     the rest of the app
+
+UI workflow guidance:
+
+-   new reusable UI components must ship with Storybook stories
+-   major presentational feature components should have Storybook stories
+    when they are backend-agnostic
+-   server-bound components should be split into pure presenters and thin
+    wrappers before Storybook coverage is added
+-   Storybook and `/preview` must use mock data only, never auth,
+    Prisma, or server-only modules
+-   prefer shared fixtures from `lib/mocks/ui-fixtures.ts` over repeated
+    inline mock data
 
 ------------------------------------------------------------------------
 

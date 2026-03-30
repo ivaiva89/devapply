@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ApplicationsStatusChartSection } from "@/features/dashboard/components/applications-status-chart-section";
+import { PipelineOverviewCard } from "@/features/dashboard/components/pipeline-overview-card";
 import { mockApplicationsStatusDistribution } from "@/lib/mocks/ui-fixtures";
 
 const meta = {
-  title: "Features/ApplicationsStatusChartSection",
-  component: ApplicationsStatusChartSection,
+  title: "Features/Dashboard/PipelineOverviewCard",
+  component: PipelineOverviewCard,
   args: {
     items: mockApplicationsStatusDistribution,
     isEmpty: false,
   },
-} satisfies Meta<typeof ApplicationsStatusChartSection>;
+} satisfies Meta<typeof PipelineOverviewCard>;
 
 export default meta;
 

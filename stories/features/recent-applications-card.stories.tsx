@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { RecentApplicationsSection } from "@/features/dashboard/components/recent-applications-section";
+import { RecentApplicationsCard } from "@/features/dashboard/components/recent-applications-card";
 import { mockRecentApplications } from "@/lib/mocks/ui-fixtures";
 
 const meta = {
-  title: "Features/RecentApplicationsSection",
-  component: RecentApplicationsSection,
+  title: "Features/Dashboard/RecentApplicationsCard",
+  component: RecentApplicationsCard,
   args: {
     items: mockRecentApplications,
   },
-} satisfies Meta<typeof RecentApplicationsSection>;
+} satisfies Meta<typeof RecentApplicationsCard>;
 
 export default meta;
 

@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/design/section-header";
 import { ApplicationsTable } from "@/features/applications/components/applications-table";
@@ -7,15 +6,22 @@ import { ApplicationCard } from "@/features/applications/components/application-
 import { ApplicationKanbanColumn } from "@/features/applications/components/application-kanban-column";
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
+import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
-import { ApplicationsStatusChartSection } from "@/features/dashboard/components/applications-status-chart-section";
 import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
 import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
-import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
-import { RecentApplicationsSection } from "@/features/dashboard/components/recent-applications-section";
-import { UpcomingRemindersSection } from "@/features/dashboard/components/upcoming-reminders-section";
+import { DashboardErrorState } from "@/features/dashboard/components/dashboard-error-state";
+import { DashboardHeader } from "@/features/dashboard/components/dashboard-header";
+import { DashboardLoadingState } from "@/features/dashboard/components/dashboard-loading-state";
+import { DashboardShell } from "@/features/dashboard/components/dashboard-shell";
+import { PipelineOverviewCard } from "@/features/dashboard/components/pipeline-overview-card";
+import { RecentApplicationsCard } from "@/features/dashboard/components/recent-applications-card";
+import { StatsGrid } from "@/features/dashboard/components/stats-grid";
+import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
 import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
+import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
+import { ResumeListPresenter } from "@/features/resumes/components/resume-list-presenter";
 import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
 import {
   mockApplicationsOverTime,
@@ -29,22 +35,6 @@ import {
   mockResumeListItems,
   mockUpcomingReminders,
 } from "@/lib/mocks/ui-fixtures";
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function formatBytes(value: number) {
-  if (value < 1024 * 1024) {
-    return `${Math.round(value / 1024)} KB`;
-  }
-
-  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export default function PreviewPage() {
   return (
@@ -69,26 +59,70 @@ export default function PreviewPage() {
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
-            <DashboardStats items={mockDashboardKpis} />
-            <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-              <ApplicationsStatusChartSection
-                items={mockApplicationsStatusDistribution}
-                isEmpty={false}
-              />
-              <ApplicationsOverTimeChartSection
-                items={mockApplicationsOverTime}
-                isEmpty={false}
-              />
+            <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
+              <DashboardShell>
+                <DashboardHeader
+                  title="Dashboard"
+                  description="Job search overview — pipeline volume, recent activity, and follow-ups."
+                />
+                <StatsGrid items={mockDashboardKpis} />
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+                  <ApplicationsOverTimeChartSection
+                    items={mockApplicationsOverTime}
+                    isEmpty={false}
+                  />
+                  <PipelineOverviewCard
+                    items={mockApplicationsStatusDistribution}
+                    isEmpty={false}
+                  />
+                </div>
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+                  <RecentApplicationsCard items={mockRecentApplications} />
+                  <UpcomingRemindersCard items={mockUpcomingReminders} />
+                </div>
+                <ConversionSummarySection
+                  items={mockDashboardConversions}
+                  isEmpty={false}
+                />
+              </DashboardShell>
+            </section>
+
+            <div className="grid gap-6 xl:grid-cols-3">
+              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+                <SectionHeader
+                  eyebrow="Dashboard state"
+                  title="Empty"
+                  description="Route-level empty state using the same dashboard presenter."
+                />
+                <div className="mt-6">
+                  <DashboardEmptyState />
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+                <SectionHeader
+                  eyebrow="Dashboard state"
+                  title="Loading"
+                  description="Skeleton state matches the shipped dashboard surface."
+                />
+                <div className="mt-6">
+                  <DashboardLoadingState />
+                </div>
+              </section>
+
+              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+                <SectionHeader
+                  eyebrow="Dashboard state"
+                  title="Error"
+                  description="Error card uses the same near-black and indigo system."
+                />
+                <div className="mt-6">
+                  <DashboardErrorState
+                    description="Previewing the dashboard error state without a retry handler."
+                  />
+                </div>
+              </section>
             </div>
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-              <RecentApplicationsSection items={mockRecentApplications} />
-              <UpcomingRemindersSection items={mockUpcomingReminders} />
-            </div>
-            <ConversionSummarySection
-              items={mockDashboardConversions}
-              isEmpty={false}
-            />
-            <DashboardEmptyState />
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">
@@ -146,34 +180,20 @@ export default function PreviewPage() {
                 <SectionHeader
                   eyebrow="Reminders"
                   title="Follow-up list mock"
-                  description="Preview route stays UI-only, so reminder rows are rendered as static examples instead of live mutation forms."
+                  description="Preview route stays UI-only, so reminder actions stay visual while the presenter matches the production list."
                 />
-                <div className="mt-6 space-y-4">
-                  {mockReminderListItems.map((item) => (
-                    <Card key={item.id} className="rounded-3xl border border-border/70 bg-background shadow-none">
-                      <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="space-y-2">
-                          <p className="text-lg font-semibold tracking-tight text-foreground">
-                            {item.title}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Remind at {formatDate(item.remindAt)}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {item.application
-                              ? `${item.application.company} - ${item.application.role}`
-                              : "General reminder"}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            Mark done
-                          </Button>
-                          <Button size="sm">Mark sent</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="mt-6">
+                  <RemindersListPresenter
+                    reminders={mockReminderListItems}
+                    renderActions={() => (
+                      <>
+                        <Button size="sm" variant="outline">
+                          Mark done
+                        </Button>
+                        <Button size="sm">Mark sent</Button>
+                      </>
+                    )}
+                  />
                 </div>
               </section>
 
@@ -181,47 +201,17 @@ export default function PreviewPage() {
                 <SectionHeader
                   eyebrow="Resumes"
                   title="Resume library mock"
-                  description="Resume upload and attachment flows stay server-bound in production, but file cards can still be reviewed here with placeholder metadata."
+                  description="Resume upload and attachment flows stay server-bound in production, but the visual list now reuses the shared presenter."
                 />
-                <div className="mt-6 space-y-4">
-                  {mockResumeListItems.map((resume) => (
-                    <Card key={resume.id} className="rounded-3xl border border-border/70 bg-background shadow-none">
-                      <CardHeader>
-                        <CardTitle>{resume.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="space-y-1 text-sm text-muted-foreground">
-                          <p>{resume.fileName}</p>
-                          <p>
-                            {formatBytes(resume.fileSizeBytes)} · {resume.mimeType} · Uploaded{" "}
-                            {formatDate(resume.uploadedAt)}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {resume.attachedApplications.length > 0 ? (
-                            resume.attachedApplications.map((application) => (
-                              <span
-                                key={application.id}
-                                className="rounded-full bg-muted px-3 py-2 text-sm text-muted-foreground"
-                              >
-                                {application.company} - {application.role}
-                              </span>
-                            ))
-                          ) : (
-                            <p className="text-sm text-muted-foreground">
-                              No linked applications yet.
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            Open file
-                          </Button>
-                          <Button size="sm">Attach resume</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="mt-6">
+                  <ResumeListPresenter
+                    resumes={mockResumeListItems}
+                    renderAttachForm={() => (
+                      <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+                        Attach form preview
+                      </div>
+                    )}
+                  />
                 </div>
               </section>
             </div>
@@ -237,44 +227,20 @@ export default function PreviewPage() {
               description="Free plan users can track 30 applications, keep 1 resume, and hold 3 active reminders. Upgrade states stay previewable here without touching hosted checkout."
             />
             <div className="grid gap-6 lg:grid-cols-2">
-              <Card className="rounded-3xl border border-border/70 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>Free plan summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                      <p className="text-sm text-muted-foreground">Applications</p>
-                      <p className="mt-2 text-2xl font-semibold text-foreground">30</p>
-                    </div>
-                    <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                      <p className="text-sm text-muted-foreground">Resumes</p>
-                      <p className="mt-2 text-2xl font-semibold text-foreground">1</p>
-                    </div>
-                    <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                      <p className="text-sm text-muted-foreground">Reminders</p>
-                      <p className="mt-2 text-2xl font-semibold text-foreground">3</p>
-                    </div>
-                  </div>
-                  <Button>Upgrade to Pro</Button>
-                </CardContent>
-              </Card>
+              <PlanSummaryPresenter
+                plan="FREE"
+                actions={
+                  <>
+                    <Button>Upgrade to Pro</Button>
+                    <Button variant="outline">Manage existing billing</Button>
+                  </>
+                }
+              />
 
-              <Card className="rounded-3xl border border-border/70 bg-card shadow-sm">
-                <CardHeader>
-                  <CardTitle>Pro plan summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 text-sm text-muted-foreground">
-                  <p>
-                    Pro removes the MVP usage caps and routes ongoing subscription
-                    management into Polar&apos;s hosted customer portal.
-                  </p>
-                  <div className="flex gap-2">
-                    <Button variant="outline">Manage billing</Button>
-                    <Button variant="ghost">Portal unavailable state</Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <PlanSummaryPresenter
+                plan="PRO"
+                actions={<Button variant="outline">Manage billing</Button>}
+              />
             </div>
           </TabsContent>
         </Tabs>

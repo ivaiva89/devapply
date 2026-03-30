@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { UpcomingRemindersSection } from "@/features/dashboard/components/upcoming-reminders-section";
+import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
 import { mockUpcomingReminders } from "@/lib/mocks/ui-fixtures";
 
 const meta = {
-  title: "Features/UpcomingRemindersSection",
-  component: UpcomingRemindersSection,
+  title: "Features/Dashboard/UpcomingRemindersCard",
+  component: UpcomingRemindersCard,
   args: {
     items: mockUpcomingReminders,
   },
-} satisfies Meta<typeof UpcomingRemindersSection>;
+} satisfies Meta<typeof UpcomingRemindersCard>;
 
 export default meta;
 

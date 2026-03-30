@@ -39,14 +39,19 @@ Follow-up refactor needed before Storybook coverage:
 
 Covered now:
 
-- `features/dashboard/components/dashboard-stats.tsx`
+- `features/dashboard/components/dashboard-header.tsx`
+- `features/dashboard/components/dashboard-loading-state.tsx`
+- `features/dashboard/components/dashboard-error-state.tsx`
+- `features/dashboard/components/stats-grid.tsx`
 - `features/dashboard/components/dashboard-empty-state.tsx`
-- `features/dashboard/components/dashboard-section-empty.tsx`
-- `features/dashboard/components/applications-status-chart-section.tsx`
+- `features/dashboard/components/pipeline-overview-card.tsx`
 - `features/dashboard/components/applications-over-time-chart-section.tsx`
 - `features/dashboard/components/conversion-summary-section.tsx`
-- `features/dashboard/components/recent-applications-section.tsx`
-- `features/dashboard/components/upcoming-reminders-section.tsx`
+- `features/dashboard/components/recent-applications-card.tsx`
+- `features/dashboard/components/upcoming-reminders-card.tsx`
+- `features/reminders/components/reminders-list-presenter.tsx`
+- `features/resumes/components/resume-list-presenter.tsx`
+- `features/billing/components/plan-summary-presenter.tsx`
 - `features/applications/components/application-status-badge.tsx`
 - `features/applications/components/application-card.tsx`
 - `features/applications/components/application-kanban-column.tsx`
@@ -64,12 +69,9 @@ Story-safe refactor still needed:
 - `features/applications/components/application-form-modal.tsx`
 - `features/applications/components/new-application-modal.tsx`
 - `features/applications/components/application-delete-dialog.tsx`
-- `features/reminders/components/reminders-list.tsx`
 - `features/reminders/components/create-reminder-form.tsx`
-- `features/resumes/components/resume-list.tsx`
 - `features/resumes/components/upload-resume-form.tsx`
 - `features/resumes/components/attach-resume-form.tsx`
-- `features/billing/components/plan-summary.tsx`
 - `features/billing/components/upgrade-button.tsx`
 - `features/billing/components/customer-portal-button.tsx`
 - navigation components that depend on Clerk session state
@@ -79,6 +81,7 @@ Story-safe refactor still needed:
 The preview route should keep static showcase coverage for:
 
 - dashboard analytics and list sections
+- dashboard empty, loading, and error states
 - applications table states
 - pipeline composition
 - reminders and resumes screen composition

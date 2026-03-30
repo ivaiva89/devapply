@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { StatsGrid } from "@/features/dashboard/components/stats-grid";
 import { mockDashboardKpis } from "@/lib/mocks/ui-fixtures";
-import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
 
 const meta = {
-  title: "Features/DashboardStats",
-  component: DashboardStats,
+  title: "Features/Dashboard/StatsGrid",
+  component: StatsGrid,
   args: {
     items: mockDashboardKpis,
   },
-} satisfies Meta<typeof DashboardStats>;
+} satisfies Meta<typeof StatsGrid>;
 
 export default meta;
 
