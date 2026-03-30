@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { DeleteApplicationActionState } from "@/features/applications/application-delete";
 import { deleteApplicationForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { getValidationErrorMessage } from "@/lib/server-action-validation";
 
 const deleteApplicationSchema = z.object({
   applicationId: z
@@ -27,9 +28,7 @@ export async function deleteApplication(
   if (!result.success) {
     return {
       status: "error",
-      error:
-        result.error.issues[0]?.message ??
-        "That application could not be found.",
+      error: getValidationErrorMessage(result.error, "That application could not be found."),
     };
   }
 

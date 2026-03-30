@@ -5,6 +5,10 @@ import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/lib/prisma";
+import {
+  getFormString,
+  getValidationErrorMessage,
+} from "@/lib/server-action-validation";
 
 export type AttachResumeActionState = {
   status: "idle" | "error" | "success";
@@ -27,15 +31,16 @@ export async function attachResumeToApplication(
   const user = await requireCurrentUser();
   const result = attachResumeSchema.safeParse({
     resumeId,
-    applicationId: formData.get("applicationId"),
+    applicationId: getFormString(formData, "applicationId"),
   });
 
   if (!result.success) {
     return {
       status: "error",
-      error:
-        result.error.issues[0]?.message ??
+      error: getValidationErrorMessage(
+        result.error,
         "Choose an application to attach this resume to.",
+      ),
     };
   }
 

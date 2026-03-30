@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/lib/prisma";
+import { getValidationErrorMessage } from "@/lib/server-action-validation";
 import type { DeleteReminderActionState } from "@/features/reminders/types";
 
 const deleteReminderSchema = z.object({
@@ -24,7 +25,7 @@ export async function deleteReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: result.error.issues[0]?.message ?? "That reminder could not be found.",
+      error: getValidationErrorMessage(result.error, "That reminder could not be found."),
     };
   }
 

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { applicationStatusValues, type ApplicationStatusValue } from "@/features/applications/config";
 import { updateApplicationStatusForUser } from "@/features/applications/server/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { getValidationErrorMessage } from "@/lib/server-action-validation";
 
 type UpdateApplicationStatusResult =
   | { status: "success" }
@@ -31,8 +32,10 @@ export async function updateApplicationStatus(
   if (!result.success) {
     return {
       status: "error",
-      message:
-        result.error.issues[0]?.message ?? "The selected status is not valid.",
+      message: getValidationErrorMessage(
+        result.error,
+        "The selected status is not valid.",
+      ),
     };
   }
 

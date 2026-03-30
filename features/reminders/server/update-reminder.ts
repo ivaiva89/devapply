@@ -12,6 +12,10 @@ import {
 } from "@/features/reminders/reminder-form";
 import type { UpdateReminderActionState } from "@/features/reminders/types";
 import { prisma } from "@/lib/prisma";
+import {
+  getFormString,
+  getValidationErrorMessage,
+} from "@/lib/server-action-validation";
 
 const updateReminderSchema = z.object({
   reminderId: z.string().trim().min(1, "That reminder could not be found."),
@@ -43,17 +47,12 @@ export async function updateReminder(
   _prevState: UpdateReminderActionState,
   formData: FormData,
 ): Promise<UpdateReminderActionState> {
-  const titleValue = formData.get("title");
-  const remindAtValue = formData.get("remindAt");
-  const timezoneOffsetMinutesValue = formData.get("timezoneOffsetMinutes");
-  const applicationIdValue = formData.get("applicationId");
   const rawValues = {
     reminderId,
-    title: typeof titleValue === "string" ? titleValue : "",
-    remindAt: typeof remindAtValue === "string" ? remindAtValue : "",
-    timezoneOffsetMinutes:
-      typeof timezoneOffsetMinutesValue === "string" ? timezoneOffsetMinutesValue : "",
-    applicationId: typeof applicationIdValue === "string" ? applicationIdValue : "",
+    title: getFormString(formData, "title"),
+    remindAt: getFormString(formData, "remindAt"),
+    timezoneOffsetMinutes: getFormString(formData, "timezoneOffsetMinutes"),
+    applicationId: getFormString(formData, "applicationId"),
   };
 
   const fallbackValues = toReminderFormValues(rawValues);
@@ -62,7 +61,7 @@ export async function updateReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: result.error.issues[0]?.message ?? "Reminder could not be updated.",
+      error: getValidationErrorMessage(result.error, "Reminder could not be updated."),
       values: fallbackValues,
     };
   }

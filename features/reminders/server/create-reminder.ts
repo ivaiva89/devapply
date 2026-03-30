@@ -15,6 +15,10 @@ import {
 } from "@/features/reminders/reminder-form";
 import type { CreateReminderActionState } from "@/features/reminders/types";
 import { prisma } from "@/lib/prisma";
+import {
+  getFormString,
+  getValidationErrorMessage,
+} from "@/lib/server-action-validation";
 
 const createReminderSchema = z.object({
   title: z
@@ -45,17 +49,10 @@ export async function createReminder(
   formData: FormData,
 ): Promise<CreateReminderActionState> {
   const rawValues = {
-    title: typeof formData.get("title") === "string" ? formData.get("title") : "",
-    remindAt:
-      typeof formData.get("remindAt") === "string" ? formData.get("remindAt") : "",
-    timezoneOffsetMinutes:
-      typeof formData.get("timezoneOffsetMinutes") === "string"
-        ? formData.get("timezoneOffsetMinutes")
-        : "",
-    applicationId:
-      typeof formData.get("applicationId") === "string"
-        ? formData.get("applicationId")
-        : "",
+    title: getFormString(formData, "title"),
+    remindAt: getFormString(formData, "remindAt"),
+    timezoneOffsetMinutes: getFormString(formData, "timezoneOffsetMinutes"),
+    applicationId: getFormString(formData, "applicationId"),
   };
 
   const result = createReminderSchema.safeParse(rawValues);
@@ -63,7 +60,7 @@ export async function createReminder(
   if (!result.success) {
     return {
       status: "error",
-      error: result.error.issues[0]?.message ?? "Reminder could not be created.",
+      error: getValidationErrorMessage(result.error, "Reminder could not be created."),
     };
   }
 
