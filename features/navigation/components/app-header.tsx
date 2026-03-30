@@ -1,34 +1,33 @@
+import type { ReactNode } from "react";
 import { UserButton } from "@clerk/nextjs";
 
-import { Badge } from "@/components/ui/badge";
+import { AppHeaderPresenter } from "@/features/navigation/components/app-header-presenter";
 
 type AppHeaderProps = {
   title: string;
   description: string;
+  userControl?: ReactNode;
   userName: string;
   userEmail: string;
   planLabel: string;
 };
 
 export function AppHeader({
+  title,
+  description,
   userName,
   userEmail,
   planLabel,
+  userControl,
 }: AppHeaderProps) {
   return (
-    <header className="flex h-12 items-center justify-end gap-3 border-b border-border px-6">
-      <div className="flex items-center gap-2">
-        <div className="text-right">
-          <p className="text-sm font-medium leading-none text-foreground">
-            {userName}
-          </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">{userEmail}</p>
-        </div>
-        <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-muted-foreground">
-          {planLabel}
-        </Badge>
-        <UserButton />
-      </div>
-    </header>
+    <AppHeaderPresenter
+      title={title}
+      description={description}
+      userName={userName}
+      userEmail={userEmail}
+      planLabel={planLabel}
+      userControl={userControl ?? <UserButton />}
+    />
   );
 }

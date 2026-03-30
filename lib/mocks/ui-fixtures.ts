@@ -47,6 +47,12 @@ type UpcomingReminderItem = {
   company: string | null;
 };
 
+type NavigationShellUser = {
+  email: string;
+  name: string;
+  planLabel: string;
+};
+
 type PipelineColumnFixture = {
   label: string;
   status: ApplicationStatusValue;
@@ -164,6 +170,12 @@ export const mockUpcomingReminders: UpcomingReminderItem[] = [
     company: null,
   },
 ];
+
+export const mockNavigationShellUser: NavigationShellUser = {
+  name: "Avery Johnson",
+  email: "avery@devapply.app",
+  planLabel: "PRO",
+};
 
 export const mockApplicationTableRows: ApplicationTableRow[] = [
   createApplicationRow({

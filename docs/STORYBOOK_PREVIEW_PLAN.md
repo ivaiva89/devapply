@@ -42,6 +42,8 @@ Covered now:
 - `features/dashboard/components/dashboard-header.tsx`
 - `features/dashboard/components/dashboard-loading-state.tsx`
 - `features/dashboard/components/dashboard-error-state.tsx`
+- `features/navigation/components/app-header-presenter.tsx`
+- `features/navigation/components/app-sidebar-presenter.tsx`
 - `features/dashboard/components/stats-grid.tsx`
 - `features/dashboard/components/dashboard-empty-state.tsx`
 - `features/dashboard/components/pipeline-overview-card.tsx`
@@ -74,13 +76,14 @@ Covered now:
 
 Story-safe refactor still needed:
 
-- navigation components that depend on Clerk session state
+- none for the current app shell and feature surface
 
 ## Preview route coverage
 
 The preview route should keep static showcase coverage for:
 
 - dashboard analytics and list sections
+- authenticated app shell chrome
 - dashboard empty, loading, and error states
 - applications table states
 - pipeline composition and row actions

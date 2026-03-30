@@ -31,6 +31,8 @@ import { StatsGrid } from "@/features/dashboard/components/stats-grid";
 import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
 import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
 import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
+import { AppHeaderPresenter } from "@/features/navigation/components/app-header-presenter";
+import { AppSidebarPresenter } from "@/features/navigation/components/app-sidebar-presenter";
 import { AttachResumeFormPresenter } from "@/features/resumes/components/attach-resume-form-presenter";
 import { ResumeListPresenter } from "@/features/resumes/components/resume-list-presenter";
 import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
@@ -41,6 +43,7 @@ import {
   mockApplicationTableRows,
   mockDashboardConversions,
   mockDashboardKpis,
+  mockNavigationShellUser,
   mockPipelineBoardColumns,
   mockReminderApplicationOptions,
   mockRecentApplications,
@@ -65,12 +68,53 @@ export default function PreviewPage() {
 
         <Tabs defaultValue="dashboard" className="gap-6">
           <TabsList className="flex-wrap">
+            <TabsTrigger value="shell">App shell</TabsTrigger>
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
             <TabsTrigger value="organize">Reminders and resumes</TabsTrigger>
             <TabsTrigger value="billing">Billing</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="shell" className="space-y-6">
+            <section className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-sm">
+              <SectionHeader
+                eyebrow="Navigation shell"
+                title="App chrome preview"
+                description="Sidebar and header presenters mirror the authenticated app shell without Clerk or route-header dependencies."
+              />
+              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-background">
+                <div className="grid min-h-[28rem] lg:grid-cols-[13rem_minmax(0,1fr)]">
+                  <div className="border-b border-border/70 lg:border-b-0 lg:border-r">
+                    <AppSidebarPresenter currentPath="/applications" />
+                  </div>
+                  <div className="min-w-0">
+                    <AppHeaderPresenter
+                      title="Application tracker"
+                      description="Protected area for managing applications, interview progress, reminders, and resume assets."
+                      userName={mockNavigationShellUser.name}
+                      userEmail={mockNavigationShellUser.email}
+                      planLabel={mockNavigationShellUser.planLabel}
+                      userControl={
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground">
+                          AJ
+                        </div>
+                      }
+                    />
+                    <div className="p-8">
+                      <DashboardShell>
+                        <DashboardHeader
+                          title="Dashboard"
+                          description="Job search overview — pipeline volume, recent activity, and follow-ups."
+                        />
+                        <StatsGrid items={mockDashboardKpis} />
+                      </DashboardShell>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
             <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
