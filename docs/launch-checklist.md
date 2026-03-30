@@ -85,7 +85,7 @@ Local verification reference:
 
 ## Trust
 
-- [ ] Privacy policy available
+- [x] Privacy policy available
 - [ ] Terms of service available
 - [x] Support/contact email visible
 

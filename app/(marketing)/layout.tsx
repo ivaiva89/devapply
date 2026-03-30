@@ -66,6 +66,14 @@ export default async function MarketingLayout({
                 </nav>
               </header>
               <main className="flex-1 py-10">{children}</main>
+              <footer className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 px-2 py-6 text-sm text-stone-500">
+                <p>DevApply</p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Link href="/privacy" className="transition hover:text-stone-950">
+                    Privacy policy
+                  </Link>
+                </div>
+              </footer>
             </div>
           </div>
         </ClerkProvider>
