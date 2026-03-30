@@ -174,10 +174,10 @@ export default async function MarketingHomePage() {
               Job application tracker for developers
             </Badge>
             <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
                 Track every application in one developer-first workflow.
               </h1>
-              <p className="max-w-2xl text-base leading-7 text-stone-600">
+              <p className="max-w-2xl text-base leading-7 text-muted-foreground">
                 DevApply keeps applications, interview stages, reminders, and
                 resume versions together so your search stays structured without
                 turning into a spreadsheet maintenance project.
@@ -188,7 +188,10 @@ export default async function MarketingHomePage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-in"
-              className={cn(buttonVariants({ size: "lg" }), "rounded-full px-5")}
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "rounded-full px-5",
+              )}
             >
               Sign up free
             </Link>
@@ -208,24 +211,24 @@ export default async function MarketingHomePage() {
               <Badge
                 key={fact}
                 variant="outline"
-                className="h-auto rounded-full border-stone-200 bg-white/80 px-3 py-1 text-xs text-stone-600"
+                className="h-auto rounded-full border-border bg-card/80 px-3 py-1 text-xs text-muted-foreground"
               >
                 {fact}
               </Badge>
             ))}
           </div>
 
-          <p className="text-sm leading-7 text-stone-600">
+          <p className="text-sm leading-7 text-muted-foreground">
             Built for developers managing roughly 20 to 200 active applications.
           </p>
         </div>
 
-        <Card className="rounded-[2rem] border border-black/10 bg-stone-950 text-white shadow-sm">
+        <Card className="rounded-[2rem] border border-border/70 bg-foreground text-background shadow-sm">
           <CardHeader className="px-6 pt-6 sm:px-8 sm:pt-8">
             <CardTitle className="text-2xl font-semibold tracking-tight">
               Core workflow preview
             </CardTitle>
-            <CardDescription className="max-w-md text-sm leading-6 text-stone-300">
+            <CardDescription className="max-w-md text-sm leading-6 text-background/70">
               The MVP stays focused on the parts of the search developers repeat
               every week.
             </CardDescription>
@@ -233,10 +236,10 @@ export default async function MarketingHomePage() {
           <CardContent className="space-y-4 px-6 pb-6 sm:px-8 sm:pb-8">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
                   Applications
                 </p>
-                <p className="text-xs text-stone-400">Table view</p>
+                <p className="text-xs text-background/60">Table view</p>
               </div>
               <div className="mt-4 space-y-3">
                 {previewApplications.map((application) => (
@@ -249,11 +252,11 @@ export default async function MarketingHomePage() {
                         <p className="text-sm font-semibold text-white">
                           {application.role}
                         </p>
-                        <p className="mt-1 text-sm text-stone-300">
+                        <p className="mt-1 text-sm text-background/70">
                           {application.note}
                         </p>
                       </div>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-xs text-stone-200">
+                      <span className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-xs text-background/80">
                         {application.stage}
                       </span>
                     </div>
@@ -264,34 +267,34 @@ export default async function MarketingHomePage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
                   Pipeline
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {previewStages.map((stage) => (
                     <span
                       key={stage}
-                      className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-stone-200"
+                      className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-background/80"
                     >
                       {stage}
                     </span>
                   ))}
                 </div>
-                <p className="mt-4 text-sm leading-6 text-stone-300">
-                  Move roles forward without rebuilding your process in a generic
-                  project board.
+                <p className="mt-4 text-sm leading-6 text-background/70">
+                  Move roles forward without rebuilding your process in a
+                  generic project board.
                 </p>
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
                   Reminders
                 </p>
                 <div className="mt-4 space-y-3">
                   {previewReminders.map((reminder) => (
                     <div key={reminder} className="flex items-start gap-2.5">
                       <span className="mt-1 size-2 rounded-full bg-accent" />
-                      <p className="text-sm leading-6 text-stone-300">
+                      <p className="text-sm leading-6 text-background/70">
                         {reminder}
                       </p>
                     </div>
@@ -305,13 +308,13 @@ export default async function MarketingHomePage() {
 
       <section id="developers" className="space-y-6">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             Value Proposition
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-stone-950">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
             Built around the messy middle of a real developer search.
           </h2>
-          <p className="text-sm leading-7 text-stone-600">
+          <p className="text-sm leading-7 text-muted-foreground">
             The product focuses on application volume, interview movement,
             follow-ups, and resume variants. It avoids bloated CRM behavior and
             keeps the workflow small enough to use every day.
@@ -321,14 +324,14 @@ export default async function MarketingHomePage() {
           {developerValueProps.map((item) => (
             <Card
               key={item.title}
-              className="rounded-[1.75rem] border border-black/10 bg-white/90 shadow-sm"
+              className="rounded-[1.75rem] border border-border/70 bg-card/90 shadow-sm"
             >
               <CardHeader className="px-6 pt-6">
-                <CardTitle className="text-xl font-semibold tracking-tight text-stone-950">
+                <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
                   {item.title}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-6 pb-6 text-sm leading-7 text-stone-600">
+              <CardContent className="px-6 pb-6 text-sm leading-7 text-muted-foreground">
                 {item.description}
               </CardContent>
             </Card>
@@ -338,13 +341,13 @@ export default async function MarketingHomePage() {
 
       <section id="features" className="space-y-6">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             Feature Highlights
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-stone-950">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
             The launch scope is intentionally practical.
           </h2>
-          <p className="text-sm leading-7 text-stone-600">
+          <p className="text-sm leading-7 text-muted-foreground">
             DevApply covers the workflow that matters during an active search:
             clear application tracking, a visible pipeline, reminder support,
             resume attachments, and basic funnel insight.
@@ -357,16 +360,16 @@ export default async function MarketingHomePage() {
             return (
               <Card
                 key={item.title}
-                className="rounded-[1.75rem] border border-black/10 bg-white/90 shadow-sm"
+                className="rounded-[1.75rem] border border-border/70 bg-card/90 shadow-sm"
               >
                 <CardHeader className="px-6 pt-6">
                   <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <Icon className="size-5" />
                   </div>
-                  <CardTitle className="pt-3 text-xl font-semibold tracking-tight text-stone-950">
+                  <CardTitle className="pt-3 text-xl font-semibold tracking-tight text-foreground">
                     {item.title}
                   </CardTitle>
-                  <CardDescription className="text-sm leading-7 text-stone-600">
+                  <CardDescription className="text-sm leading-7 text-muted-foreground">
                     {item.description}
                   </CardDescription>
                 </CardHeader>
@@ -378,13 +381,13 @@ export default async function MarketingHomePage() {
 
       <section id="pricing" className="space-y-6">
         <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             Pricing
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-stone-950">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
             Start free. Remove the caps when your search needs more room.
           </h2>
-          <p className="text-sm leading-7 text-stone-600">
+          <p className="text-sm leading-7 text-muted-foreground">
             Both plans use the same product. Pro removes the limits on
             applications, reminders, and resume versions when the search grows.
           </p>
@@ -394,10 +397,10 @@ export default async function MarketingHomePage() {
             <Card
               key={tier.name}
               className={cn(
-                "rounded-[1.75rem] border bg-white shadow-sm",
+                "rounded-[1.75rem] border bg-card shadow-sm",
                 tier.highlighted
                   ? "border-primary/20 ring-2 ring-primary/10"
-                  : "border-black/10 bg-white/90",
+                  : "border-border/70 bg-card/90",
               )}
             >
               <CardHeader className="px-6 pt-6">
@@ -406,25 +409,25 @@ export default async function MarketingHomePage() {
                     Launch plan
                   </div>
                 ) : null}
-                <CardTitle className="pt-3 text-2xl font-semibold tracking-tight text-stone-950">
+                <CardTitle className="pt-3 text-2xl font-semibold tracking-tight text-foreground">
                   {tier.name}
                 </CardTitle>
-                <CardDescription className="text-sm leading-7 text-stone-600">
+                <CardDescription className="text-sm leading-7 text-muted-foreground">
                   {tier.description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="px-6 pb-6">
                 <div className="flex items-end gap-2">
-                  <p className="text-4xl font-semibold tracking-tight text-stone-950">
+                  <p className="text-4xl font-semibold tracking-tight text-foreground">
                     {tier.price}
                   </p>
                   {tier.priceSuffix ? (
-                    <p className="pb-1 text-sm text-stone-500">
+                    <p className="pb-1 text-sm text-muted-foreground">
                       {tier.priceSuffix}
                     </p>
                   ) : null}
                 </div>
-                <ul className="mt-5 space-y-3 text-sm leading-7 text-stone-600">
+                <ul className="mt-5 space-y-3 text-sm leading-7 text-muted-foreground">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
                       <span className="mt-1 flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -483,7 +486,9 @@ export default async function MarketingHomePage() {
                         "w-full justify-center rounded-full",
                       )}
                     >
-                      {tier.name === "Pro" ? "Sign up to upgrade" : tier.ctaLabel}
+                      {tier.name === "Pro"
+                        ? "Sign up to upgrade"
+                        : tier.ctaLabel}
                     </Link>
                   )}
                 </div>
@@ -491,23 +496,23 @@ export default async function MarketingHomePage() {
             </Card>
           ))}
         </div>
-        <p className="text-sm leading-7 text-stone-600">
+        <p className="text-sm leading-7 text-muted-foreground">
           Signed-in users can start hosted checkout directly from the Pro tier.
           New users still begin with account creation first.
         </p>
       </section>
 
       <section>
-        <Card className="rounded-[2rem] border border-black/10 bg-stone-950 text-white shadow-sm">
+        <Card className="rounded-[2rem] border border-border/70 bg-foreground text-background shadow-sm">
           <CardContent className="flex flex-col gap-6 px-8 py-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
                 Get Started
               </p>
               <h2 className="text-3xl font-semibold tracking-tight">
                 Set up the tracker before your search gets harder to manage.
               </h2>
-              <p className="text-sm leading-7 text-stone-300">
+              <p className="text-sm leading-7 text-background/70">
                 Start on the free plan, bring your current applications into one
                 place, and upgrade only if you outgrow the built-in limits.
               </p>
@@ -517,7 +522,7 @@ export default async function MarketingHomePage() {
                 href="/sign-in"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "rounded-full bg-white px-5 text-stone-950 hover:bg-stone-100",
+                  "rounded-full bg-background px-5 text-foreground hover:bg-background/90",
                 )}
               >
                 Create free account
@@ -537,16 +542,16 @@ export default async function MarketingHomePage() {
         </Card>
       </section>
 
-      <section className="rounded-[1.75rem] border border-black/10 bg-white/90 p-6 shadow-sm">
+      <section className="rounded-[1.75rem] border border-border/70 bg-card/90 p-6 shadow-sm">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               Support
             </p>
-            <h2 className="text-xl font-semibold tracking-tight text-stone-950">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">
               Need help before or after signup?
             </h2>
-            <p className="max-w-2xl text-sm leading-7 text-stone-600">
+            <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
               Reach the DevApply team directly for billing questions, account
               issues, or launch feedback.
             </p>

@@ -10,7 +10,7 @@ export default function SignUpPage() {
         title="Create your DevApply account."
         description="Set up your account to start tracking applications, reminders, and resume versions inside the protected workspace."
       >
-        <div className="mt-8 rounded-3xl border border-stone-200 bg-stone-50 p-6">
+        <div className="mt-8 rounded-3xl border border-border/70 bg-card/80 p-6 shadow-sm">
           <SignUp
             path="/sign-up"
             routing="path"

@@ -45,28 +45,26 @@ const sections = [
   },
   {
     title: "Contact",
-    body: [
-      `Terms questions can be sent to ${SUPPORT_EMAIL}.`,
-    ],
+    body: [`Terms questions can be sent to ${SUPPORT_EMAIL}.`],
   },
 ] as const;
 
 export default function TermsOfServicePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <section className="rounded-[2rem] border border-black/10 bg-white/90 p-8 shadow-sm">
+      <section className="rounded-[2rem] border border-border/70 bg-card/90 p-8 shadow-sm">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             Terms of service
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-stone-950">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
             Terms for using DevApply
           </h1>
-          <p className="max-w-3xl text-sm leading-7 text-stone-600">
+          <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
             These terms describe the current MVP usage expectations for DevApply
             and should be read together with the privacy policy.
           </p>
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-muted-foreground">
             Effective date: March 30, 2026
           </p>
         </div>
@@ -76,14 +74,17 @@ export default function TermsOfServicePage() {
         {sections.map((section) => (
           <article
             key={section.title}
-            className="rounded-[1.75rem] border border-black/10 bg-white/90 p-6 shadow-sm"
+            className="rounded-[1.75rem] border border-border/70 bg-card/90 p-6 shadow-sm"
           >
-            <h2 className="text-xl font-semibold tracking-tight text-stone-950">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">
               {section.title}
             </h2>
             <div className="mt-3 space-y-3">
               {section.body.map((paragraph) => (
-                <p key={paragraph} className="text-sm leading-7 text-stone-600">
+                <p
+                  key={paragraph}
+                  className="text-sm leading-7 text-muted-foreground"
+                >
                   {section.title === "Contact" ? (
                     <>
                       Terms questions can be sent to{" "}

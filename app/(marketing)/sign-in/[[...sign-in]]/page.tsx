@@ -19,9 +19,7 @@ function getAuthErrorMessage(value: string | undefined) {
   }
 }
 
-export default async function SignInPage({
-  searchParams,
-}: SignInPageProps) {
+export default async function SignInPage({ searchParams }: SignInPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const authError = Array.isArray(resolvedSearchParams?.auth_error)
     ? resolvedSearchParams.auth_error[0]
@@ -35,9 +33,9 @@ export default async function SignInPage({
         title="Access the job tracker workspace."
         description="Sign in with your DevApply account to manage applications, reminders, and resume versions in the protected workspace."
       >
-        <div className="mt-8 rounded-3xl border border-stone-200 bg-stone-50 p-6">
+        <div className="mt-8 rounded-3xl border border-border/70 bg-card/80 p-6 shadow-sm">
           {authErrorMessage ? (
-            <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mb-4 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {authErrorMessage}
             </div>
           ) : null}
