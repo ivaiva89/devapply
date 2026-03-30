@@ -19,6 +19,7 @@ export type ApplicationListItem = Pick<
   | "jobUrl"
   | "notes"
   | "appliedDate"
+  | "lastActivityAt"
   | "updatedAt"
 > & {
   status: ApplicationStatusValue;

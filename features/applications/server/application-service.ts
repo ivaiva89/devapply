@@ -30,6 +30,7 @@ const applicationListSelect = Prisma.validator<Prisma.ApplicationSelect>()({
   jobUrl: true,
   notes: true,
   appliedDate: true,
+  lastActivityAt: true,
   updatedAt: true,
 });
 
@@ -178,6 +179,7 @@ export async function createApplicationWithCountForUser(
       jobUrl: input.jobUrl,
       notes: input.notes,
       appliedDate: input.appliedDate,
+      lastActivityAt: new Date(),
     },
   });
   const totalApplications = await client.application.count({
@@ -214,6 +216,7 @@ export async function updateApplicationForUser(
       jobUrl: input.jobUrl,
       notes: input.notes,
       appliedDate: input.appliedDate,
+      lastActivityAt: new Date(),
     },
   });
 }
@@ -242,6 +245,7 @@ export async function updateApplicationStatusForUser(
     },
     data: {
       status: nextStatus,
+      lastActivityAt: new Date(),
     },
   });
 }

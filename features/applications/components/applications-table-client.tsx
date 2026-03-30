@@ -69,7 +69,7 @@ export function ApplicationsTableClient({
     appliedDate: formatDate(application.appliedDate),
     sourceLabel: applicationSourceLabels[application.source],
     source: application.source,
-    lastActivity: formatDate(application.updatedAt),
+    lastActivity: formatDate(application.lastActivityAt ?? application.updatedAt),
     actions: (
       <RowActionsMenu
         application={application}
