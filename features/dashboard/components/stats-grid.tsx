@@ -19,9 +19,19 @@ type StatsGridProps = {
 };
 
 // Ordered to match the four KPIs returned from getDashboardDataForUser.
-const SLOT_ICONS: LucideIcon[] = [Briefcase, CalendarPlus, MessageSquare, Trophy];
+const SLOT_ICONS: [LucideIcon, LucideIcon, LucideIcon, LucideIcon] = [
+  Briefcase,
+  CalendarPlus,
+  MessageSquare,
+  Trophy,
+];
 
-const SLOT_VALUE_CLASSNAMES: (string | undefined)[] = [
+const SLOT_VALUE_CLASSNAMES: [
+  undefined,
+  undefined,
+  string,
+  string,
+] = [
   undefined,          // slot 0: total applications — default (primary card handles color)
   undefined,          // slot 1: applications this month
   "text-violet-400",  // slot 2: interviews
