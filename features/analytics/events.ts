@@ -1,6 +1,7 @@
 export const analyticsEventNames = [
   "signup",
   "application_created",
+  "first_application_created",
   "reminder_created",
   "resume_uploaded",
   "upgrade_clicked",

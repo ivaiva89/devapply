@@ -46,22 +46,36 @@ export async function createApplication(
 
     const input = result.data;
 
-    const application = await prisma.application.create({
-      data: {
-        userId: user.id,
-        company: input.company,
-        role: input.role,
-        location: input.location,
-        source: input.source,
-        status: input.status,
-        salaryMin: input.salaryMin,
-        salaryMax: input.salaryMax,
-        currency: input.currency,
-        jobUrl: input.jobUrl,
-        notes: input.notes,
-        appliedDate: input.appliedDate,
+    const { application, totalApplications } = await prisma.$transaction(
+      async (tx) => {
+        const application = await tx.application.create({
+          data: {
+            userId: user.id,
+            company: input.company,
+            role: input.role,
+            location: input.location,
+            source: input.source,
+            status: input.status,
+            salaryMin: input.salaryMin,
+            salaryMax: input.salaryMax,
+            currency: input.currency,
+            jobUrl: input.jobUrl,
+            notes: input.notes,
+            appliedDate: input.appliedDate,
+          },
+        });
+        const totalApplications = await tx.application.count({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        return {
+          application,
+          totalApplications,
+        };
       },
-    });
+    );
 
     await trackServerEvent({
       distinctId: user.id,
@@ -71,6 +85,17 @@ export async function createApplication(
         status: application.status,
       },
     });
+
+    if (totalApplications === 1) {
+      await trackServerEvent({
+        distinctId: user.id,
+        event: "first_application_created",
+        properties: {
+          applicationId: application.id,
+          status: application.status,
+        },
+      });
+    }
 
     revalidatePath("/applications");
     revalidatePath("/dashboard");

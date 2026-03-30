@@ -47,7 +47,7 @@ Local verification reference:
 ## Analytics
 
 - [x] Signup tracked
-- [ ] First application created tracked
+- [x] First application created tracked
 - [x] Application created tracked
 - [x] Reminder created tracked
 - [x] Upgrade click tracked
