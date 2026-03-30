@@ -12,6 +12,28 @@ Use:
   mock data
 - `lib/mocks/ui-fixtures.ts` as the shared fixture source
 
+## When to use which
+
+Use Storybook for:
+
+- isolated reusable components
+- multiple visual states of the same component
+- presenter-level feature UI that should be reviewed by props alone
+
+Use `/preview` for:
+
+- full-screen or multi-section composition
+- app-shell context, spacing, and density checks
+- mock screens that need several Storybook-covered pieces working
+  together
+
+Update both when:
+
+- a reusable component also appears in a previewed screen
+- a presenter changes enough to affect both isolated and composed review
+- a new mock screen section introduces reusable UI that needs isolated
+  state coverage
+
 ## Presenter vs wrapper rule
 
 For feature UI that needs Storybook or `/preview` coverage:

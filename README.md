@@ -110,6 +110,28 @@ npm run storybook:build
   wiring, split it into a pure presenter plus a thin wrapper before
   adding Storybook or `/preview` coverage
 
+Use Storybook when:
+
+- you are developing or reviewing one reusable component in isolation
+- you need multiple visual states for the same component
+- the goal is prop-driven UI coverage, not full-screen composition
+
+Use `/preview` when:
+
+- you need to review a composed screen with multiple presentational
+  sections together
+- layout, spacing, shell chrome, or cross-component density matters
+- the same screen should be inspectable inside the app frame with mock
+  data
+
+Update both in the same task when:
+
+- a reusable component changes materially and also appears in a previewed
+  screen
+- a new presenter is introduced for Storybook-safe feature UI
+- a major screen composition changes and the underlying reusable pieces
+  also gain new states
+
 ## Authentication setup
 
 DevApply now uses Clerk for production auth in the App Router.

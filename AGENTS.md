@@ -120,6 +120,9 @@ UI workflow guidance:
     backend imports into preview-safe files
 -   prefer shared fixtures from `lib/mocks/ui-fixtures.ts` over repeated
     inline mock data
+-   use Storybook for isolated reusable component states and `/preview`
+    for composed screen-level mock review; update both when the same UI
+    change affects both layers
 
 ------------------------------------------------------------------------
 
