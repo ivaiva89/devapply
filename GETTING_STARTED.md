@@ -61,12 +61,12 @@ App available at **http://localhost:3000**
 
 ## Verify your setup
 
-| URL | What you should see |
-|---|---|
-| `http://localhost:3000` | Marketing landing page |
-| `http://localhost:3000/sign-up` | Clerk sign-up form |
-| `http://localhost:3000/dashboard` | Dashboard (after sign-up) |
-| `http://localhost:3000/preview` | UI component preview — no auth needed |
+| URL                               | What you should see                   |
+| --------------------------------- | ------------------------------------- |
+| `http://localhost:3000`           | Marketing landing page                |
+| `http://localhost:3000/sign-up`   | Clerk sign-up form                    |
+| `http://localhost:3000/dashboard` | Dashboard (after sign-up)             |
+| `http://localhost:3000/preview`   | UI component preview — no auth needed |
 
 ## Optional: Start Storybook
 
@@ -78,10 +78,10 @@ Available at **http://localhost:6006** — isolated component development enviro
 
 ## Next steps
 
-| Goal | Read |
-|---|---|
-| Resume uploads | Add `BLOB_READ_WRITE_TOKEN` — see [`docs/ENVIRONMENT_VARIABLES.md`](docs/ENVIRONMENT_VARIABLES.md) |
-| Billing locally | [`docs/polar-sandbox-setup.md`](docs/polar-sandbox-setup.md) |
-| Deploy to Vercel | [`docs/vercel-build.md`](docs/vercel-build.md) |
-| Architecture overview | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
-| UI component guide | [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) |
+| Goal                  | Read                                                                                               |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| Resume uploads        | Add `BLOB_READ_WRITE_TOKEN` — see [`docs/ENVIRONMENT_VARIABLES.md`](docs/ENVIRONMENT_VARIABLES.md) |
+| Billing locally       | [`docs/polar-sandbox-setup.md`](docs/polar-sandbox-setup.md)                                       |
+| Deploy to Vercel      | [`docs/vercel-build.md`](docs/vercel-build.md)                                                     |
+| Architecture overview | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)                                                     |
+| Design system spec    | [`docs/DESIGN.md`](docs/DESIGN.md)                                                                 |

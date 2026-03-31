@@ -113,10 +113,10 @@ npm run storybook:build
 
 ## Branching
 
-| Branch | Purpose |
-|---|---|
-| `main` | Production — Vercel deploys from here |
-| `development` | Integration branch for finished features |
+| Branch              | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| `main`              | Production — Vercel deploys from here    |
+| `development`       | Integration branch for finished features |
 | `<initials>/<slug>` | Feature branches — e.g. `ik/billing-fix` |
 
 Feature branches → `development` via PR → `main` when ready to deploy.
