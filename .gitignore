@@ -33,11 +33,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — secrets stay local, example template is tracked
 .env
 .env.local
+.env*.local
 .env.neon-local
+!.env.example
+!.env.neon-local.example
 .neon_local/
 /public/uploads/
 

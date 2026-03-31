@@ -42,7 +42,7 @@ shadcn/ui
 
 Backend - Next.js Server Actions - Prisma ORM - PostgreSQL
 
-Infrastructure - Vercel - Polar (planned billing provider) - Resend - PostHog
+Infrastructure - Vercel - Polar (billing) - PostHog
 
 ## Development
 
@@ -52,16 +52,11 @@ npm install
 
 Configure environment variables
 
-- Copy `.env.example` to `.env.local`
-- Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
-- Add `BLOB_READ_WRITE_TOKEN` to enable resume uploads via Vercel Blob
-- Add billing env vars for the hosted checkout path:
-  `POLAR_ACCESS_TOKEN`, `POLAR_PRODUCT_ID_PRO`, and `POLAR_ENVIRONMENT`
-- Add `POLAR_WEBHOOK_SECRET` to verify incoming Polar webhooks
-- Keep `NEXT_PUBLIC_CLERK_SIGN_IN_URL`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL`, and the Clerk redirect URLs aligned with `/sign-in`, `/sign-up`, and `/dashboard`
-- Restart `npm run dev` after changing Clerk environment variables
-- For local Polar billing setup, follow
-  `docs/polar-sandbox-setup.md`
+- Copy `.env.example` to `.env.local` and fill in Clerk keys and database URLs
+- Full variable reference: [`docs/ENVIRONMENT_VARIABLES.md`](docs/ENVIRONMENT_VARIABLES.md)
+- For local Polar billing setup: [`docs/polar-sandbox-setup.md`](docs/polar-sandbox-setup.md)
+
+> First time? Follow [`GETTING_STARTED.md`](GETTING_STARTED.md) for a sequential step-by-step guide.
 
 Run database migrations
 
@@ -115,6 +110,17 @@ Build Storybook
 ```bash
 npm run storybook:build
 ```
+
+## Branching
+
+| Branch | Purpose |
+|---|---|
+| `main` | Production — Vercel deploys from here |
+| `development` | Integration branch for finished features |
+| `<initials>/<slug>` | Feature branches — e.g. `ik/billing-fix` |
+
+Feature branches → `development` via PR → `main` when ready to deploy.
+Vercel preview deployments on PRs serve as staging.
 
 ## UI development workflow
 
