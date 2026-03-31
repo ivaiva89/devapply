@@ -26,23 +26,22 @@ function isOverdue(value: string) {
 export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">
-          Upcoming reminders
+      <CardHeader className="pb-4">
+        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+          Upcoming Reminders
         </p>
-        <p className="text-xs text-muted-foreground">Scheduled follow-ups.</p>
+        <p className="text-sm text-muted-foreground">Scheduled follow-ups.</p>
       </CardHeader>
-      <Separator />
       <CardContent className="pt-0">
         {items.length > 0 ? (
-          <div className="divide-y divide-border">
+          <div className="flex flex-col gap-1">
             {items.map((item) => {
               const overdue = isOverdue(item.dueAt);
 
               return (
                 <div
                   key={item.id}
-                  className="-mx-4 flex items-center justify-between px-4 py-2.5 transition-colors hover:bg-muted/40"
+                  className="group -mx-2 flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">
@@ -54,7 +53,7 @@ export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
                   </div>
                   <Badge
                     variant={overdue ? "destructive" : "outline"}
-                    className="ml-4 shrink-0 tabular-nums"
+                    className="ml-4 shrink-0 font-label tabular-nums"
                   >
                     {overdue ? "Overdue" : formatDate(item.dueAt)}
                   </Badge>

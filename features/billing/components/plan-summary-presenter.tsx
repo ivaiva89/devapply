@@ -13,12 +13,12 @@ export function PlanSummaryPresenter({
   actions,
 }: PlanSummaryPresenterProps) {
   return (
-    <Card className="rounded-3xl border border-border/70 bg-card shadow-sm">
+    <Card className="rounded-3xl border-none bg-card shadow-sm">
       <CardHeader className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="font-label text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           Billing
         </p>
-        <CardTitle className="text-2xl tracking-tight">
+        <CardTitle className="font-display text-2xl font-bold tracking-tight text-foreground">
           {PLAN_LABELS[plan]} plan
         </CardTitle>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -30,22 +30,22 @@ export function PlanSummaryPresenter({
 
       <CardContent className="space-y-6">
         {plan === "FREE" ? (
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-border bg-muted/40 p-4">
-              <p className="text-sm text-muted-foreground">Applications</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl bg-muted/30 p-5">
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Applications</p>
+              <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.applications}
               </p>
             </div>
-            <div className="rounded-2xl border border-border bg-muted/40 p-4">
-              <p className="text-sm text-muted-foreground">Resumes</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">
+            <div className="rounded-2xl bg-muted/30 p-5">
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Resumes</p>
+              <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.resumes}
               </p>
             </div>
-            <div className="rounded-2xl border border-border bg-muted/40 p-4">
-              <p className="text-sm text-muted-foreground">Active reminders</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">
+            <div className="rounded-2xl bg-muted/30 p-5">
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Active reminders</p>
+              <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.reminders}
               </p>
             </div>

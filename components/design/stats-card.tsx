@@ -27,8 +27,8 @@ export function StatsCard({
         <div className="flex items-center justify-between">
           <p
             className={cn(
-              "text-xs",
-              highlight ? "text-primary/70" : "text-muted-foreground",
+              "text-sm font-medium",
+              highlight ? "text-primary/90" : "text-muted-foreground",
             )}
           >
             {label}
@@ -44,14 +44,14 @@ export function StatsCard({
         </div>
         <p
           className={cn(
-            "text-2xl font-semibold tabular-nums tracking-tight",
+            "font-display text-4xl font-semibold tabular-nums tracking-tight",
             valueClassName ?? "text-foreground",
           )}
         >
           {value}
         </p>
         {helper ? (
-          <p className="text-xs text-muted-foreground">{helper}</p>
+          <p className="font-label text-xs tracking-wide text-muted-foreground">{helper}</p>
         ) : null}
       </CardContent>
     </Card>

@@ -18,15 +18,14 @@ export function ApplicationsOverTimeChartSection({
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">
-          Applications over time
+      <CardHeader className="pb-6">
+        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+          Applications Over Time
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Monthly volume — last 6 months.
         </p>
       </CardHeader>
-      <Separator />
       <CardContent className="pt-4">
         {!isEmpty ? (
           <div className="flex h-28 items-end gap-2">
@@ -48,7 +47,7 @@ export function ApplicationsOverTimeChartSection({
                   <div className="relative flex w-full flex-1 items-end">
                     <div className="absolute inset-0 rounded-sm bg-muted/30" />
                     <div
-                      className="relative w-full rounded-t-sm bg-primary/70 transition-colors group-hover:bg-primary"
+                      className="relative w-full rounded-t-sm bg-gradient-to-t from-primary/80 to-primary-container transition-all group-hover:from-primary group-hover:to-primary"
                       style={{ height: `${heightPct}%` }}
                     />
                   </div>

@@ -19,13 +19,13 @@ export default async function SettingsPage({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+      <section className="rounded-3xl border-none bg-card p-8 shadow-sm">
+        <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Settings
         </p>
         <div className="mt-3 space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-            Account and billing
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+            Account and Billing
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
             Review your current plan, understand the MVP limits, start hosted
@@ -64,12 +64,12 @@ export default async function SettingsPage({
         </section>
       ) : null}
       <PlanSummary plan={user.plan} />
-      <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+      <section className="rounded-3xl border-none bg-card p-6 shadow-sm">
+        <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           Support
         </p>
         <div className="mt-3 space-y-2">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Need account or billing help?
           </h2>
           <p className="text-sm leading-6 text-muted-foreground">

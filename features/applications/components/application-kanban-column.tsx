@@ -29,9 +29,9 @@ export function ApplicationKanbanColumn({
     <Card
       onDragOver={onDragOver}
       onDrop={onDrop}
-      className="min-h-[24rem] rounded-3xl border border-border/70 bg-card shadow-sm"
+      className="min-h-[24rem] rounded-3xl bg-card transition-colors hover:bg-card/80"
     >
-      <CardHeader className="border-b border-border/80">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between gap-3">
           <ApplicationStatusBadge status={status} />
           <Badge variant="secondary" className="rounded-full px-2.5 py-1">

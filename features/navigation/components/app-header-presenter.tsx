@@ -20,27 +20,27 @@ export function AppHeaderPresenter({
   userName,
 }: AppHeaderPresenterProps) {
   return (
-    <header className="border-b border-border px-4 py-3">
+    <header className="bg-background/80 px-4 py-3 backdrop-blur-xl">
       <div className="flex min-h-10 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           {title ? (
-            <p className="text-sm font-semibold tracking-tight text-foreground">
+            <h1 className="font-display text-lg font-semibold tracking-tight text-foreground">
               {title}
-            </p>
+            </h1>
           ) : null}
           {description ? (
-            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
           ) : null}
         </div>
 
         <div className="flex items-center gap-2">
           <div className="text-right">
             <p className="text-xs font-medium text-foreground">{userName}</p>
-            <p className="text-[11px] text-muted-foreground">{userEmail}</p>
+            <p className="font-label text-[10px] text-muted-foreground">{userEmail}</p>
           </div>
           <Badge
             variant="outline"
-            className="h-5 rounded-sm px-1.5 text-[10px] uppercase tracking-wider text-muted-foreground"
+            className="h-5 rounded-sm px-1.5 font-label text-[10px] uppercase tracking-wider text-muted-foreground"
           >
             {planLabel}
           </Badge>

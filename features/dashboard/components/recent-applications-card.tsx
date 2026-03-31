@@ -23,20 +23,19 @@ function formatDate(value: string) {
 export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">
-          Recent applications
+      <CardHeader className="pb-4">
+        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+          Recent Applications
         </p>
-        <p className="text-xs text-muted-foreground">Latest tracked roles.</p>
+        <p className="text-sm text-muted-foreground">Latest tracked roles.</p>
       </CardHeader>
-      <Separator />
       <CardContent className="pt-0">
         {items.length > 0 ? (
-          <div className="divide-y divide-border">
+          <div className="flex flex-col gap-1">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="-mx-4 flex items-center justify-between px-4 py-2.5 transition-colors hover:bg-muted/40"
+                className="group -mx-2 flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">
@@ -46,8 +45,8 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
                     {item.role}
                   </p>
                 </div>
-                <div className="ml-4 flex shrink-0 items-center gap-3">
-                  <span className="text-xs tabular-nums text-muted-foreground">
+                <div className="ml-4 flex shrink-0 items-center justify-end gap-3 text-right">
+                  <span className="font-label text-xs tabular-nums text-muted-foreground">
                     {formatDate(item.updatedAt)}
                   </span>
                   <ApplicationStatusBadge status={item.status} />

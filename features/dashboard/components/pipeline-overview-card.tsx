@@ -23,15 +23,14 @@ export function PipelineOverviewCard({
 }: PipelineOverviewCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <p className="text-xs font-medium text-foreground">
-          Pipeline distribution
+      <CardHeader className="pb-6">
+        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+          Pipeline Distribution
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Applications by current status.
         </p>
       </CardHeader>
-      <Separator />
       <CardContent className="pt-4">
         {!isEmpty ? (
           <div className="space-y-3">
@@ -39,16 +38,16 @@ export function PipelineOverviewCard({
               <div key={item.status} className="space-y-1">
                 <div className="flex items-center justify-between">
                   <ApplicationStatusBadge status={item.status} />
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3 font-label text-xs text-muted-foreground">
                     <span className="tabular-nums">{item.count}</span>
-                    <span className="w-7 text-right tabular-nums">
+                    <span className="w-8 text-right tabular-nums">
                       {formatPercentage(item.percentage)}
                     </span>
                   </div>
                 </div>
-                <div className="h-1 overflow-hidden rounded-none bg-muted">
+                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-primary/60 transition-all"
+                    className="h-full bg-gradient-to-r from-primary to-primary-container transition-all"
                     style={{
                       width:
                         item.percentage === 0

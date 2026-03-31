@@ -34,13 +34,13 @@ export function ResumeListPresenter({
       {resumes.map((resume) => (
         <Card
           key={resume.id}
-          className="rounded-3xl border border-border/70 bg-card shadow-sm"
+          className="rounded-3xl border-none bg-card shadow-sm"
         >
           <CardContent className="space-y-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-2">
                 <div>
-                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                  <p className="font-display text-xl font-semibold tracking-tight text-foreground">
                     {resume.title}
                   </p>
                   <p className="text-sm text-muted-foreground">
@@ -48,7 +48,7 @@ export function ResumeListPresenter({
                   </p>
                 </div>
 
-                <dl className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <dl className="flex flex-wrap gap-3 font-label text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                   <div>{formatBytes(resume.fileSizeBytes)}</div>
                   <div>{resume.mimeType}</div>
                   <div>Uploaded {formatDate(resume.uploadedAt)}</div>

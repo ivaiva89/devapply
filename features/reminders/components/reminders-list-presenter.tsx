@@ -35,12 +35,12 @@ export function RemindersListPresenter({
         return (
           <Card
             key={reminder.id}
-            className="rounded-3xl border border-border/70 bg-card shadow-sm"
+            className="rounded-3xl border-none bg-card shadow-sm"
           >
             <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-lg font-semibold tracking-tight text-foreground">
+                  <p className="font-display text-xl font-semibold tracking-tight text-foreground">
                     {reminder.title}
                   </p>
                   <Badge variant={overdue ? "destructive" : "outline"}>

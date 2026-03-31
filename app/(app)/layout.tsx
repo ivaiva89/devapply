@@ -2,6 +2,25 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { headers } from "next/headers";
+import { Inter, Manrope, Space_Grotesk } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
 
 import "@/app/globals.css";
 
@@ -23,7 +42,10 @@ export default async function AppLayout({
   const currentPath = headerStore.get("x-current-path") ?? "/dashboard";
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${inter.variable} ${manrope.variable} ${spaceGrotesk.variable}`}
+    >
       <body className="bg-background text-foreground antialiased">
         <ClerkProvider>
           <div className="flex min-h-screen">

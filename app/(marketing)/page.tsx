@@ -7,19 +7,12 @@ import {
   BriefcaseBusiness,
   Check,
   FileText,
+  Github,
   KanbanSquare,
-  SearchCheck,
+  Terminal,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   FREE_PLAN_LIMITS,
   PRO_PLAN_PRICE_MONTHLY,
@@ -32,537 +25,853 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Job Application Tracker for Developers | DevApply",
   description:
-    "Track applications, interview stages, reminders, and resume versions in one focused workspace built for developer job searches.",
+    "Stop using generic spreadsheets. Track your career growth with an IDE-inspired workflow designed for technical talent.",
 };
 
-const heroFacts = [
-  `Free plan includes ${FREE_PLAN_LIMITS.applications} applications`,
-  `${FREE_PLAN_LIMITS.resumes} saved resume version`,
-  `${FREE_PLAN_LIMITS.reminders} active reminders before upgrade`,
+/* ─── Data ─── */
+
+const testimonials = [
+  {
+    quote:
+      "DevApply turned my chaotic job hunt into a manageable pipeline. The technical focus is exactly what's missing in other tools.",
+    name: "Alex Rivera",
+    role: "Senior Frontend Engineer",
+    initials: "AR",
+  },
+  {
+    quote:
+      "Finally, a tool that understands markdown and versioning. It feels like a natural extension of my development environment.",
+    name: "Sarah Chen",
+    role: "DevOps Architect",
+    initials: "SC",
+  },
+  {
+    quote:
+      "The career insights helped me negotiate a 20% higher salary. The data it tracks is actually meaningful for my role.",
+    name: "Jordan Smith",
+    role: "Fullstack Lead",
+    initials: "JS",
+  },
 ] as const;
 
-const developerValueProps = [
-  {
-    title: "Replace the spreadsheet stack",
-    description:
-      "Keep applications, notes, follow-ups, and resume attachments in one place instead of splitting the search across tabs and documents.",
-  },
-  {
-    title: "Reduce search drift",
-    description:
-      "A clear pipeline and reminder workflow makes it easier to keep momentum when interviews and day-to-day work compete for attention.",
-  },
-  {
-    title: "Stay tailored per role",
-    description:
-      "Attach the right resume version to each application so role-specific materials stay connected to the job they support.",
-  },
-] as const;
-
-const featureHighlights = [
-  {
-    icon: BriefcaseBusiness,
-    title: "Applications table",
-    description:
-      "Track company, role, source, status, and applied date in a format that stays usable even when your search volume climbs.",
-  },
+const features = [
   {
     icon: KanbanSquare,
-    title: "Kanban pipeline",
+    title: "Application Tracking",
     description:
-      "Move roles from wishlist to interview and offer stages without losing the context around each application.",
-  },
-  {
-    icon: BellRing,
-    title: "Reminder workflow",
-    description:
-      "Create follow-ups for recruiter outreach, take-home deadlines, and interview prep before they slip out of view.",
+      "Visualize your journey with a technical Kanban. Move applications from 'Applied' to 'Offer' with a single hotkey.",
+    accent: "primary" as const,
   },
   {
     icon: FileText,
-    title: "Resume attachments",
+    title: "Resume Storage",
     description:
-      "Store resume versions and attach them to applications so you can see what was sent where.",
+      "Version-controlled resume management. Link specific versions to specific applications instantly.",
+    accent: "accent" as const,
   },
   {
-    icon: SearchCheck,
-    title: "Source and status visibility",
+    icon: BellRing,
+    title: "Reminders",
     description:
-      "Spot which channels are producing movement and where applications are getting stuck.",
+      "Automated follow-up reminders that integrate directly with your calendar. Never miss a deadline.",
+    accent: "primary" as const,
   },
   {
     icon: BarChart3,
-    title: "Basic analytics",
+    title: "Career Insights",
     description:
-      "Review funnel progress from the dashboard without turning the product into a reporting tool.",
+      "Data-driven analytics on your interview performance and application funnel. Benchmark your growth.",
+    accent: "accent" as const,
   },
-] as const;
-
-const previewApplications = [
-  {
-    role: "Platform engineer role",
-    stage: "Applied",
-    note: "Resume v2 attached",
-  },
-  {
-    role: "Frontend infrastructure role",
-    stage: "Interview",
-    note: "Technical screen queued",
-  },
-  {
-    role: "Full-stack product role",
-    stage: "Follow-up",
-    note: "Recruiter check-in drafted",
-  },
-] as const;
-
-const previewStages = ["Wishlist", "Applied", "Interview", "Offer"] as const;
-
-const previewReminders = [
-  "Follow up after recruiter screen",
-  "Attach backend-focused resume",
-  "Prep system design notes",
 ] as const;
 
 const pricingTiers = [
   {
-    name: "Free",
-    description:
-      "A good fit for evaluating the workflow or running a lighter application cycle.",
+    name: "The Junior",
+    description: "Perfect for evaluating the workflow or a lighter search.",
     price: "$0",
     priceSuffix: null,
     ctaLabel: "Sign up free",
     ctaVariant: "outline" as const,
     highlighted: false,
     features: [
-      `Up to ${FREE_PLAN_LIMITS.applications} applications`,
+      `Track up to ${FREE_PLAN_LIMITS.applications} applications`,
+      "Basic Career Kanban",
       `${FREE_PLAN_LIMITS.resumes} saved resume version`,
       `${FREE_PLAN_LIMITS.reminders} active reminders`,
-      "Dashboard, applications table, pipeline, and reminders",
     ],
   },
   {
-    name: "Pro",
-    description:
-      "For longer searches and higher application volume where the free plan caps become friction.",
+    name: "The Architect",
+    description: "For longer searches where free plan caps become friction.",
     price: `$${PRO_PLAN_PRICE_MONTHLY}`,
     priceSuffix: "/ month",
     ctaLabel: "Start with the free account",
     ctaVariant: "default" as const,
     highlighted: true,
     features: [
-      "Unlimited applications",
-      "Unlimited reminders",
-      "Multiple resume versions",
-      "The same core workflow without plan limits",
+      "Unlimited active applications",
+      "Multi-resume management",
+      "Advanced career insights",
+      "No plan limits on any core feature",
     ],
   },
 ] as const;
+
+const appRows = [
+  {
+    company: "Stripe",
+    role: "Platform Engineer",
+    status: "Interview",
+    statusColor: "var(--accent)",
+  },
+  {
+    company: "Linear",
+    role: "Frontend Infrastructure",
+    status: "Applied",
+    statusColor: "var(--primary)",
+  },
+  {
+    company: "Vercel",
+    role: "Full-Stack Product",
+    status: "Follow-up",
+    statusColor: "var(--muted-foreground)",
+  },
+  {
+    company: "Supabase",
+    role: "Developer Relations",
+    status: "Offer",
+    statusColor: "155 69% 59%",
+  },
+  {
+    company: "PlanetScale",
+    role: "Backend Systems",
+    status: "Wishlist",
+    statusColor: "var(--muted-foreground)",
+  },
+];
+
+/* ─── Page ─── */
 
 export default async function MarketingHomePage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="space-y-16">
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-center">
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <Badge
-              variant="outline"
-              className="h-auto rounded-full border-primary/20 bg-primary/5 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-primary"
-            >
-              Job application tracker for developers
-            </Badge>
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Track every application in one developer-first workflow.
-              </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-                DevApply keeps applications, interview stages, reminders, and
-                resume versions together so your search stays structured without
-                turning into a spreadsheet maintenance project.
-              </p>
-            </div>
-          </div>
+    <div className="space-y-28">
+      {/* ── Hero ── */}
+      <section className="space-y-10 pt-8 text-center">
+        {/* Badge */}
+        <div
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5"
+          style={{
+            background: "hsl(var(--primary) / 0.06)",
+            boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.12)",
+          }}
+        >
+          <Terminal className="size-3" style={{ color: "hsl(var(--accent))" }} />
+          <span className="font-label text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/90">
+            Built for architects of the web
+          </span>
+        </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/sign-in"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "rounded-full px-5",
-              )}
+        {/* Headline */}
+        <div className="mx-auto max-w-4xl space-y-6">
+          <h1 className="font-display text-5xl font-extrabold leading-[1.06] tracking-tight text-foreground sm:text-6xl lg:text-[4.5rem]">
+            Stop using spreadsheets.{" "}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%)",
+              }}
             >
-              Sign up free
-            </Link>
-            <Link
-              href="/#pricing"
-              className={cn(
-                buttonVariants({ size: "lg", variant: "outline" }),
-                "rounded-full px-5",
-              )}
-            >
-              View pricing
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {heroFacts.map((fact) => (
-              <Badge
-                key={fact}
-                variant="outline"
-                className="h-auto rounded-full border-border bg-card/80 px-3 py-1 text-xs text-muted-foreground"
-              >
-                {fact}
-              </Badge>
-            ))}
-          </div>
-
-          <p className="text-sm leading-7 text-muted-foreground">
-            Built for developers managing roughly 20 to 200 active applications.
+              Debug your career.
+            </span>
+          </h1>
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Track your career growth with an IDE-inspired workflow designed for
+            technical talent. Powerful tools to manage your pipeline without the
+            friction.
           </p>
         </div>
 
-        <Card className="rounded-[2rem] border border-border/70 bg-foreground text-background shadow-sm">
-          <CardHeader className="px-6 pt-6 sm:px-8 sm:pt-8">
-            <CardTitle className="text-2xl font-semibold tracking-tight">
-              Core workflow preview
-            </CardTitle>
-            <CardDescription className="max-w-md text-sm leading-6 text-background/70">
-              The MVP stays focused on the parts of the search developers repeat
-              every week.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 px-6 pb-6 sm:px-8 sm:pb-8">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
-                  Applications
-                </p>
-                <p className="text-xs text-background/60">Table view</p>
+        {/* CTAs */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/sign-up"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "rounded-xl px-8 text-sm font-semibold",
+              "text-[hsl(var(--primary-foreground))]",
+            )}
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-container)) 100%)",
+            }}
+          >
+            Start for free
+            <ArrowRight className="ml-1 size-4" />
+          </Link>
+          <Link
+            href="/#pricing"
+            className={cn(
+              buttonVariants({ size: "lg", variant: "ghost" }),
+              "rounded-xl px-8 text-sm text-muted-foreground hover:text-foreground",
+            )}
+          >
+            View pricing
+          </Link>
+        </div>
+
+        {/* Trust row */}
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground/80">
+          {[
+            `Free plan includes ${FREE_PLAN_LIMITS.applications} applications`,
+            `${FREE_PLAN_LIMITS.resumes} saved resume version`,
+            "No credit card required",
+          ].map((text) => (
+            <span key={text} className="flex items-center gap-1.5">
+              <Check
+                className="size-3.5"
+                style={{ color: "hsl(var(--accent))" }}
+              />
+              {text}
+            </span>
+          ))}
+        </div>
+
+        {/* ── Dashboard Preview ── */}
+        <div className="relative mx-auto mt-4 max-w-5xl">
+          {/* Ambient glow */}
+          <div
+            className="pointer-events-none absolute -inset-x-12 -top-12 h-56 opacity-50"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, hsl(var(--primary) / 0.3), transparent 70%)",
+            }}
+          />
+
+          {/* Browser chrome - no explicit borders, tonal shift */}
+          <div
+            className="relative overflow-hidden rounded-2xl"
+            style={{
+              boxShadow: "0 24px 64px rgba(6, 14, 32, 0.55)",
+            }}
+          >
+            {/* Title bar */}
+            <div
+              className="flex items-center gap-2 px-4 py-3"
+              style={{ background: "hsl(var(--card))" }}
+            >
+              <div className="flex gap-1.5">
+                <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+                <span className="size-2.5 rounded-full bg-[#febc2e]" />
+                <span className="size-2.5 rounded-full bg-[#28c840]" />
               </div>
-              <div className="mt-4 space-y-3">
-                {previewApplications.map((application) => (
+              <div
+                className="mx-auto flex h-5 items-center gap-1.5 rounded-full px-3"
+                style={{
+                  background: "hsl(var(--background))",
+                }}
+              >
+                <span
+                  className="size-1.5 rounded-full"
+                  style={{ background: "hsl(var(--accent))" }}
+                />
+                <span className="font-label text-[10px] text-muted-foreground/75">
+                  devapply.io/applications
+                </span>
+              </div>
+              <div className="w-12" />
+            </div>
+
+            {/* App layout */}
+            <div
+              className="flex"
+              style={{ height: 340, background: "hsl(var(--background))" }}
+            >
+              {/* Sidebar — surface-container-low, NO border-right */}
+              <div
+                className="flex w-44 shrink-0 flex-col gap-0.5 px-3 py-4"
+                style={{ background: "hsl(var(--card))" }}
+              >
+                <div className="mb-4 flex items-center gap-2 px-2">
                   <div
-                    key={application.role}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-3"
+                    className="flex size-5 items-center justify-center rounded"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, hsl(var(--primary)/0.3), hsl(var(--primary-container)/0.3))",
+                    }}
+                  />
+                  <span className="font-label text-[11px] font-semibold text-foreground/85">
+                    DevApply
+                  </span>
+                </div>
+                {[
+                  { label: "Dashboard", active: false },
+                  { label: "Applications", active: true },
+                  { label: "Pipeline", active: false },
+                  { label: "Reminders", active: false },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className={cn(
+                      "flex items-center gap-2 rounded-lg px-2 py-1.5",
+                      item.active
+                        ? "text-primary"
+                        : "text-muted-foreground/75",
+                    )}
+                    style={{
+                      background: item.active
+                        ? "hsl(var(--primary)/0.08)"
+                        : undefined,
+                    }}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-white">
-                          {application.role}
-                        </p>
-                        <p className="mt-1 text-sm text-background/70">
-                          {application.note}
-                        </p>
+                    <div
+                      className="size-3 rounded-sm"
+                      style={{
+                        background: item.active
+                          ? "hsl(var(--primary)/0.4)"
+                          : "hsl(var(--border)/0.3)",
+                      }}
+                    />
+                    <span className="font-label text-[11px]">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Main content */}
+              <div className="flex flex-1 flex-col overflow-hidden px-5 py-4">
+                {/* Top bar */}
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <span className="font-display text-sm font-semibold text-foreground">
+                      Applications
+                    </span>
+                    <span
+                      className="ml-2 font-label text-[10px] text-muted-foreground/75"
+                      style={{
+                        background: "hsl(var(--secondary))",
+                        borderRadius: "0.375rem",
+                        padding: "1px 6px",
+                      }}
+                    >
+                      24
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="h-6 w-14 rounded-lg"
+                      style={{ background: "hsl(var(--secondary))" }}
+                    />
+                    <div
+                      className="h-6 w-20 rounded-lg"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, hsl(var(--primary)/0.25) 0%, hsl(var(--primary-container)/0.25) 100%)",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Column headers */}
+                <div className="mb-1 flex items-center gap-3 px-3 py-1">
+                  {["Company", "Role", "Status"].map((h) => (
+                    <span
+                      key={h}
+                      className="font-label text-[9px] uppercase tracking-widest text-muted-foreground/85"
+                      style={{
+                        flex: h === "Role" ? 1 : "none",
+                        width:
+                          h === "Company"
+                            ? 64
+                            : h === "Status"
+                              ? 56
+                              : undefined,
+                      }}
+                    >
+                      {h}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Rows */}
+                <div className="space-y-0.5">
+                  {appRows.map((row, i) => (
+                    <div
+                      key={`${row.company}-${i}`}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2"
+                      style={{
+                        background:
+                          i === 0
+                            ? "hsl(var(--secondary)/0.6)"
+                            : "transparent",
+                      }}
+                    >
+                      <div
+                        className="flex size-6 shrink-0 items-center justify-center rounded-md font-label text-[9px] font-bold"
+                        style={{
+                          background: `hsl(${row.statusColor} / 0.1)`,
+                          color: `hsl(${row.statusColor})`,
+                        }}
+                      >
+                        {row.company[0]}
                       </div>
-                      <span className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-xs text-background/80">
-                        {application.stage}
+                      <span className="w-16 shrink-0 font-label text-[11px] font-medium text-foreground/90">
+                        {row.company}
                       </span>
+                      <span className="flex-1 truncate font-label text-[10px] text-muted-foreground/80">
+                        {row.role}
+                      </span>
+                      <span
+                        className="w-14 rounded-full px-2 py-0.5 text-center font-label text-[9px] font-medium"
+                        style={{
+                          background: `hsl(${row.statusColor} / 0.1)`,
+                          color: `hsl(${row.statusColor})`,
+                        }}
+                      >
+                        {row.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right stats panel — tonal shift, NO border-left */}
+              <div
+                className="hidden w-40 shrink-0 flex-col gap-3 px-4 py-4 lg:flex"
+                style={{ background: "hsl(var(--card))" }}
+              >
+                <span className="font-label text-[9px] uppercase tracking-widest text-muted-foreground/85">
+                  This week
+                </span>
+                {[
+                  {
+                    label: "Applied",
+                    value: "8",
+                    color: "hsl(var(--primary))",
+                    pct: "72%",
+                  },
+                  {
+                    label: "Interviews",
+                    value: "3",
+                    color: "hsl(var(--accent))",
+                    pct: "38%",
+                  },
+                  {
+                    label: "Follow-ups",
+                    value: "5",
+                    color: "hsl(var(--muted-foreground))",
+                    pct: "55%",
+                  },
+                ].map((stat) => (
+                  <div key={stat.label} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-label text-[10px] text-muted-foreground/80">
+                        {stat.label}
+                      </span>
+                      <span
+                        className="font-display text-sm font-bold"
+                        style={{ color: stat.color }}
+                      >
+                        {stat.value}
+                      </span>
+                    </div>
+                    <div
+                      className="h-1 overflow-hidden rounded-full"
+                      style={{ background: "hsl(var(--secondary))" }}
+                    >
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: stat.pct,
+                          background: stat.color,
+                          opacity: 0.7,
+                        }}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
-                  Pipeline
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {previewStages.map((stage) => (
-                    <span
-                      key={stage}
-                      className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-background/80"
-                    >
-                      {stage}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-4 text-sm leading-6 text-background/70">
-                  Move roles forward without rebuilding your process in a
-                  generic project board.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-background/60">
-                  Reminders
-                </p>
-                <div className="mt-4 space-y-3">
-                  {previewReminders.map((reminder) => (
-                    <div key={reminder} className="flex items-start gap-2.5">
-                      <span className="mt-1 size-2 rounded-full bg-accent" />
-                      <p className="text-sm leading-6 text-background/70">
-                        {reminder}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </section>
 
-      <section id="developers" className="space-y-6">
-        <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            Value Proposition
+      {/* ── Features ── */}
+      <section id="features" className="space-y-10">
+        <div className="space-y-4 text-center">
+          <p className="font-label text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground/80">
+            Features
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-            Built around the messy middle of a real developer search.
+          <h2 className="font-display mx-auto max-w-3xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
+            Powerful tools to manage your pipeline without the friction.
           </h2>
-          <p className="text-sm leading-7 text-muted-foreground">
-            The product focuses on application volume, interview movement,
-            follow-ups, and resume variants. It avoids bloated CRM behavior and
-            keeps the workflow small enough to use every day.
+          <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Four focused capabilities that cover the complete job-search
+            workflow — nothing more, nothing less.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {developerValueProps.map((item) => (
-            <Card
-              key={item.title}
-              className="rounded-[1.75rem] border border-border/70 bg-card/90 shadow-sm"
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {features.map((feat) => (
+            <div
+              key={feat.title}
+              className="group relative rounded-2xl p-7 transition-colors duration-300"
+              style={{
+                background: "hsl(var(--card))",
+              }}
             >
-              <CardHeader className="px-6 pt-6">
-                <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-6 pb-6 text-sm leading-7 text-muted-foreground">
-                {item.description}
-              </CardContent>
-            </Card>
+              {/* Hover glow */}
+              <div
+                className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{
+                  background:
+                    feat.accent === "accent"
+                      ? "radial-gradient(circle at 30% 20%, hsl(var(--accent) / 0.06), transparent 60%)"
+                      : "radial-gradient(circle at 30% 20%, hsl(var(--primary) / 0.06), transparent 60%)",
+                }}
+              />
+              <div className="relative">
+                <div
+                  className="flex size-12 items-center justify-center rounded-2xl"
+                  style={{
+                    background:
+                      feat.accent === "accent"
+                        ? "hsl(var(--accent) / 0.1)"
+                        : "hsl(var(--primary) / 0.1)",
+                  }}
+                >
+                  <feat.icon
+                    className="size-5"
+                    style={{
+                      color:
+                        feat.accent === "accent"
+                          ? "hsl(var(--accent))"
+                          : "hsl(var(--primary))",
+                    }}
+                  />
+                </div>
+                <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-foreground">
+                  {feat.title}
+                </h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                  {feat.description}
+                </p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      <section id="features" className="space-y-6">
-        <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            Feature Highlights
+      {/* ── Testimonials ── */}
+      <section className="space-y-10">
+        <div className="space-y-4 text-center">
+          <p className="font-label text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground/80">
+            Why architects of the web love us
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-            The launch scope is intentionally practical.
+          <h2 className="font-display mx-auto max-w-2xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Built for the job search you&apos;re actually running.
           </h2>
-          <p className="text-sm leading-7 text-muted-foreground">
-            DevApply covers the workflow that matters during an active search:
-            clear application tracking, a visible pipeline, reminder support,
-            resume attachments, and basic funnel insight.
-          </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {featureHighlights.map((item) => {
-            const Icon = item.icon;
 
-            return (
-              <Card
-                key={item.title}
-                className="rounded-[1.75rem] border border-border/70 bg-card/90 shadow-sm"
-              >
-                <CardHeader className="px-6 pt-6">
-                  <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Icon className="size-5" />
-                  </div>
-                  <CardTitle className="pt-3 text-xl font-semibold tracking-tight text-foreground">
-                    {item.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm leading-7 text-muted-foreground">
-                    {item.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            );
-          })}
+        <div className="grid gap-4 md:grid-cols-3">
+          {testimonials.map((t, i) => (
+            <div
+              key={t.name}
+              className="relative rounded-2xl p-7"
+              style={{ background: "hsl(var(--card))" }}
+            >
+              {/* Stars */}
+              <div className="mb-5 flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <svg
+                    key={j}
+                    className="size-3.5"
+                    viewBox="0 0 12 12"
+                    fill="hsl(var(--accent))"
+                  >
+                    <path d="M6 1l1.5 3 3.3.5-2.4 2.3.6 3.3L6 8.8l-2.9 1.3.6-3.3L1.2 4.5l3.3-.5z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full font-label text-xs font-bold"
+                  style={{
+                    background:
+                      i === 0
+                        ? "hsl(var(--primary) / 0.15)"
+                        : i === 1
+                          ? "hsl(var(--accent) / 0.15)"
+                          : "hsl(var(--primary-container) / 0.15)",
+                    color:
+                      i === 0
+                        ? "hsl(var(--primary))"
+                        : i === 1
+                          ? "hsl(var(--accent))"
+                          : "hsl(var(--primary))",
+                  }}
+                >
+                  {t.initials}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {t.name}
+                  </p>
+                  <p className="font-label text-xs text-muted-foreground/80">
+                    {t.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section id="pricing" className="space-y-6">
-        <div className="max-w-3xl space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            Pricing
+      {/* ── Pricing ── */}
+      <section id="pricing" className="space-y-10">
+        <div className="space-y-4 text-center">
+          <p className="font-label text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground/80">
+            Choose your track
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-            Start free. Remove the caps when your search needs more room.
+          <h2 className="font-display mx-auto max-w-2xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Simple, developer-centric pricing. No hidden fees.
           </h2>
-          <p className="text-sm leading-7 text-muted-foreground">
-            Both plans use the same product. Pro removes the limits on
-            applications, reminders, and resume versions when the search grows.
+          <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Both plans use the same product. The Architect removes limits on
+            applications, reminders, and resume versions.
           </p>
         </div>
-        <div className="grid gap-4 lg:grid-cols-2">
+
+        <div className="mx-auto grid max-w-3xl gap-5 lg:grid-cols-2">
           {pricingTiers.map((tier) => (
-            <Card
+            <div
               key={tier.name}
-              className={cn(
-                "rounded-[1.75rem] border bg-card shadow-sm",
+              className="relative overflow-hidden rounded-2xl p-7"
+              style={
                 tier.highlighted
-                  ? "border-primary/20 ring-2 ring-primary/10"
-                  : "border-border/70 bg-card/90",
-              )}
+                  ? {
+                      background: "hsl(var(--card))",
+                      boxShadow:
+                        "0 0 0 1px hsl(var(--primary)/0.2), 0 12px 32px rgba(6,14,32,0.4)",
+                    }
+                  : {
+                      background: "hsl(var(--card))",
+                    }
+              }
             >
-              <CardHeader className="px-6 pt-6">
-                {tier.highlighted ? (
-                  <div className="inline-flex w-fit items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                    Launch plan
+              {/* Pro glow */}
+              {tier.highlighted && (
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-2xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 50% 0%, hsl(var(--primary)/0.08), transparent 60%)",
+                  }}
+                />
+              )}
+
+              <div className="relative">
+                {tier.highlighted && (
+                  <div
+                    className="mb-5 inline-flex items-center rounded-full px-3 py-1 font-label text-xs font-semibold uppercase tracking-[0.18em]"
+                    style={{
+                      background: "hsl(var(--primary)/0.12)",
+                      color: "hsl(var(--primary))",
+                    }}
+                  >
+                    Most popular
                   </div>
-                ) : null}
-                <CardTitle className="pt-3 text-2xl font-semibold tracking-tight text-foreground">
+                )}
+                <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">
                   {tier.name}
-                </CardTitle>
-                <CardDescription className="text-sm leading-7 text-muted-foreground">
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {tier.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-6 pb-6">
-                <div className="flex items-end gap-2">
-                  <p className="text-4xl font-semibold tracking-tight text-foreground">
+                </p>
+
+                <div className="mt-6 flex items-end gap-1.5">
+                  <span className="font-display text-4xl font-extrabold tracking-tight text-foreground">
                     {tier.price}
-                  </p>
-                  {tier.priceSuffix ? (
-                    <p className="pb-1 text-sm text-muted-foreground">
+                  </span>
+                  {tier.priceSuffix && (
+                    <span className="mb-1 text-sm text-muted-foreground/80">
                       {tier.priceSuffix}
-                    </p>
-                  ) : null}
+                    </span>
+                  )}
                 </div>
-                <ul className="mt-5 space-y-3 text-sm leading-7 text-muted-foreground">
+
+                <ul className="mt-6 space-y-3">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <span className="mt-1 flex size-5 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Check className="size-3.5" />
+                    <li
+                      key={feature}
+                      className="flex items-start gap-3 text-sm leading-6 text-muted-foreground"
+                    >
+                      <span
+                        className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full"
+                        style={{ background: "hsl(var(--accent)/0.1)" }}
+                      >
+                        <Check
+                          className="size-3"
+                          style={{ color: "hsl(var(--accent))" }}
+                        />
                       </span>
                       <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6">
-                  {tier.name === "Pro" && user?.plan === "FREE" ? (
+
+                <div className="mt-7">
+                  {tier.name === "The Architect" && user?.plan === "FREE" ? (
                     <UpgradeButton
-                      label="Upgrade to Pro"
+                      label="Upgrade to Architect"
                       className={cn(
-                        buttonVariants({
-                          size: "lg",
-                          variant: tier.ctaVariant,
-                        }),
-                        "w-full justify-center rounded-full",
+                        buttonVariants({ size: "lg" }),
+                        "w-full justify-center rounded-xl",
                       )}
                     />
-                  ) : tier.name === "Pro" && user?.plan === "PRO" ? (
+                  ) : tier.name === "The Architect" &&
+                    user?.plan === "PRO" ? (
                     <Link
                       href="/dashboard"
                       className={cn(
-                        buttonVariants({
-                          size: "lg",
-                          variant: tier.ctaVariant,
-                        }),
-                        "w-full justify-center rounded-full",
+                        buttonVariants({ size: "lg" }),
+                        "w-full justify-center rounded-xl",
                       )}
                     >
                       Open dashboard
                     </Link>
-                  ) : tier.name === "Free" && user ? (
+                  ) : tier.name === "The Junior" && user ? (
                     <Link
                       href="/dashboard"
                       className={cn(
-                        buttonVariants({
-                          size: "lg",
-                          variant: tier.ctaVariant,
-                        }),
-                        "w-full justify-center rounded-full",
+                        buttonVariants({ size: "lg", variant: "outline" }),
+                        "w-full justify-center rounded-xl",
                       )}
                     >
                       Open dashboard
+                    </Link>
+                  ) : tier.highlighted ? (
+                    <Link
+                      href="/sign-up"
+                      className="flex w-full items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold text-[hsl(var(--primary-foreground))] transition-opacity hover:opacity-90"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-container)) 100%)",
+                      }}
+                    >
+                      {tier.ctaLabel}
                     </Link>
                   ) : (
                     <Link
                       href="/sign-up"
                       className={cn(
-                        buttonVariants({
-                          size: "lg",
-                          variant: tier.ctaVariant,
-                        }),
-                        "w-full justify-center rounded-full",
+                        buttonVariants({ size: "lg", variant: "outline" }),
+                        "w-full justify-center rounded-xl",
                       )}
                     >
-                      {tier.name === "Pro"
-                        ? "Sign up to upgrade"
-                        : tier.ctaLabel}
+                      {tier.ctaLabel}
                     </Link>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
-        <p className="text-sm leading-7 text-muted-foreground">
-          Signed-in users can start hosted checkout directly from the Pro tier.
-          New users still begin with account creation first.
-        </p>
       </section>
 
-      <section>
-        <Card className="rounded-[2rem] border border-border/70 bg-foreground text-background shadow-sm">
-          <CardContent className="flex flex-col gap-6 px-8 py-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-2xl space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-background/60">
-                Get Started
-              </p>
-              <h2 className="text-3xl font-semibold tracking-tight">
-                Set up the tracker before your search gets harder to manage.
-              </h2>
-              <p className="text-sm leading-7 text-background/70">
-                Start on the free plan, bring your current applications into one
-                place, and upgrade only if you outgrow the built-in limits.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/sign-in"
-                className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "rounded-full bg-background px-5 text-foreground hover:bg-background/90",
-                )}
-              >
-                Create free account
-              </Link>
-              <Link
-                href="/#features"
-                className={cn(
-                  buttonVariants({ size: "lg", variant: "outline" }),
-                  "rounded-full border-white/20 bg-white/5 px-5 text-white hover:bg-white/10 hover:text-white",
-                )}
-              >
-                Review features
-                <ArrowRight className="size-4" />
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      {/* ── CTA Banner ── */}
+      <section
+        className="relative overflow-hidden rounded-[2rem] p-10 lg:p-16"
+        style={{ background: "hsl(var(--card))" }}
+      >
+        {/* Glassmorphism glows */}
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[2rem]"
+          style={{
+            background:
+              "radial-gradient(circle at 70% 40%, hsl(var(--primary)/0.14), transparent 50%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-16 -left-16 size-72 rounded-full opacity-20"
+          style={{
+            background: "hsl(var(--accent))",
+            filter: "blur(80px)",
+          }}
+        />
 
-      <section className="rounded-[1.75rem] border border-border/70 bg-card/90 p-6 shadow-sm">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-              Support
+        <div className="relative flex flex-col gap-10 text-center lg:text-left lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-xl space-y-4">
+            <p className="font-label text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground/80">
+              Get started
             </p>
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
-              Need help before or after signup?
+            <h2 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Join 5,000+ developers who have automated their career
+              progression.
             </h2>
-            <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
-              Reach the DevApply team directly for billing questions, account
-              issues, or launch feedback.
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Designed for architects of the web. Manage your career like a
+              codebase — start on the free plan and upgrade only if you outgrow
+              the built-in limits.
             </p>
           </div>
-          <a
-            href={SUPPORT_MAILTO}
-            className="text-sm font-medium text-primary underline underline-offset-4"
-          >
-            {SUPPORT_EMAIL}
-          </a>
+
+          <div className="flex flex-wrap justify-center gap-3 lg:justify-end">
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold text-[hsl(var(--primary-foreground))] transition-opacity hover:opacity-90"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-container)) 100%)",
+              }}
+            >
+              Create free account
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              href="/#features"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "ghost" }),
+                "rounded-xl text-muted-foreground hover:text-foreground",
+              )}
+            >
+              Review features
+            </Link>
+          </div>
         </div>
+      </section>
+
+      {/* ── Support ── */}
+      <section
+        className="flex flex-col gap-4 rounded-2xl p-7 sm:flex-row sm:items-center sm:justify-between"
+        style={{ background: "hsl(var(--card))" }}
+      >
+        <div className="space-y-1.5">
+          <p className="font-label text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground/80">
+            Support
+          </p>
+          <h3 className="text-sm font-semibold text-foreground">
+            Questions before or after signup?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Reach the DevApply team directly for billing, account issues, or
+            feedback.
+          </p>
+        </div>
+        <a
+          href={SUPPORT_MAILTO}
+          className="shrink-0 text-sm font-medium underline underline-offset-4 transition-opacity hover:opacity-70"
+          style={{ color: "hsl(var(--primary))" }}
+        >
+          {SUPPORT_EMAIL}
+        </a>
       </section>
     </div>
   );

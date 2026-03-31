@@ -18,9 +18,9 @@ function isItemActive(currentPath: string, href: string) {
 
 export function AppSidebarPresenter({ currentPath }: AppSidebarPresenterProps) {
   return (
-    <aside className="flex h-full flex-col border-r border-border bg-sidebar">
+    <aside className="flex h-full flex-col bg-sidebar">
       {/* Logo — same height as header (h-10) so it aligns across the shell */}
-      <div className="flex h-10 items-center gap-2 border-b border-border px-4">
+      <div className="flex h-10 items-center gap-2 px-4">
         <Image
           src="/devapply-logo-optimized.svg"
           alt="DevApply"
@@ -28,7 +28,7 @@ export function AppSidebarPresenter({ currentPath }: AppSidebarPresenterProps) {
           height={20}
           className="shrink-0"
         />
-        <span className="text-sm font-semibold tracking-tight text-foreground">
+        <span className="font-display text-[15px] font-semibold tracking-tight text-foreground">
           DevApply
         </span>
       </div>

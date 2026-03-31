@@ -31,7 +31,7 @@ export function ApplicationCard({
       draggable={draggable}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className="cursor-grab rounded-2xl border border-border bg-muted/40 shadow-none transition hover:border-border/80 active:cursor-grabbing"
+      className="group cursor-grab rounded-2xl border-none bg-muted/30 shadow-sm transition-all hover:bg-muted/60 active:cursor-grabbing"
     >
       <CardContent className="space-y-3">
         <div>
@@ -40,7 +40,7 @@ export function ApplicationCard({
           </p>
           <p className="text-sm text-muted-foreground">{item.role}</p>
         </div>
-        <dl className="space-y-1 text-xs text-muted-foreground">
+        <dl className="space-y-1 font-label text-xs text-muted-foreground">
           <div className="flex justify-between gap-3">
             <dt>Applied</dt>
             <dd>{item.appliedDate}</dd>
