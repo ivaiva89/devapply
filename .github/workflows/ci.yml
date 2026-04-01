@@ -12,6 +12,7 @@ jobs:
     env:
       DATABASE_URL: "postgresql://ci:ci@localhost:5432/devapply"
       DIRECT_URL: "postgresql://ci:ci@localhost:5432/devapply"
+      SHADOW_DATABASE_URL: "postgresql://ci:ci@localhost:5432/devapply_shadow"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
