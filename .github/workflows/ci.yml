@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+
+jobs:
+  lint-and-format:
+    name: Lint and format check
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/devapply"
+      DIRECT_URL: "postgresql://ci:ci@localhost:5432/devapply"
+      SHADOW_DATABASE_URL: "postgresql://ci:ci@localhost:5432/devapply_shadow"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npx tsc --noEmit

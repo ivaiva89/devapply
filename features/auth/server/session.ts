@@ -1,98 +1,258 @@
 import "server-only";
 
-import { createHmac, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { Prisma } from "@prisma/client";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
 
-const SESSION_COOKIE_NAME = "devapply_session";
-const DEFAULT_SESSION_SECRET = "devapply-local-development-secret";
+export type AuthenticatedAppUser = {
+  id: string;
+  clerkUserId: string | null;
+  email: string;
+  name: string | null;
+  plan: "FREE" | "PRO";
+};
 
-function getSessionSecret() {
-  return process.env.AUTH_SESSION_SECRET ?? DEFAULT_SESSION_SECRET;
+export class AuthSyncError extends Error {
+  code: "email_already_linked" | "missing_email";
+
+  constructor(code: "email_already_linked" | "missing_email", message: string) {
+    super(message);
+    this.code = code;
+  }
 }
 
-function createSignature(userId: string) {
-  return createHmac("sha256", getSessionSecret()).update(userId).digest("hex");
-}
-
-function parseSessionValue(value: string) {
-  const [userId, signature] = value.split(".");
-
-  if (!userId || !signature) {
+function getPrimaryEmailAddress(
+  user: Awaited<ReturnType<typeof currentUser>>,
+): string | null {
+  if (!user) {
     return null;
   }
 
-  return { userId, signature };
+  const primaryEmail =
+    user.primaryEmailAddress?.emailAddress ??
+    user.emailAddresses[0]?.emailAddress;
+
+  return primaryEmail?.trim().toLowerCase() ?? null;
 }
 
-function isValidSignature(userId: string, signature: string) {
-  const expectedSignature = createSignature(userId);
-
-  if (signature.length !== expectedSignature.length) {
-    return false;
-  }
-
-  return timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature),
-  );
-}
-
-export async function createUserSession(userId: string) {
-  const cookieStore = await cookies();
-  const value = `${userId}.${createSignature(userId)}`;
-
-  cookieStore.set(SESSION_COOKIE_NAME, value, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
-}
-
-export async function clearUserSession() {
-  const cookieStore = await cookies();
-
-  cookieStore.delete(SESSION_COOKIE_NAME);
-}
-
-export async function getCurrentUser() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
-
-  if (!sessionCookie?.value) {
+function getDisplayName(user: Awaited<ReturnType<typeof currentUser>>) {
+  if (!user) {
     return null;
   }
 
-  const parsedValue = parseSessionValue(sessionCookie.value);
+  const fullName = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
-  if (!parsedValue) {
+  if (fullName.length > 0) {
+    return fullName;
+  }
+
+  if (user.username && user.username.trim().length > 0) {
+    return user.username.trim();
+  }
+
+  return null;
+}
+
+async function syncClerkUserToDatabase(
+  clerkUserId: string,
+): Promise<AuthenticatedAppUser | null> {
+  const clerkProfile = await currentUser();
+
+  if (!clerkProfile) {
     return null;
   }
 
-  if (!isValidSignature(parsedValue.userId, parsedValue.signature)) {
-    return null;
+  const email = getPrimaryEmailAddress(clerkProfile);
+
+  if (!email) {
+    throw new AuthSyncError(
+      "missing_email",
+      "Authenticated Clerk user is missing a valid email address.",
+    );
   }
 
-  return prisma.user.findUnique({
-    where: { id: parsedValue.userId },
+  const name = getDisplayName(clerkProfile);
+  const imageUrl = clerkProfile.imageUrl ?? null;
+
+  const existingByClerkUserId = await prisma.user.findUnique({
+    where: { clerkUserId },
     select: {
       id: true,
+      clerkUserId: true,
+      email: true,
+      name: true,
+      plan: true,
+      imageUrl: true,
+    },
+  });
+
+  if (existingByClerkUserId) {
+    if (
+      existingByClerkUserId.email !== email ||
+      existingByClerkUserId.name !== name ||
+      existingByClerkUserId.imageUrl !== imageUrl
+    ) {
+      const updatedUser = await prisma.user.update({
+        where: { id: existingByClerkUserId.id },
+        data: {
+          email,
+          imageUrl,
+          name,
+        },
+        select: {
+          id: true,
+          clerkUserId: true,
+          email: true,
+          name: true,
+          plan: true,
+        },
+      });
+
+      return updatedUser;
+    }
+
+    return {
+      id: existingByClerkUserId.id,
+      clerkUserId: existingByClerkUserId.clerkUserId,
+      email: existingByClerkUserId.email,
+      name: existingByClerkUserId.name,
+      plan: existingByClerkUserId.plan,
+    };
+  }
+
+  const existingByEmail = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      clerkUserId: true,
       email: true,
       name: true,
       plan: true,
     },
   });
+
+  if (existingByEmail) {
+    if (
+      existingByEmail.clerkUserId &&
+      existingByEmail.clerkUserId !== clerkUserId
+    ) {
+      throw new AuthSyncError(
+        "email_already_linked",
+        "This email is already linked to a different user.",
+      );
+    }
+
+    return prisma.user.update({
+      where: { id: existingByEmail.id },
+      data: {
+        clerkUserId,
+        imageUrl,
+        name,
+      },
+      select: {
+        id: true,
+        clerkUserId: true,
+        email: true,
+        name: true,
+        plan: true,
+      },
+    });
+  }
+
+  try {
+    return await prisma.user.create({
+      data: {
+        clerkUserId,
+        email,
+        imageUrl,
+        name,
+      },
+      select: {
+        id: true,
+        clerkUserId: true,
+        email: true,
+        name: true,
+        plan: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const recoveredUser = await prisma.user.findFirst({
+        where: {
+          OR: [{ clerkUserId }, { email }],
+        },
+        select: {
+          id: true,
+          clerkUserId: true,
+          email: true,
+          name: true,
+          plan: true,
+        },
+      });
+
+      if (recoveredUser) {
+        if (!recoveredUser.clerkUserId) {
+          return prisma.user.update({
+            where: { id: recoveredUser.id },
+            data: {
+              clerkUserId,
+              imageUrl,
+              name,
+            },
+            select: {
+              id: true,
+              clerkUserId: true,
+              email: true,
+              name: true,
+              plan: true,
+            },
+          });
+        }
+
+        if (recoveredUser.clerkUserId === clerkUserId) {
+          return recoveredUser;
+        }
+      }
+    }
+
+    throw error;
+  }
+}
+
+export async function getCurrentUser() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  return syncClerkUserToDatabase(userId);
 }
 
 export async function requireCurrentUser() {
-  const user = await getCurrentUser();
+  let user: Awaited<ReturnType<typeof getCurrentUser>>;
+
+  try {
+    user = await getCurrentUser();
+  } catch (error) {
+    if (error instanceof AuthSyncError) {
+      redirect(`/sign-in?auth_error=${error.code}`);
+    }
+
+    throw error;
+  }
 
   if (!user) {
-    redirect("/sign-in");
+    const { redirectToSignIn } = await auth();
+    return redirectToSignIn();
   }
 
   return user;

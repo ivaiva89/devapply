@@ -1,0 +1,130 @@
+# Codex Rules
+
+## Project context
+This repository is a real SaaS product for developers:
+
+1. Job Application Tracker
+2. Developer Job CRM
+3. Developer Career Toolkit
+
+Current focus:
+Ship a production-quality MVP of the Job Application Tracker quickly and safely.
+
+## MVP scope
+Allowed:
+- authentication
+- dashboard
+- applications CRUD
+- applications table
+- kanban pipeline
+- reminders
+- resume attachments
+- basic analytics
+- billing and plan limits
+
+Not allowed unless explicitly requested:
+- resume builder
+- cover letter generator
+- salary comparison tool
+- interview prep AI
+- recruiter CRM
+- email sync
+- browser extension
+- mobile app
+
+## Stack
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Prisma
+- PostgreSQL
+- Stripe
+- Resend
+- PostHog
+
+## Architecture
+- Modular monolith
+- Feature-first organization
+- Business logic in feature server modules
+- Validation near inputs and mutations
+- Shared UI in components/
+- Routing in app/
+- Infra utilities in lib/
+- Schema and migrations in prisma/
+
+## Implementation rules
+- Use strict TypeScript
+- Avoid `any`
+- Keep code modular and explicit
+- Prefer composition over large components
+- Do not put database logic in UI components
+- Do not put business logic in page components
+- Keep diffs narrowly scoped to the task
+- Reuse existing repo conventions
+- Do not modify unrelated files
+
+## Validation and auth
+- Use Zod for user input validation
+- Validate every mutation
+- Never trust client input
+- Scope every query to the authenticated user
+- Verify ownership on every mutation
+- Never expose cross-user data
+
+## Billing
+- Enforce plan limits server-side
+- Free:
+  - 30 applications
+  - 1 resume
+  - 3 reminders
+- Pro:
+  - removes these limits
+
+## Database
+- Use Prisma with PostgreSQL
+- Change schema only when necessary
+- Explain schema changes
+- Preserve data integrity
+- Add indexes when justified for common filters
+
+## Dependencies
+- Add dependencies only when clearly justified
+- Prefer built-in capabilities and current stack first
+
+## UX expectations
+The product should feel:
+- clean
+- fast
+- professional
+- developer-focused
+
+Prioritize:
+- add application
+- edit application
+- update status
+- move through pipeline
+- schedule follow-up
+- attach resume
+
+Always include:
+- loading states
+- empty states
+- error states
+
+## Delivery expectations
+For each task, provide:
+1. summary of what changed
+2. changed files
+3. env or migration changes
+4. follow-up improvements
+5. risks or tradeoffs
+
+## Decision rule
+Choose the implementation that is:
+- simplest
+- safest
+- maintainable
+- aligned with the repo
+- enough for the MVP

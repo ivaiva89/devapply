@@ -1,0 +1,214 @@
+# Polar Sandbox Setup
+
+## Purpose
+
+Use this setup when validating DevApply billing locally against Polar
+sandbox.
+
+The current billing flow is:
+
+- authenticated UI triggers a server action
+- the server action redirects to `app/api/billing/checkout`
+- that route delegates to Polar hosted checkout
+- `app/api/webhooks/polar/route.ts` verifies webhook signatures and
+  updates internal `User.plan`
+- signed-in users with a matching Polar customer can open
+  `app/api/billing/portal` from settings
+
+Checkout redirects alone are not enough to grant `PRO`. Webhook delivery
+must succeed before plan state changes in the app.
+
+## Required env vars
+
+Add these values to `.env.local` for local sandbox testing:
+
+- `NEXT_PUBLIC_APP_URL`
+- `POLAR_ACCESS_TOKEN`
+- `POLAR_PRODUCT_ID_PRO`
+- `POLAR_ENVIRONMENT`
+- `POLAR_WEBHOOK_SECRET`
+
+Recommended local values:
+
+- `NEXT_PUBLIC_APP_URL="http://localhost:3000"`
+- `POLAR_ENVIRONMENT="sandbox"`
+
+Notes:
+
+- `POLAR_ACCESS_TOKEN` must be a valid Polar sandbox organization access
+  token
+- `POLAR_PRODUCT_ID_PRO` must belong to the same Polar sandbox
+  organization as the access token
+- `POLAR_WEBHOOK_SECRET` must match the webhook endpoint configured in
+  Polar for the local test tunnel target
+
+## Current verification status
+
+Verified on March 30, 2026 from this repository workspace:
+
+- the configured sandbox `POLAR_ACCESS_TOKEN` can read the configured
+  `POLAR_PRODUCT_ID_PRO`
+- direct Polar checkout creation succeeded against the configured
+  sandbox product when using the current token and omitting a prefilled
+  customer email
+- the local app is reachable on `http://localhost:3000`
+- `POLAR_WEBHOOK_SECRET` is configured locally
+- the local webhook route at `/api/webhooks/polar` accepts a correctly
+  signed webhook and rejects an invalid signature
+- the authenticated checkout route at `/api/billing/checkout` correctly
+  redirects signed-out requests to `/sign-in`
+- a real sandbox checkout was reported successful from a signed-in local
+  browser session
+
+Not yet verified in this workspace:
+
+- webhook-driven entitlement sync from a real Polar-delivered event
+  through `/api/webhooks/polar`
+- persisted billing linkage updates in the local database after the real
+  checkout
+- cancel or downgrade behavior
+
+Current blockers for full local verification:
+
+- this CLI session cannot observe the signed-in browser session directly,
+  so checkout completion is only user-reported from the UI side
+- the latest local database read still shows no `billingSyncedAt`,
+  `billingCustomerId`, `billingSubscriptionId`, or
+  `billingSubscriptionStatus` values for the existing users, so a real
+  provider-to-app webhook sync has not yet been proven by persisted
+  state
+
+## Local checkout verification
+
+1. Start the app with `npm run dev`.
+2. Sign in with a local test account.
+3. Trigger upgrade from settings or the signed-in pricing CTA.
+4. Confirm the request reaches `/api/billing/checkout`.
+5. Confirm Polar hosted checkout opens successfully.
+
+If checkout fails before redirect:
+
+- verify `POLAR_ACCESS_TOKEN`
+- verify `POLAR_PRODUCT_ID_PRO`
+- verify `POLAR_ENVIRONMENT`
+- verify `NEXT_PUBLIC_APP_URL`
+
+If Polar returns `401 invalid_token`, replace the access token with a
+fresh sandbox token.
+
+## Local customer portal verification
+
+Customer portal access is optional, but the current implementation
+supports it for authenticated users whose Polar customer record can be
+resolved by external customer ID.
+
+Portal verification flow:
+
+1. Sign in with an account that has already completed Polar checkout.
+2. Open `/settings`.
+3. Trigger the billing portal action from the Pro plan section.
+4. Confirm the request reaches `/api/billing/portal`.
+5. Confirm Polar redirects to the hosted customer portal.
+
+If the app redirects back to `/settings?billing=portal_unavailable`:
+
+- verify the user has completed at least one Polar checkout
+- verify the Polar customer was created with `externalCustomerId`
+  matching the local `User.id`
+- verify `POLAR_ACCESS_TOKEN` and `POLAR_ENVIRONMENT`
+
+## Local webhook verification
+
+Webhook sync is required for entitlement changes.
+
+Local verification flow:
+
+1. Expose the local app with a tunnel that can receive HTTPS callbacks.
+2. Configure the Polar sandbox webhook target to:
+   `https://<your-tunnel-host>/api/webhooks/polar`
+3. Copy the matching Polar webhook secret into
+   `POLAR_WEBHOOK_SECRET`.
+4. Complete a sandbox checkout or replay a relevant Polar webhook.
+5. Confirm the webhook returns success and the local user's `plan`
+   changes in Prisma.
+
+Observed on March 30, 2026:
+
+- locally signed test webhooks hit the route successfully
+- a real sandbox checkout was completed in the browser
+- local persisted billing state still did not show a matching webhook
+  sync afterward
+
+If checkout succeeds but Prisma billing fields stay null:
+
+- inspect Polar event delivery logs for the webhook endpoint
+- verify the active Polar listener is forwarding to the exact local app
+  instance handling `/api/webhooks/polar`
+- verify the checkout created a Polar customer with
+  `externalCustomerId = User.id`
+- verify the delivered event type is one of the mapped sync events
+  listed below
+
+Relevant webhook outcomes in the current implementation:
+
+- `order.paid` -> `PRO`
+- `subscription.active` -> `PRO`
+- `subscription.uncanceled` -> `PRO`
+- `subscription.revoked` -> `FREE`
+
+Webhook sync also persists provider linkage when available, including
+Polar customer ID, subscription ID, product ID, subscription status, and
+the latest synced billing period end timestamp.
+
+`subscription.canceled` does not immediately downgrade access because the
+customer may still have access until the end of the billing period.
+
+## What to inspect during debugging
+
+- app logs for `/api/billing/checkout`
+- app logs for `/api/webhooks/polar`
+- Polar sandbox event delivery status
+- the local user's `plan` field in Prisma
+
+If webhook delivery succeeds but `plan` does not change:
+
+- verify Polar customer `externalId` matches the DevApply `User.id`
+- verify the checkout used the configured `POLAR_PRODUCT_ID_PRO`
+- verify the event type is one of the mapped sync events above
+
+## Current limitations
+
+- app entitlements still use normalized app plan state only: `FREE` /
+  `PRO`
+- provider-specific linkage is persisted on `User`, but existing users
+  may keep null billing-linkage fields until a later billing webhook or
+  an operator-run backfill populates them
+- customer portal availability depends on Polar resolving the customer by
+  external customer ID
+
+## Backfill older Pro users
+
+If an existing user already has `User.plan = PRO` but still has null
+Polar linkage fields, run the explicit backfill script from the app
+repository:
+
+```bash
+npm run billing:backfill-polar-linkage -- --user-id <userId>
+npm run billing:backfill-polar-linkage -- --user-id <userId> --write
+```
+
+Bulk mode is intentionally gated and should be used carefully:
+
+```bash
+npm run billing:backfill-polar-linkage -- --all-pro-missing
+npm run billing:backfill-polar-linkage -- --all-pro-missing --write --confirm-all-pro-missing
+```
+
+Operational notes:
+
+- dry run is the default
+- the script does not change `User.plan`
+- the script queries Polar customer state by `externalCustomerId =
+User.id`
+- the script only backfills stored provider linkage and latest synced
+  subscription metadata

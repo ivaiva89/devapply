@@ -7,30 +7,16 @@ type PageShellProps = {
   children?: ReactNode;
 };
 
-export function PageShell({
-  title,
-  description,
-  eyebrow,
-  children,
-}: PageShellProps) {
+export function PageShell({ title, description, children }: PageShellProps) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm">
-      <div className="space-y-3">
-        {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-stone-500">
-            {eyebrow}
-          </p>
-        ) : null}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-stone-950">
-            {title}
-          </h1>
-          <p className="max-w-2xl text-sm leading-6 text-stone-600">
-            {description}
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-base font-semibold tracking-tight text-foreground">
+          {title}
+        </h1>
+        <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
-      {children ? <div className="mt-8">{children}</div> : null}
-    </section>
+      {children ? <div>{children}</div> : null}
+    </div>
   );
 }

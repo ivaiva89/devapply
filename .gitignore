@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Visual brainstorming sessions
+.superpowers/
+
 # dependencies
 /node_modules
 /.pnp
@@ -30,8 +33,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files — secrets stay local, example template is tracked
+.env
+.env.local
+.env*.local
+.env.neon-local
+!.env.example
+!.env.neon-local.example
+.neon_local/
+/public/uploads/
 
 # vercel
 .vercel
@@ -41,11 +51,10 @@ yarn-error.log*
 next-env.d.ts
 
 .idea
-.cursorrules
-.codexrules
-AGENTS.md
-ARCHITECTURE.md
-PRODUCT.md
-TASKS.md
-docs
 .env*.local
+
+# clerk configuration (can include secrets)
+/.clerk/
+
+*storybook.log
+storybook-static

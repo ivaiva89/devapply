@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import {
   PrismaClient,
   ApplicationSource,
@@ -7,8 +9,16 @@ import {
   InterviewType,
   Plan,
 } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to run prisma/seed.mjs.");
+}
+
+const adapter = new PrismaNeon({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   await prisma.applicationAttachment.deleteMany();
@@ -85,7 +95,8 @@ async function main() {
       salaryMin: 185000,
       salaryMax: 220000,
       currency: "USD",
-      jobUrl: "https://vercel.com/careers/software-engineer-developer-experience",
+      jobUrl:
+        "https://vercel.com/careers/software-engineer-developer-experience",
       appliedDate: new Date("2026-02-20T18:00:00.000Z"),
       lastActivityAt: new Date("2026-02-20T18:00:00.000Z"),
       notes:
@@ -121,7 +132,8 @@ async function main() {
         interviewerName: "Morgan Lee",
         scheduledAt: new Date("2026-02-08T17:00:00.000Z"),
         completedAt: new Date("2026-02-08T17:30:00.000Z"),
-        notes: "Passed to technical screen. Discussed distributed systems and API ownership.",
+        notes:
+          "Passed to technical screen. Discussed distributed systems and API ownership.",
       },
       {
         userId: ava.id,
@@ -131,7 +143,8 @@ async function main() {
         title: "Technical systems interview",
         interviewerName: "Priya Raman",
         scheduledAt: new Date("2026-03-18T16:00:00.000Z"),
-        notes: "Prepare examples around incident response and schema design tradeoffs.",
+        notes:
+          "Prepare examples around incident response and schema design tradeoffs.",
       },
     ],
   });
@@ -178,7 +191,8 @@ async function main() {
         userId: ava.id,
         applicationId: vercelApplication.id,
         title: "Referral follow-up",
-        notes: "Check whether the hiring manager has reviewed the referral packet.",
+        notes:
+          "Check whether the hiring manager has reviewed the referral packet.",
         dueAt: new Date("2026-03-22T18:00:00.000Z"),
       },
     ],

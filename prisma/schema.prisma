@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum ApplicationStatus {
@@ -47,6 +46,10 @@ enum Plan {
   PRO
 }
 
+enum BillingProvider {
+  POLAR
+}
+
 enum AttachmentKind {
   RESUME
   COVER_LETTER
@@ -56,10 +59,18 @@ enum AttachmentKind {
 
 model User {
   id           String                  @id @default(cuid())
+  clerkUserId  String?                 @unique
   email        String                  @unique
   name         String?
   imageUrl     String?
   plan         Plan                    @default(FREE)
+  billingProvider           BillingProvider?
+  billingCustomerId         String?                 @unique
+  billingSubscriptionId     String?                 @unique
+  billingProductId          String?
+  billingSubscriptionStatus String?
+  billingCurrentPeriodEnd   DateTime?
+  billingSyncedAt           DateTime?
   timezone     String                  @default("UTC")
   createdAt    DateTime                @default(now())
   updatedAt    DateTime                @updatedAt
@@ -70,6 +81,8 @@ model User {
   reminders    Reminder[]
 
   @@index([plan])
+  @@index([billingProvider])
+  @@index([billingProductId])
   @@index([createdAt])
   @@index([updatedAt])
 }
