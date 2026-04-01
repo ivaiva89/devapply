@@ -10,7 +10,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "prisma generate",
+    "postinstall": "[ \"$VERCEL\" = '1' ] || prisma generate",
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
