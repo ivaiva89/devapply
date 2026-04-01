@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:vercel": "npm run db:generate && if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:deploy; fi && next build",
+    "build:vercel": "export DATABASE_URL=${DATABASE_URL:-$POSTGRES_PRISMA_URL} && export DIRECT_URL=${DIRECT_URL:-$DATABASE_URL_UNPOOLED} && npm run db:generate && if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:deploy; fi && next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
