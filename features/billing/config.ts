@@ -1,5 +1,5 @@
 export const FREE_PLAN_LIMITS = {
-  applications: 30,
+  applications: 10,
   resumes: 1,
   reminders: 3,
 } as const;

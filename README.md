@@ -126,11 +126,11 @@ Vercel preview deployments on PRs serve as staging.
 
 - Use Storybook for isolated component work in `stories/ui`, `stories/design`, and `stories/features`
 - Use `app/(v0)/preview/page.tsx` for in-app mock compositions
-- Reuse shared placeholder data from `lib/mocks/ui-fixtures.ts`
+- Reuse shared placeholder data from `shared/mocks/ui-fixtures.ts`
 - Review `docs/STORYBOOK_PREVIEW_PLAN.md` when adding or auditing UI coverage
 - Keep stories backend-agnostic: no Prisma, Clerk, auth server modules, or `server-only` imports
 - ESLint now enforces the backend-import guardrail for `stories/`,
-  `app/(v0)/preview`, and `lib/mocks`
+  `app/(v0)/preview`, and `shared/mocks`
 - When feature UI mixes rendering with auth, server actions, or session
   wiring, split it into a pure presenter plus a thin wrapper before
   adding Storybook or `/preview` coverage
@@ -187,8 +187,10 @@ The repository includes Storybook with:
 
 - config in `.storybook/`
 - stories in `stories/`
-- shadcn primitives in `components/ui/`
-- shared presentational components in `components/design/`
+- shadcn-style primitives in `shared/ui/`
+- reusable field, layout, and presentational helpers in `shared/`
+- domain display pieces in `entities/`
+- composed screen sections in `widgets/`
 
 Storybook loads `app/globals.css` so Tailwind styles and theme tokens match the app shell.
 

@@ -316,7 +316,7 @@ export default function PreviewPage() {
           <TabsContent value="billing" className="space-y-6">
             <UpgradePrompt
               title="Upgrade to keep tracking more applications."
-              description="Free plan users can track 30 applications, keep 1 resume, and hold 3 active reminders. Upgrade states stay previewable here without touching hosted checkout."
+              description="Free plan users can track 10 applications, keep 1 resume, and hold 3 active reminders. Upgrade states stay previewable here without touching hosted checkout."
             />
             <div className="grid gap-6 lg:grid-cols-2">
               <PlanSummaryPresenter

@@ -52,7 +52,7 @@ Billing provider direction for the MVP:
 Free plan
 
 - default plan
-- up to 30 applications
+- up to 10 applications
 - 1 resume
 - 3 reminders
 
