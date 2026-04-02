@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { headers } from "next/headers";
 import { Inter, Manrope, Space_Grotesk } from "next/font/google";
@@ -25,8 +25,8 @@ const spaceGrotesk = Space_Grotesk({
 import "@/app/globals.css";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { AppHeader } from "@/features/navigation/components/app-header";
-import { AppSidebar } from "@/features/navigation/components/app-sidebar";
+import { AppHeader } from "@/widgets/app-shell/ui/app-header";
+import { AppSidebar } from "@/widgets/app-shell/ui/app-sidebar";
 
 export const metadata: Metadata = {
   title: "DevApply",
@@ -37,8 +37,10 @@ export const metadata: Metadata = {
 export default async function AppLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const user = await requireCurrentUser();
-  const headerStore = await headers();
+  const [user, headerStore] = await Promise.all([
+    requireCurrentUser(),
+    headers(),
+  ]);
   const currentPath = headerStore.get("x-current-path") ?? "/dashboard";
 
   return (
@@ -48,28 +50,23 @@ export default async function AppLayout({
     >
       <body className="bg-background text-foreground antialiased">
         <ClerkProvider>
-          <div className="flex min-h-screen">
-            {/* Sidebar — fixed, aligned to header height */}
-            <div className="hidden w-48 shrink-0 lg:block">
-              <div className="fixed inset-y-0 left-0 w-48">
-                <AppSidebar currentPath={currentPath} />
-              </div>
-            </div>
-            {/* Main column */}
-            <div className="flex min-w-0 flex-1 flex-col">
-              <div className="sticky top-0 z-10 bg-background">
-                <AppHeader
-                  title="DevApply"
-                  description=""
-                  userName={user.name ?? "Developer"}
-                  userEmail={user.email}
-                  planLabel={user.plan}
-                />
-              </div>
-              <main className="flex-1 px-6 py-6">
-                <div className="mx-auto max-w-5xl">{children}</div>
-              </main>
-            </div>
+          <div className="min-h-screen bg-muted/40">
+            <AppHeader
+              currentPath={currentPath}
+              title="DevApply"
+              description="Track applications, reminders, resumes, and billing in one workspace."
+              userName={user.name ?? "Developer"}
+              userEmail={user.email}
+              planLabel={user.plan}
+            />
+            <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8">
+              <aside className="hidden lg:block">
+                <div className="sticky top-24 overflow-hidden rounded-[1.75rem] border border-border/70 bg-background shadow-sm">
+                  <AppSidebar currentPath={currentPath} />
+                </div>
+              </aside>
+              <div className="grid gap-6">{children}</div>
+            </main>
           </div>
         </ClerkProvider>
       </body>

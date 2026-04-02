@@ -1,9 +1,1 @@
-import { AppSidebarPresenter } from "@/features/navigation/components/app-sidebar-presenter";
-
-type AppSidebarProps = {
-  currentPath: string;
-};
-
-export function AppSidebar({ currentPath }: AppSidebarProps) {
-  return <AppSidebarPresenter currentPath={currentPath} />;
-}
+export * from "@/widgets/app-shell/ui/app-sidebar";

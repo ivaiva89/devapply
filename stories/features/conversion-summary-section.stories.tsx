@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
-import { mockDashboardConversions } from "@/lib/mocks/ui-fixtures";
+import { ConversionSummarySection } from "@/widgets/dashboard/ui/conversion-summary-section";
+import { mockDashboardConversions } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/ConversionSummarySection",

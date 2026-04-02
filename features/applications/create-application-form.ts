@@ -1,7 +1,7 @@
 import type {
   ApplicationSourceValue,
   ApplicationStatusValue,
-} from "@/features/applications/config";
+} from "@/entities/application/model/config";
 
 export type CreateApplicationFormValues = {
   company: string;

@@ -3,13 +3,13 @@ import "server-only";
 import { ApplicationStatus } from "@prisma/client";
 
 import { getUserPlan } from "@/features/billing/server/plan-enforcement";
-import { getApplicationListDataForUser } from "@/features/applications/server/application-service";
+import { getApplicationListDataForUser } from "@/entities/application/api/application-service";
 import {
   type ApplicationListItem,
   applicationSortOptions,
   type ApplicationSortOption,
   type ApplicationsQueryState,
-} from "@/features/applications/types";
+} from "@/entities/application/model/types";
 
 const DEFAULT_QUERY_STATE: ApplicationsQueryState = {
   query: "",

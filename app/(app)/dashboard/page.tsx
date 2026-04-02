@@ -1,12 +1,12 @@
-import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
-import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
-import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
-import { DashboardHeader } from "@/features/dashboard/components/dashboard-header";
-import { DashboardShell } from "@/features/dashboard/components/dashboard-shell";
-import { PipelineOverviewCard } from "@/features/dashboard/components/pipeline-overview-card";
-import { RecentApplicationsCard } from "@/features/dashboard/components/recent-applications-card";
-import { StatsGrid } from "@/features/dashboard/components/stats-grid";
-import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
+import { ApplicationsOverTimeChartSection } from "@/widgets/dashboard/ui/applications-over-time-chart-section";
+import { ConversionSummarySection } from "@/widgets/dashboard/ui/conversion-summary-section";
+import { DashboardEmptyState } from "@/widgets/dashboard/ui/dashboard-empty-state";
+import { DashboardHeader } from "@/widgets/dashboard/ui/dashboard-header";
+import { DashboardShell } from "@/widgets/dashboard/ui/dashboard-shell";
+import { PipelineOverviewCard } from "@/widgets/dashboard/ui/pipeline-overview-card";
+import { RecentApplicationsCard } from "@/widgets/dashboard/ui/recent-applications-card";
+import { StatsGrid } from "@/widgets/dashboard/ui/stats-grid";
+import { UpcomingRemindersCard } from "@/widgets/dashboard/ui/upcoming-reminders-card";
 import { getDashboardDataForUser } from "@/features/dashboard/server/dashboard-data";
 import { requireCurrentUser } from "@/features/auth/server/session";
 

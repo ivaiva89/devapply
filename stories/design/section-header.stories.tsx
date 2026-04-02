@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { SectionHeader } from "@/components/design/section-header";
-import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/shared/design/section-header";
+import { Button } from "@/shared/ui/button";
 
 const meta = {
   title: "Design/SectionHeader",

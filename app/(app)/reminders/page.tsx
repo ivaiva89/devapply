@@ -3,8 +3,8 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { CreateReminderForm } from "@/features/reminders/components/create-reminder-form";
-import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
-import { RemindersList } from "@/features/reminders/components/reminders-list";
+import { RemindersEmptyState } from "@/widgets/reminders-panel/ui/reminders-empty-state";
+import { RemindersList } from "@/widgets/reminders-panel/ui/reminders-list";
 import { getRemindersPageDataForUser } from "@/features/reminders/server/reminder-list";
 
 export default async function RemindersPage() {

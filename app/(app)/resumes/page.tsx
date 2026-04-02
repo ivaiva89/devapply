@@ -2,8 +2,8 @@ import { requireCurrentUser } from "@/features/auth/server/session";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { ResumeList } from "@/features/resumes/components/resume-list";
-import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
+import { ResumeList } from "@/widgets/resumes-panel/ui/resume-list";
+import { ResumesEmptyState } from "@/widgets/resumes-panel/ui/resumes-empty-state";
 import { UploadResumeForm } from "@/features/resumes/components/upload-resume-form";
 import { getResumePageDataForUser } from "@/features/resumes/server/resume-list";
 

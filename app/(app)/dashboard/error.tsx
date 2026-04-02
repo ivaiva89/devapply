@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { DashboardErrorState } from "@/features/dashboard/components/dashboard-error-state";
+import { Button } from "@/shared/ui/button";
+import { DashboardErrorState } from "@/widgets/dashboard/ui/dashboard-error-state";
 
 type DashboardErrorProps = {
   error: Error;

@@ -1,6 +1,6 @@
 import type { ComponentProps, RefObject } from "react";
 
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import {
   createEmptyReminderFormValues,
   toReminderFormValues,

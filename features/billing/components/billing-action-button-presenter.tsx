@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
+import { FormErrorMessage } from "@/shared/ui/field";
 
 type BillingActionButtonPresenterProps = {
   action?: ComponentProps<"form">["action"];
@@ -36,7 +37,9 @@ export function BillingActionButtonPresenter({
       >
         {isPending ? pendingLabel : label}
       </Button>
-      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      {error ? (
+        <FormErrorMessage className="px-3 py-2">{error}</FormErrorMessage>
+      ) : null}
     </form>
   );
 }

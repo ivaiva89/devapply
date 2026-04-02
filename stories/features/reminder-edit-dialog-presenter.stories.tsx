@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ReminderEditDialogPresenter } from "@/features/reminders/components/reminder-edit-dialog-presenter";
-import { mockReminderApplicationOptions } from "@/lib/mocks/ui-fixtures";
+import { mockReminderApplicationOptions } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/Reminders/ReminderEditDialogPresenter",

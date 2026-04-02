@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { AppSidebarPresenter } from "@/features/navigation/components/app-sidebar-presenter";
+import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
 const meta = {
   title: "Features/Navigation/AppSidebarPresenter",
@@ -9,7 +9,7 @@ const meta = {
     currentPath: "/applications",
   },
   parameters: {
-    layout: "fullscreen",
+    layout: "centered",
   },
 } satisfies Meta<typeof AppSidebarPresenter>;
 

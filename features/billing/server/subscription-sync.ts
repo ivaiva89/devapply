@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import type { BillingPlan } from "@/features/billing/server/provider-config";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 type BillingPayloadMetadata = Record<
   string,

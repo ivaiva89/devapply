@@ -1,4 +1,4 @@
-import { EmptyState } from "@/components/design/empty-state";
+import { EmptyState } from "@/shared/design/empty-state";
 
 export function PipelineEmptyState() {
   return (

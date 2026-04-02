@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   applicationSourceValues,
   applicationStatusValues,
-} from "@/features/applications/config";
+} from "@/entities/application/model/config";
 import {
   createApplicationDefaultValues,
   createApplicationFieldNames,

@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { ReminderDeleteDialogPresenter } from "@/features/reminders/components/reminder-delete-dialog-presenter";
 import { getDeleteReminderInitialState } from "@/features/reminders/reminder-delete";
 import { deleteReminder } from "@/features/reminders/server/delete-reminder";

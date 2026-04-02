@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/design/empty-state";
+import { Button } from "@/shared/ui/button";
+import { EmptyState } from "@/shared/design/empty-state";
 
 const meta = {
   title: "Design/EmptyState",

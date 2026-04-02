@@ -1,4 +1,4 @@
-import { PipelineBoard } from "@/features/applications/components/pipeline-board";
+import { PipelineBoard } from "@/widgets/pipeline-board/ui/pipeline-board";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
 import { getPipelineColumnsForUser } from "@/features/applications/server/pipeline-board";
 import { requireCurrentUser } from "@/features/auth/server/session";

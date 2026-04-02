@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 const completeReminderSchema = z.object({
   reminderId: z.string().trim().min(1),

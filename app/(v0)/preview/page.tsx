@@ -1,45 +1,45 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SectionHeader } from "@/components/design/section-header";
-import { ApplicationsTable } from "@/features/applications/components/applications-table";
+import { SectionHeader } from "@/shared/design/section-header";
+import { Button } from "@/shared/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { ApplicationsTable } from "@/widgets/applications-table/ui/applications-table";
 import { ApplicationDeleteDialogPresenter } from "@/features/applications/components/application-delete-dialog-presenter";
 import { ApplicationFormModalPresenter } from "@/features/applications/components/application-form-modal-presenter";
-import { ApplicationRowActionsMenu } from "@/features/applications/components/application-row-actions-menu";
+import { ApplicationRowActionsMenu } from "@/entities/application/ui/application-row-actions-menu";
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFiltersPresenter } from "@/features/applications/components/applications-filters-presenter";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
-import { PipelineBoardPresenter } from "@/features/applications/components/pipeline-board-presenter";
+import { PipelineBoardPresenter } from "@/widgets/pipeline-board/ui/pipeline-board-presenter";
 import { NewApplicationTrigger } from "@/features/applications/components/new-application-trigger";
 import {
   createApplicationDefaultValues,
   getCreateApplicationInitialState,
 } from "@/features/applications/create-application-form";
 import { BillingActionButtonPresenter } from "@/features/billing/components/billing-action-button-presenter";
-import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
+import { PlanSummaryPresenter } from "@/widgets/settings-billing/ui/plan-summary-presenter";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { CreateReminderFormPresenter } from "@/features/reminders/components/create-reminder-form-presenter";
 import { ReminderDeleteDialogPresenter } from "@/features/reminders/components/reminder-delete-dialog-presenter";
 import { ReminderEditDialogPresenter } from "@/features/reminders/components/reminder-edit-dialog-presenter";
-import { ApplicationsOverTimeChartSection } from "@/features/dashboard/components/applications-over-time-chart-section";
-import { ConversionSummarySection } from "@/features/dashboard/components/conversion-summary-section";
-import { DashboardEmptyState } from "@/features/dashboard/components/dashboard-empty-state";
-import { DashboardErrorState } from "@/features/dashboard/components/dashboard-error-state";
-import { DashboardHeader } from "@/features/dashboard/components/dashboard-header";
-import { DashboardLoadingState } from "@/features/dashboard/components/dashboard-loading-state";
-import { DashboardShell } from "@/features/dashboard/components/dashboard-shell";
-import { PipelineOverviewCard } from "@/features/dashboard/components/pipeline-overview-card";
-import { RecentApplicationsCard } from "@/features/dashboard/components/recent-applications-card";
-import { StatsGrid } from "@/features/dashboard/components/stats-grid";
-import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
-import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
-import { RemindersListPresenter } from "@/features/reminders/components/reminders-list-presenter";
-import { AppHeaderPresenter } from "@/features/navigation/components/app-header-presenter";
-import { AppSidebarPresenter } from "@/features/navigation/components/app-sidebar-presenter";
+import { ApplicationsOverTimeChartSection } from "@/widgets/dashboard/ui/applications-over-time-chart-section";
+import { ConversionSummarySection } from "@/widgets/dashboard/ui/conversion-summary-section";
+import { DashboardEmptyState } from "@/widgets/dashboard/ui/dashboard-empty-state";
+import { DashboardErrorState } from "@/widgets/dashboard/ui/dashboard-error-state";
+import { DashboardHeader } from "@/widgets/dashboard/ui/dashboard-header";
+import { DashboardLoadingState } from "@/widgets/dashboard/ui/dashboard-loading-state";
+import { DashboardShell } from "@/widgets/dashboard/ui/dashboard-shell";
+import { PipelineOverviewCard } from "@/widgets/dashboard/ui/pipeline-overview-card";
+import { RecentApplicationsCard } from "@/widgets/dashboard/ui/recent-applications-card";
+import { StatsGrid } from "@/widgets/dashboard/ui/stats-grid";
+import { UpcomingRemindersCard } from "@/widgets/dashboard/ui/upcoming-reminders-card";
+import { RemindersEmptyState } from "@/widgets/reminders-panel/ui/reminders-empty-state";
+import { RemindersListPresenter } from "@/widgets/reminders-panel/ui/reminders-list-presenter";
+import { AppHeaderPresenter } from "@/widgets/app-shell/ui/app-header-presenter";
+import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 import { AttachResumeFormPresenter } from "@/features/resumes/components/attach-resume-form-presenter";
-import { ResumeListPresenter } from "@/features/resumes/components/resume-list-presenter";
-import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
+import { ResumeListPresenter } from "@/widgets/resumes-panel/ui/resume-list-presenter";
+import { ResumesEmptyState } from "@/widgets/resumes-panel/ui/resumes-empty-state";
 import { UploadResumeFormPresenter } from "@/features/resumes/components/upload-resume-form-presenter";
 import {
   mockApplicationsOverTime,
@@ -55,11 +55,11 @@ import {
   mockResumeApplicationOptions,
   mockResumeListItems,
   mockUpcomingReminders,
-} from "@/lib/mocks/ui-fixtures";
+} from "@/shared/mocks/ui-fixtures";
 
 export default function PreviewPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/40">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-6 py-6">
         <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
           <SectionHeader
@@ -85,36 +85,35 @@ export default function PreviewPage() {
               <SectionHeader
                 eyebrow="Navigation shell"
                 title="App chrome preview"
-                description="Sidebar and header presenters mirror the authenticated app shell without Clerk or route-header dependencies."
+                description="Sticky header, desktop nav, search, and the mobile drawer mirror the authenticated app shell without auth or route dependencies."
               />
-              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-background">
-                <div className="grid min-h-[28rem] lg:grid-cols-[13rem_minmax(0,1fr)]">
-                  <div className="border-b border-border/70 lg:border-b-0 lg:border-r">
-                    <AppSidebarPresenter currentPath="/applications" />
-                  </div>
-                  <div className="min-w-0">
-                    <AppHeaderPresenter
-                      title="Application tracker"
-                      description="Protected area for managing applications, interview progress, reminders, and resume assets."
-                      userName={mockNavigationShellUser.name}
-                      userEmail={mockNavigationShellUser.email}
-                      planLabel={mockNavigationShellUser.planLabel}
-                      userControl={
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground">
-                          AJ
-                        </div>
-                      }
-                    />
-                    <div className="p-8">
-                      <DashboardShell>
-                        <DashboardHeader
-                          title="Dashboard"
-                          description="Job search overview — pipeline volume, recent activity, and follow-ups."
-                        />
-                        <StatsGrid items={mockDashboardKpis} />
-                      </DashboardShell>
+              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-muted/40">
+                <AppHeaderPresenter
+                  currentPath="/applications"
+                  title="Application tracker"
+                  description="Protected area for managing applications, interview progress, reminders, and resume assets."
+                  userName={mockNavigationShellUser.name}
+                  userEmail={mockNavigationShellUser.email}
+                  planLabel={mockNavigationShellUser.planLabel}
+                  userControl={
+                    <Button variant="outline" className="w-full rounded-lg">
+                      Sign out
+                    </Button>
+                  }
+                />
+                <div className="grid gap-6 p-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
+                  <div className="hidden lg:block">
+                    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-background shadow-sm">
+                      <AppSidebarPresenter currentPath="/applications" />
                     </div>
                   </div>
+                  <DashboardShell>
+                    <DashboardHeader
+                      title="Dashboard"
+                      description="Job search overview — pipeline volume, recent activity, and follow-ups."
+                    />
+                    <StatsGrid items={mockDashboardKpis} />
+                  </DashboardShell>
                 </div>
               </div>
             </section>

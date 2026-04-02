@@ -14,11 +14,11 @@ import {
   toUtcDateFromLocalInput,
 } from "@/features/reminders/reminder-form";
 import type { CreateReminderActionState } from "@/features/reminders/types";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 import {
   getFormString,
   getValidationErrorMessage,
-} from "@/lib/server-action-validation";
+} from "@/shared/lib/server-action-validation";
 
 const createReminderSchema = z.object({
   title: z

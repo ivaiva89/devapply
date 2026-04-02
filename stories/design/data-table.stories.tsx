@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import {
   DataTable,
   type DataTableColumn,
-} from "@/components/design/data-table";
+} from "@/shared/design/data-table";
 
 type Row = {
   id: string;

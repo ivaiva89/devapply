@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { get } from "@vercel/blob";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 function getBlobToken() {
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();

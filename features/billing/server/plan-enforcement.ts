@@ -3,7 +3,7 @@ import "server-only";
 import type { Plan } from "@prisma/client";
 
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 export type LimitResource = keyof typeof FREE_PLAN_LIMITS;
 

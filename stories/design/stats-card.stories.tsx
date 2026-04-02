@@ -1,7 +1,7 @@
 import { Trophy } from "lucide-react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { StatsCard } from "@/components/design/stats-card";
+import { StatsCard } from "@/shared/design/stats-card";
 
 const meta = {
   title: "Design/StatsCard",
