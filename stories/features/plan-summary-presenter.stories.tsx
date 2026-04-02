@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Button } from "@/components/ui/button";
-import { PlanSummaryPresenter } from "@/features/billing/components/plan-summary-presenter";
+import { Button } from "@/shared/ui/button";
+import { PlanSummaryPresenter } from "@/widgets/settings-billing/ui/plan-summary-presenter";
 
 const meta = {
   title: "Features/Billing/PlanSummaryPresenter",

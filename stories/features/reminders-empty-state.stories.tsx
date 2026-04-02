@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { RemindersEmptyState } from "@/features/reminders/components/reminders-empty-state";
+import { RemindersEmptyState } from "@/widgets/reminders-panel/ui/reminders-empty-state";
 
 const meta = {
   title: "Features/RemindersEmptyState",

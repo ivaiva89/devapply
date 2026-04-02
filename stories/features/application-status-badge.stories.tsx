@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ApplicationStatusBadge } from "@/features/applications/components/application-status-badge";
+import { ApplicationStatusBadge } from "@/entities/application/ui/application-status-badge";
 
 const meta = {
   title: "Features/ApplicationStatusBadge",

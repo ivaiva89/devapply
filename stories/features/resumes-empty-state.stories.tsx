@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ResumesEmptyState } from "@/features/resumes/components/resumes-empty-state";
+import { ResumesEmptyState } from "@/widgets/resumes-panel/ui/resumes-empty-state";
 
 const meta = {
   title: "Features/ResumesEmptyState",

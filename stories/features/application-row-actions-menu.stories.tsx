@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ApplicationRowActionsMenu } from "@/features/applications/components/application-row-actions-menu";
+import { ApplicationRowActionsMenu } from "@/entities/application/ui/application-row-actions-menu";
 
 const meta = {
   title: "Features/Applications/ApplicationRowActionsMenu",

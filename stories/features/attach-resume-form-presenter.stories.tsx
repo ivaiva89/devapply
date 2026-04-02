@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { AttachResumeFormPresenter } from "@/features/resumes/components/attach-resume-form-presenter";
-import { mockResumeApplicationOptions } from "@/lib/mocks/ui-fixtures";
+import { mockResumeApplicationOptions } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/Resumes/AttachResumeFormPresenter",

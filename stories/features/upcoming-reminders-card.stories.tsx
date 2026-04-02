@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { UpcomingRemindersCard } from "@/features/dashboard/components/upcoming-reminders-card";
-import { mockUpcomingReminders } from "@/lib/mocks/ui-fixtures";
+import { UpcomingRemindersCard } from "@/widgets/dashboard/ui/upcoming-reminders-card";
+import { mockUpcomingReminders } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/Dashboard/UpcomingRemindersCard",

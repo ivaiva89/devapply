@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { DashboardHeader } from "@/features/dashboard/components/dashboard-header";
+import { DashboardHeader } from "@/widgets/dashboard/ui/dashboard-header";
 
 const meta = {
   title: "Features/Dashboard/DashboardHeader",

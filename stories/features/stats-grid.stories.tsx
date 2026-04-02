@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { StatsGrid } from "@/features/dashboard/components/stats-grid";
-import { mockDashboardKpis } from "@/lib/mocks/ui-fixtures";
+import { StatsGrid } from "@/widgets/dashboard/ui/stats-grid";
+import { mockDashboardKpis } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/Dashboard/StatsGrid",
