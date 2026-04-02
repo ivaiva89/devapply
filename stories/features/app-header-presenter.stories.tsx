@@ -1,35 +1,25 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { SidebarProvider } from "@/shared/ui/sidebar";
 import { AppHeaderPresenter } from "@/widgets/app-shell/ui/app-header-presenter";
 import { mockNavigationShellUser } from "@/shared/mocks/ui-fixtures";
+import { Button } from "@/shared/ui/button";
 
 const meta = {
   title: "Features/Navigation/AppHeaderPresenter",
   component: AppHeaderPresenter,
   args: {
+    currentPath: "/dashboard",
     title: "Application tracker",
     description:
       "Protected area for managing applications, interview progress, reminders, and resume assets.",
     userName: mockNavigationShellUser.name,
     userEmail: mockNavigationShellUser.email,
     planLabel: mockNavigationShellUser.planLabel,
-    userControl: (
-      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground">
-        AJ
-      </div>
-    ),
+    userControl: <Button variant="outline">Sign out</Button>,
   },
   parameters: {
     layout: "fullscreen",
   },
-  decorators: [
-    (Story) => (
-      <SidebarProvider>
-        <Story />
-      </SidebarProvider>
-    ),
-  ],
 } satisfies Meta<typeof AppHeaderPresenter>;
 
 export default meta;
@@ -40,6 +30,7 @@ export const Default: Story = {};
 
 export const Compact: Story = {
   args: {
+    currentPath: "/settings",
     title: undefined,
     description: undefined,
     planLabel: "FREE",

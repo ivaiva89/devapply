@@ -1,10 +1,7 @@
 "use client";
 
-import type { CSSProperties } from "react";
-
 import { SectionHeader } from "@/shared/design/section-header";
 import { Button } from "@/shared/ui/button";
-import { SidebarInset, SidebarProvider } from "@/shared/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { ApplicationsTable } from "@/widgets/applications-table/ui/applications-table";
 import { ApplicationDeleteDialogPresenter } from "@/features/applications/components/application-delete-dialog-presenter";
@@ -62,7 +59,7 @@ import {
 
 export default function PreviewPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/40">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-6 py-6">
         <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
           <SectionHeader
@@ -88,43 +85,36 @@ export default function PreviewPage() {
               <SectionHeader
                 eyebrow="Navigation shell"
                 title="App chrome preview"
-                description="Sidebar and header presenters mirror the authenticated app shell without Clerk or route-header dependencies."
+                description="Sticky header, desktop nav, search, and the mobile drawer mirror the authenticated app shell without auth or route dependencies."
               />
-              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-background">
-                <SidebarProvider
-                  defaultOpen
-                  style={
-                    {
-                      "--sidebar-width": "17rem",
-                      "--header-height": "4.25rem",
-                    } as CSSProperties
+              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-muted/40">
+                <AppHeaderPresenter
+                  currentPath="/applications"
+                  title="Application tracker"
+                  description="Protected area for managing applications, interview progress, reminders, and resume assets."
+                  userName={mockNavigationShellUser.name}
+                  userEmail={mockNavigationShellUser.email}
+                  planLabel={mockNavigationShellUser.planLabel}
+                  userControl={
+                    <Button variant="outline" className="w-full rounded-lg">
+                      Sign out
+                    </Button>
                   }
-                >
-                  <AppSidebarPresenter currentPath="/applications" />
-                  <SidebarInset className="min-h-[28rem]">
-                    <AppHeaderPresenter
-                      title="Application tracker"
-                      description="Protected area for managing applications, interview progress, reminders, and resume assets."
-                      userName={mockNavigationShellUser.name}
-                      userEmail={mockNavigationShellUser.email}
-                      planLabel={mockNavigationShellUser.planLabel}
-                      userControl={
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-semibold text-muted-foreground">
-                          AJ
-                        </div>
-                      }
-                    />
-                    <div className="p-8">
-                      <DashboardShell>
-                        <DashboardHeader
-                          title="Dashboard"
-                          description="Job search overview — pipeline volume, recent activity, and follow-ups."
-                        />
-                        <StatsGrid items={mockDashboardKpis} />
-                      </DashboardShell>
+                />
+                <div className="grid gap-6 p-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
+                  <div className="hidden lg:block">
+                    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-background shadow-sm">
+                      <AppSidebarPresenter currentPath="/applications" />
                     </div>
-                  </SidebarInset>
-                </SidebarProvider>
+                  </div>
+                  <DashboardShell>
+                    <DashboardHeader
+                      title="Dashboard"
+                      description="Job search overview — pipeline volume, recent activity, and follow-ups."
+                    />
+                    <StatsGrid items={mockDashboardKpis} />
+                  </DashboardShell>
+                </div>
               </div>
             </section>
           </TabsContent>

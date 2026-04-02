@@ -1,10 +1,40 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ChevronDown,
+  Menu,
+  Search,
+  Settings2,
+  LayoutDashboard,
+  CreditCard,
+} from "lucide-react";
 
 import { Badge } from "@/shared/ui/badge";
-import { Separator } from "@/shared/ui/separator";
-import { SidebarTrigger } from "@/shared/ui/sidebar";
+import { Button } from "@/shared/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/shared/ui/dropdown-menu";
+import { Input } from "@/shared/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/shared/ui/sheet";
+import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
 type AppHeaderPresenterProps = {
+  currentPath: string;
   description?: string;
   planLabel: string;
   title?: string;
@@ -14,6 +44,7 @@ type AppHeaderPresenterProps = {
 };
 
 export function AppHeaderPresenter({
+  currentPath,
   description,
   planLabel,
   title,
@@ -21,40 +52,131 @@ export function AppHeaderPresenter({
   userEmail,
   userName,
 }: AppHeaderPresenterProps) {
+  const router = useRouter();
+  const initials = userName
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
-    <header className="flex h-(--header-height) shrink-0 items-center border-b border-border/70 bg-background transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-      <div className="flex w-full items-center gap-3 px-4 lg:px-6">
-        <SidebarTrigger className="-ml-1 h-9 w-9 rounded-lg border border-border/70" />
-        <Separator
-          orientation="vertical"
-          className="hidden data-[orientation=vertical]:h-5 sm:block"
-        />
-        <div className="min-w-0 flex-1">
-          {title ? (
-            <p className="truncate text-sm font-semibold text-foreground sm:text-base">
-              {title}
-            </p>
-          ) : null}
-          {description ? (
-            <p className="hidden truncate text-xs text-muted-foreground md:block">
-              {description}
-            </p>
-          ) : null}
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="lg:hidden"
+              >
+                <Menu />
+                <span className="sr-only">Open navigation</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[20rem] p-0">
+              <SheetHeader className="border-b border-border/70 px-6 py-5">
+                <SheetTitle>{title ?? "DevApply"}</SheetTitle>
+                <SheetDescription>
+                  {description ??
+                    "Track applications, reminders, resumes, and billing from one workspace."}
+                </SheetDescription>
+              </SheetHeader>
+              <AppSidebarPresenter currentPath={currentPath} />
+            </SheetContent>
+          </Sheet>
+          <div className="min-w-0">
+            {title ? (
+              <p className="truncate text-sm font-semibold text-foreground sm:text-base">
+                {title}
+              </p>
+            ) : null}
+            {description ? (
+              <p className="hidden truncate text-xs text-muted-foreground xl:block">
+                {description}
+              </p>
+            ) : null}
+          </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
+
+        <div className="relative ml-auto hidden w-full max-w-sm items-center md:flex">
+          <Search className="pointer-events-none absolute left-3 size-4 text-muted-foreground" />
+          <Input
+            type="search"
+            aria-label="Search workspace"
+            placeholder="Search applications, reminders, or resumes"
+            className="pl-9"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
           <Badge
             variant="outline"
-            className="h-6 rounded-md px-2 font-label text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+            className="hidden rounded-full px-2.5 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:inline-flex"
           >
             {planLabel}
           </Badge>
-          <div className="hidden text-right sm:block">
-            <p className="text-xs font-medium text-foreground">{userName}</p>
-            <p className="font-label text-[10px] text-muted-foreground">
-              {userEmail}
-            </p>
-          </div>
-          {userControl}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-10 rounded-full px-2.5"
+                />
+              }
+            >
+              <span className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                {initials}
+              </span>
+              <span className="hidden text-left sm:flex sm:flex-col">
+                <span className="max-w-32 truncate text-sm font-medium">
+                  {userName}
+                </span>
+              </span>
+              <ChevronDown className="text-muted-foreground" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-foreground">
+                        {userName}
+                      </span>
+                      <Badge variant="outline" className="rounded-full">
+                        {planLabel}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {userEmail}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                <LayoutDashboard />
+                Dashboard
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
+                <Settings2 />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
+                <CreditCard />
+                Billing
+              </DropdownMenuItem>
+              {userControl ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <div className="px-1 pb-1">{userControl}</div>
+                </>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
