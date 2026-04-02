@@ -1,5 +1,5 @@
 import { ApplicationsFiltersPresenter } from "@/features/applications/components/applications-filters-presenter";
-import type { ApplicationsQueryState } from "@/features/applications/types";
+import type { ApplicationsQueryState } from "@/entities/application/model/types";
 
 type ApplicationsFiltersProps = {
   state: ApplicationsQueryState;

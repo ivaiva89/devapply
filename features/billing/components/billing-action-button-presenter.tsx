@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 type BillingActionButtonPresenterProps = {
   action?: ComponentProps<"form">["action"];

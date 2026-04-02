@@ -12,7 +12,7 @@ import {
   getApplicationFormFieldErrors,
   getApplicationFormSuccessState,
 } from "@/features/applications/schemas/application-form-schema";
-import { createApplicationWithCountForUser } from "@/features/applications/server/application-service";
+import { createApplicationWithCountForUser } from "@/entities/application/api/application-service";
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -20,7 +20,7 @@ import {
   getPlanGate,
   getPlanLimitReachedMessage,
 } from "@/features/billing/server/plan-enforcement";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 export async function createApplication(
   _prevState: CreateApplicationActionState,

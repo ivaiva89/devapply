@@ -1,6 +1,6 @@
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFilters } from "@/features/applications/components/applications-filters";
-import { ApplicationsTableClient } from "@/features/applications/components/applications-table-client";
+import { ApplicationsTableClient } from "@/widgets/applications-table/ui/applications-table-client";
 import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -8,7 +8,7 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
-import { SectionHeader } from "@/components/design/section-header";
+import { SectionHeader } from "@/shared/design/section-header";
 
 type ApplicationsPageProps = {
   searchParams?: Promise<{

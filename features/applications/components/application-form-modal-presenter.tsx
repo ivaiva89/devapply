@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,12 +8,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@/shared/ui/dialog";
+import { Input } from "@/shared/ui/input";
 import {
   applicationFormStatusOptions,
   applicationSourceOptions,
-} from "@/features/applications/config";
+} from "@/entities/application/model/config";
 import type {
   CreateApplicationActionState,
   CreateApplicationFormValues,

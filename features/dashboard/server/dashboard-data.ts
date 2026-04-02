@@ -2,8 +2,8 @@ import "server-only";
 
 import { ApplicationStatus } from "@prisma/client";
 
-import { applicationStatusLabels } from "@/features/applications/config";
-import { prisma } from "@/lib/prisma";
+import { applicationStatusLabels } from "@/entities/application/model/config";
+import { prisma } from "@/shared/lib/prisma";
 
 type DashboardKpi = {
   label: string;
@@ -99,7 +99,6 @@ export async function getDashboardDataForUser(
 ): Promise<DashboardData> {
   const monthStart = getMonthStart();
   const monthBuckets = getMonthBuckets(6);
-  const now = new Date();
 
   const [
     totalApplications,

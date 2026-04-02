@@ -27,7 +27,7 @@ const spaceGrotesk = Space_Grotesk({
 import "@/app/globals.css";
 
 import { TrackedLink } from "@/features/analytics/components/tracked-link";
-import { marketingNavigation } from "@/features/navigation/config";
+import { marketingNavigation } from "@/widgets/app-shell/model/navigation-items";
 
 export const metadata: Metadata = {
   title: "DevApply",

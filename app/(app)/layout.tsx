@@ -1,5 +1,5 @@
+import type { CSSProperties, ReactNode } from "react";
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { headers } from "next/headers";
 import { Inter, Manrope, Space_Grotesk } from "next/font/google";
@@ -24,9 +24,10 @@ const spaceGrotesk = Space_Grotesk({
 
 import "@/app/globals.css";
 
+import { SidebarInset, SidebarProvider } from "@/shared/ui/sidebar";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { AppHeader } from "@/features/navigation/components/app-header";
-import { AppSidebar } from "@/features/navigation/components/app-sidebar";
+import { AppHeader } from "@/widgets/app-shell/ui/app-header";
+import { AppSidebar } from "@/widgets/app-shell/ui/app-sidebar";
 
 export const metadata: Metadata = {
   title: "DevApply",
@@ -37,8 +38,10 @@ export const metadata: Metadata = {
 export default async function AppLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const user = await requireCurrentUser();
-  const headerStore = await headers();
+  const [user, headerStore] = await Promise.all([
+    requireCurrentUser(),
+    headers(),
+  ]);
   const currentPath = headerStore.get("x-current-path") ?? "/dashboard";
 
   return (
@@ -48,29 +51,33 @@ export default async function AppLayout({
     >
       <body className="bg-background text-foreground antialiased">
         <ClerkProvider>
-          <div className="flex min-h-screen">
-            {/* Sidebar — fixed, aligned to header height */}
-            <div className="hidden w-48 shrink-0 lg:block">
-              <div className="fixed inset-y-0 left-0 w-48">
-                <AppSidebar currentPath={currentPath} />
+          <SidebarProvider
+            defaultOpen
+            style={
+              {
+                "--sidebar-width": "calc(var(--spacing) * 72)",
+                "--header-height": "calc(var(--spacing) * 12)",
+              } as CSSProperties
+            }
+          >
+            <AppSidebar currentPath={currentPath} />
+            <SidebarInset>
+              <AppHeader
+                title="DevApply"
+                description="Track applications, reminders, resumes, and billing in one workspace."
+                userName={user.name ?? "Developer"}
+                userEmail={user.email}
+                planLabel={user.plan}
+              />
+              <div className="flex flex-1 flex-col">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                  <div className="flex flex-1 flex-col gap-4 py-4 md:gap-6 md:py-6">
+                    {children}
+                  </div>
+                </div>
               </div>
-            </div>
-            {/* Main column */}
-            <div className="flex min-w-0 flex-1 flex-col">
-              <div className="sticky top-0 z-10 bg-background">
-                <AppHeader
-                  title="DevApply"
-                  description=""
-                  userName={user.name ?? "Developer"}
-                  userEmail={user.email}
-                  planLabel={user.plan}
-                />
-              </div>
-              <main className="flex-1 px-6 py-6">
-                <div className="mx-auto max-w-5xl">{children}</div>
-              </main>
-            </div>
-          </div>
+            </SidebarInset>
+          </SidebarProvider>
         </ClerkProvider>
       </body>
     </html>

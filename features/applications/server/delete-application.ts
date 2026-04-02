@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import type { DeleteApplicationActionState } from "@/features/applications/application-delete";
-import { deleteApplicationForUser } from "@/features/applications/server/application-service";
+import { deleteApplicationForUser } from "@/entities/application/api/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { getValidationErrorMessage } from "@/lib/server-action-validation";
+import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
 const deleteApplicationSchema = z.object({
   applicationId: z

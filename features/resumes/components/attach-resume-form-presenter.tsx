@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import type { ResumeApplicationOption } from "@/features/resumes/types";
 
 type AttachResumeFormPresenterProps = {

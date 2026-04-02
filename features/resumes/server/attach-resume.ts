@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 import {
   getFormString,
   getValidationErrorMessage,
-} from "@/lib/server-action-validation";
+} from "@/shared/lib/server-action-validation";
 
 export type AttachResumeActionState = {
   status: "idle" | "error" | "success";

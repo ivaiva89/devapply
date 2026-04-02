@@ -1,6 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 
-import { PageShell } from "@/components/layout/page-shell";
+import { PageShell } from "@/shared/layout/page-shell";
 
 type SignInPageProps = {
   searchParams?: Promise<{

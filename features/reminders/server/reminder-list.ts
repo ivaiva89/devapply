@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 import type { RemindersPageData } from "@/features/reminders/types";
 
 export async function getRemindersPageDataForUser(

@@ -21,7 +21,7 @@ const eslintConfig = defineConfig([
     files: [
       "stories/**/*.{js,jsx,ts,tsx}",
       "app/(v0)/preview/**/*.{js,jsx,ts,tsx}",
-      "lib/mocks/**/*.{js,jsx,ts,tsx}",
+      "shared/mocks/**/*.{js,jsx,ts,tsx}",
     ],
     rules: {
       "no-restricted-imports": [
@@ -39,12 +39,7 @@ const eslintConfig = defineConfig([
                 "Storybook, preview, and mock fixtures must not import Prisma.",
             },
             {
-              name: "@/src/lib/prisma",
-              message:
-                "Storybook, preview, and mock fixtures must not import Prisma helpers.",
-            },
-            {
-              name: "@/lib/prisma",
+              name: "@/shared/lib/prisma",
               message:
                 "Storybook, preview, and mock fixtures must not import Prisma helpers.",
             },

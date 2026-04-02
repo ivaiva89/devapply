@@ -1,12 +1,12 @@
 import type { ComponentProps } from "react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button, buttonVariants } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   applicationSortSelectOptions,
   applicationStatusFilterOptions,
-} from "@/features/applications/config";
-import type { ApplicationsQueryState } from "@/features/applications/types";
+} from "@/entities/application/model/config";
+import type { ApplicationsQueryState } from "@/entities/application/model/types";
 
 type ApplicationsFiltersPresenterProps = {
   action?: ComponentProps<"form">["action"];

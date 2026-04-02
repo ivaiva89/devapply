@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/shared/lib/support";
 
 export const metadata: Metadata = {
   title: "Terms of Service | DevApply",

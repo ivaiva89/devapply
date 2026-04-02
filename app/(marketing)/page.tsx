@@ -4,23 +4,21 @@ import {
   ArrowRight,
   BarChart3,
   BellRing,
-  BriefcaseBusiness,
   Check,
   FileText,
-  Github,
   KanbanSquare,
   Terminal,
 } from "lucide-react";
 
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/shared/ui/button";
 import {
   FREE_PLAN_LIMITS,
   PRO_PLAN_PRICE_MONTHLY,
 } from "@/features/billing/config";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { getCurrentUser } from "@/features/auth/server/session";
-import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/support";
-import { cn } from "@/lib/utils";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/shared/lib/support";
+import { cn } from "@/shared/lib/utils";
 
 export const metadata: Metadata = {
   title: "Job Application Tracker for Developers | DevApply",

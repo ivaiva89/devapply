@@ -6,10 +6,10 @@ import { z } from "zod";
 import {
   applicationStatusValues,
   type ApplicationStatusValue,
-} from "@/features/applications/config";
-import { updateApplicationStatusForUser } from "@/features/applications/server/application-service";
+} from "@/entities/application/model/config";
+import { updateApplicationStatusForUser } from "@/entities/application/api/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { getValidationErrorMessage } from "@/lib/server-action-validation";
+import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
 type UpdateApplicationStatusResult =
   | { status: "success" }

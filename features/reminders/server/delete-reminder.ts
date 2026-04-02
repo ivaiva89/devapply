@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { prisma } from "@/lib/prisma";
-import { getValidationErrorMessage } from "@/lib/server-action-validation";
+import { prisma } from "@/shared/lib/prisma";
+import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 import type { DeleteReminderActionState } from "@/features/reminders/types";
 
 const deleteReminderSchema = z.object({

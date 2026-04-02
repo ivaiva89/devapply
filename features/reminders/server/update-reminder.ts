@@ -11,11 +11,11 @@ import {
   toUtcDateFromLocalInput,
 } from "@/features/reminders/reminder-form";
 import type { UpdateReminderActionState } from "@/features/reminders/types";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 import {
   getFormString,
   getValidationErrorMessage,
-} from "@/lib/server-action-validation";
+} from "@/shared/lib/server-action-validation";
 
 const updateReminderSchema = z.object({
   reminderId: z.string().trim().min(1, "That reminder could not be found."),

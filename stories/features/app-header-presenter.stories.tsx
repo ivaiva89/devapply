@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { AppHeaderPresenter } from "@/features/navigation/components/app-header-presenter";
-import { mockNavigationShellUser } from "@/lib/mocks/ui-fixtures";
+import { SidebarProvider } from "@/shared/ui/sidebar";
+import { AppHeaderPresenter } from "@/widgets/app-shell/ui/app-header-presenter";
+import { mockNavigationShellUser } from "@/shared/mocks/ui-fixtures";
 
 const meta = {
   title: "Features/Navigation/AppHeaderPresenter",
@@ -22,6 +23,13 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [
+    (Story) => (
+      <SidebarProvider>
+        <Story />
+      </SidebarProvider>
+    ),
+  ],
 } satisfies Meta<typeof AppHeaderPresenter>;
 
 export default meta;

@@ -11,7 +11,7 @@ import {
   getPlanGate,
   getPlanLimitReachedMessage,
 } from "@/features/billing/server/plan-enforcement";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/shared/lib/prisma";
 
 export type UploadResumeActionState = {
   status: "idle" | "error" | "success";

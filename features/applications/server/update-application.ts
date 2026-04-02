@@ -9,7 +9,7 @@ import {
   getApplicationFormSuccessState,
 } from "@/features/applications/schemas/application-form-schema";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
-import { updateApplicationForUser } from "@/features/applications/server/application-service";
+import { updateApplicationForUser } from "@/entities/application/api/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import type { CreateApplicationActionState } from "@/features/applications/create-application-form";
 

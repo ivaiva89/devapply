@@ -1,8 +1,8 @@
 import type { ComponentProps, RefObject } from "react";
 
-import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/shared/ui/button";
+import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
 
 type UploadResumeFormPresenterProps = {
   action?: ComponentProps<"form">["action"];
