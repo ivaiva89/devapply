@@ -2,6 +2,11 @@ import type { ComponentProps, RefObject } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import {
+  FieldShell,
+  FormErrorMessage,
+  getFieldDescribedBy,
+} from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 
 type UploadResumeFormPresenterProps = {
@@ -44,13 +49,7 @@ export function UploadResumeFormPresenter({
       </CardHeader>
 
       <CardContent className="mt-6 space-y-4 px-0">
-        <div className="space-y-2">
-          <label
-            htmlFor={titleId}
-            className="text-sm font-medium text-foreground"
-          >
-            Title
-          </label>
+        <FieldShell htmlFor={titleId} label="Title">
           <Input
             id={titleId}
             name="title"
@@ -58,30 +57,31 @@ export function UploadResumeFormPresenter({
             placeholder="Backend resume"
             required
           />
-        </div>
+        </FieldShell>
 
-        <div className="space-y-2">
-          <label
-            htmlFor={fileId}
-            className="text-sm font-medium text-foreground"
-          >
-            File
-          </label>
+        <FieldShell
+          description="PDF, DOC, or DOCX only. Maximum file size: 5 MB."
+          htmlFor={fileId}
+          label="File"
+        >
           <Input
             id={fileId}
             name="file"
             type="file"
+            aria-describedby={getFieldDescribedBy(fileId, {
+              description: "PDF, DOC, or DOCX only. Maximum file size: 5 MB.",
+            })}
             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             disabled={!canUpload || isPending}
             required
-            className="h-auto py-2 file:mr-3 file:rounded-full file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground"
+            className="h-auto rounded-lg px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground file:shadow-sm hover:file:bg-primary/90"
           />
-        </div>
+        </FieldShell>
 
         {error ? (
-          <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <FormErrorMessage>
             {error}
-          </p>
+          </FormErrorMessage>
         ) : null}
 
         <Button type="submit" disabled={!canUpload || isPending}>

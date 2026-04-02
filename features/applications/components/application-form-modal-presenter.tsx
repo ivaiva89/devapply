@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 
 import { Button } from "@/shared/ui/button";
 import {
@@ -9,7 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
+import {
+  FieldShell,
+  FormErrorMessage,
+  getFieldDescribedBy,
+} from "@/shared/ui/field";
+import {
+  getCompactFieldControlClassName,
+  nativePickerAffordanceClassName,
+} from "@/shared/ui/form-controls";
 import { Input } from "@/shared/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import {
   applicationFormStatusOptions,
   applicationSourceOptions,
@@ -18,6 +34,7 @@ import type {
   CreateApplicationActionState,
   CreateApplicationFormValues,
 } from "@/features/applications/create-application-form";
+import { cn } from "@/shared/lib/utils";
 
 type ApplicationFormModalPresenterProps = {
   action?: ComponentProps<"form">["action"];
@@ -32,68 +49,26 @@ type ApplicationFormModalPresenterProps = {
   title: string;
 };
 
-type FormFieldProps = {
-  children: ReactNode;
-  error?: string;
-  htmlFor: string;
-  label: string;
-};
-
-type TextInputFieldProps = Omit<ComponentProps<"input">, "className" | "id"> & {
+type TextInputFieldProps = Omit<ComponentProps<"input">, "id"> & {
+  description?: string;
   error?: string;
   id: string;
 };
 
-const baseInputClassName =
-  "h-8 w-full rounded-lg border bg-transparent px-2.5 py-1 text-sm text-foreground outline-none transition-colors";
-
-function getInputClassName(error?: string) {
-  return `${baseInputClassName} ${
-    error
-      ? "border-destructive/50 focus-visible:border-destructive focus-visible:ring-3 focus-visible:ring-destructive/20"
-      : "border-input focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-  }`;
-}
-
-function FormField({ children, error, htmlFor, label }: FormFieldProps) {
-  const errorId = `${htmlFor}-error`;
-
-  return (
-    <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-sm font-medium text-foreground">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p id={errorId} className="text-sm text-destructive">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function TextInputField({ error, ...props }: TextInputFieldProps) {
-  const errorId = `${props.id}-error`;
-
+function TextInputField({
+  className,
+  description,
+  error,
+  ...props
+}: TextInputFieldProps) {
   return (
     <Input
       {...props}
-      aria-describedby={error ? errorId : undefined}
+      aria-describedby={getFieldDescribedBy(props.id, { description, error })}
       aria-invalid={Boolean(error)}
-      className={getInputClassName(error)}
+      className={cn(getCompactFieldControlClassName(error), className)}
     />
   );
-}
-
-function renderSelectOptions(
-  options: ReadonlyArray<{ label: string; value: string }>,
-) {
-  return options.map((option) => (
-    <option key={option.value} value={option.value}>
-      {option.label}
-    </option>
-  ));
 }
 
 export function ApplicationFormModalPresenter({
@@ -130,7 +105,7 @@ export function ApplicationFormModalPresenter({
 
         <form action={action} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField
+            <FieldShell
               error={state.fieldErrors.company}
               htmlFor={`${idPrefix}-company`}
               label="Company"
@@ -144,9 +119,9 @@ export function ApplicationFormModalPresenter({
                 autoComplete="organization"
                 required
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.role}
               htmlFor={`${idPrefix}-role`}
               label="Role"
@@ -160,9 +135,9 @@ export function ApplicationFormModalPresenter({
                 autoComplete="organization-title"
                 required
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.location}
               htmlFor={`${idPrefix}-location`}
               label="Location"
@@ -174,51 +149,73 @@ export function ApplicationFormModalPresenter({
                 error={state.fieldErrors.location}
                 placeholder="Remote, US"
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.source}
               htmlFor={`${idPrefix}-source`}
               label="Source"
             >
-              <select
-                id={`${idPrefix}-source`}
+              <Select
+                items={applicationSourceOptions}
                 name="source"
                 defaultValue={formValues.source}
-                aria-describedby={
-                  state.fieldErrors.source
-                    ? `${idPrefix}-source-error`
-                    : undefined
-                }
-                aria-invalid={Boolean(state.fieldErrors.source)}
-                className={getInputClassName(state.fieldErrors.source)}
               >
-                {renderSelectOptions(applicationSourceOptions)}
-              </select>
-            </FormField>
+                <SelectTrigger
+                  id={`${idPrefix}-source`}
+                  aria-describedby={getFieldDescribedBy(`${idPrefix}-source`, {
+                    error: state.fieldErrors.source,
+                  })}
+                  aria-invalid={Boolean(state.fieldErrors.source)}
+                  className={getCompactFieldControlClassName(
+                    state.fieldErrors.source,
+                  )}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {applicationSourceOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.status}
               htmlFor={`${idPrefix}-status`}
               label="Status"
             >
-              <select
-                id={`${idPrefix}-status`}
+              <Select
+                items={applicationFormStatusOptions}
                 name="status"
                 defaultValue={formValues.status}
-                aria-describedby={
-                  state.fieldErrors.status
-                    ? `${idPrefix}-status-error`
-                    : undefined
-                }
-                aria-invalid={Boolean(state.fieldErrors.status)}
-                className={getInputClassName(state.fieldErrors.status)}
               >
-                {renderSelectOptions(applicationFormStatusOptions)}
-              </select>
-            </FormField>
+                <SelectTrigger
+                  id={`${idPrefix}-status`}
+                  aria-describedby={getFieldDescribedBy(`${idPrefix}-status`, {
+                    error: state.fieldErrors.status,
+                  })}
+                  aria-invalid={Boolean(state.fieldErrors.status)}
+                  className={getCompactFieldControlClassName(
+                    state.fieldErrors.status,
+                  )}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {applicationFormStatusOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.salaryMin}
               htmlFor={`${idPrefix}-salary-min`}
               label="Salary min"
@@ -234,9 +231,9 @@ export function ApplicationFormModalPresenter({
                 error={state.fieldErrors.salaryMin}
                 placeholder="120000"
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.salaryMax}
               htmlFor={`${idPrefix}-salary-max`}
               label="Salary max"
@@ -252,9 +249,9 @@ export function ApplicationFormModalPresenter({
                 error={state.fieldErrors.salaryMax}
                 placeholder="160000"
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
               error={state.fieldErrors.currency}
               htmlFor={`${idPrefix}-currency`}
               label="Currency"
@@ -269,9 +266,10 @@ export function ApplicationFormModalPresenter({
                 maxLength={3}
                 required
               />
-            </FormField>
+            </FieldShell>
 
-            <FormField
+            <FieldShell
+              description="Optional. Leave blank if you have not applied yet."
               error={state.fieldErrors.appliedDate}
               htmlFor={`${idPrefix}-applied-date`}
               label="Applied date"
@@ -281,12 +279,14 @@ export function ApplicationFormModalPresenter({
                 name="appliedDate"
                 type="date"
                 defaultValue={formValues.appliedDate}
+                description="Optional. Leave blank if you have not applied yet."
                 error={state.fieldErrors.appliedDate}
+                className={nativePickerAffordanceClassName}
               />
-            </FormField>
+            </FieldShell>
 
             <div className="sm:col-span-2">
-              <FormField
+              <FieldShell
                 error={state.fieldErrors.jobUrl}
                 htmlFor={`${idPrefix}-job-url`}
                 label="Job URL"
@@ -299,11 +299,11 @@ export function ApplicationFormModalPresenter({
                   error={state.fieldErrors.jobUrl}
                   placeholder="https://jobs.example.com/roles/frontend-engineer"
                 />
-              </FormField>
+              </FieldShell>
             </div>
 
             <div className="sm:col-span-2">
-              <FormField
+              <FieldShell
                 error={state.fieldErrors.notes}
                 htmlFor={`${idPrefix}-notes`}
                 label="Notes"
@@ -312,25 +312,24 @@ export function ApplicationFormModalPresenter({
                   id={`${idPrefix}-notes`}
                   name="notes"
                   defaultValue={formValues.notes}
-                  aria-describedby={
-                    state.fieldErrors.notes
-                      ? `${idPrefix}-notes-error`
-                      : undefined
-                  }
+                  aria-describedby={getFieldDescribedBy(`${idPrefix}-notes`, {
+                    error: state.fieldErrors.notes,
+                  })}
                   aria-invalid={Boolean(state.fieldErrors.notes)}
-                  className={`${getInputClassName(
-                    state.fieldErrors.notes,
-                  )} min-h-[140px] resize-y py-2`}
+                  className={cn(
+                    getCompactFieldControlClassName(state.fieldErrors.notes),
+                    "min-h-[140px] resize-y py-2",
+                  )}
                   placeholder="Interview loop notes, recruiter contacts, referral context, or follow-up reminders"
                 />
-              </FormField>
+              </FieldShell>
             </div>
           </div>
 
           {state.formError ? (
-            <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <FormErrorMessage>
               {state.formError}
-            </p>
+            </FormErrorMessage>
           ) : null}
 
           <DialogFooter>

@@ -1,6 +1,15 @@
 import type { ComponentProps } from "react";
 
 import { Button } from "@/shared/ui/button";
+import { FieldShell, FormErrorMessage } from "@/shared/ui/field";
+import { compactControlClassName } from "@/shared/ui/form-controls";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import type { ResumeApplicationOption } from "@/features/resumes/types";
 
 type AttachResumeFormPresenterProps = {
@@ -10,9 +19,6 @@ type AttachResumeFormPresenterProps = {
   isPending?: boolean;
   resumeId: string;
 };
-
-const selectInputClasses =
-  "flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 dark:bg-input/30 dark:disabled:bg-input/80";
 
 export function AttachResumeFormPresenter({
   action,
@@ -25,37 +31,45 @@ export function AttachResumeFormPresenter({
 
   return (
     <form action={action} className="space-y-3">
-      <div className="space-y-2">
-        <label
-          className="text-sm font-medium text-foreground"
-          htmlFor={`application-${resumeId}`}
-        >
-          Attach to application
-        </label>
-        <select
-          id={`application-${resumeId}`}
+      <FieldShell
+        htmlFor={`application-${resumeId}`}
+        label="Attach to application"
+      >
+        <Select
+          items={applicationOptions.map((application) => ({
+            value: application.id,
+            label: application.label,
+          }))}
           name="applicationId"
           disabled={disabled}
-          className={selectInputClasses}
           defaultValue=""
         >
-          <option value="" disabled>
-            {applicationOptions.length > 0
-              ? "Select an application"
-              : "No applications available"}
-          </option>
-          {applicationOptions.map((application) => (
-            <option key={application.id} value={application.id}>
-              {application.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <SelectTrigger
+            id={`application-${resumeId}`}
+            className={compactControlClassName}
+          >
+            <SelectValue
+              placeholder={
+                applicationOptions.length > 0
+                  ? "Select an application"
+                  : "No applications available"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {applicationOptions.map((application) => (
+              <SelectItem key={application.id} value={application.id}>
+                {application.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FieldShell>
 
       {error ? (
-        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <FormErrorMessage>
           {error}
-        </p>
+        </FormErrorMessage>
       ) : null}
 
       <Button type="submit" variant="outline" size="sm" disabled={disabled}>

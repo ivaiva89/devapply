@@ -4,6 +4,14 @@ import {
   ApplicationCard,
   type ApplicationCardData,
 } from "@/entities/application/ui/application-card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
+import { compactControlClassName } from "@/shared/ui/form-controls";
 import { ApplicationKanbanColumn } from "@/widgets/pipeline-board/ui/application-kanban-column";
 import {
   applicationStatusLabels,
@@ -14,6 +22,7 @@ import type {
   PipelineApplicationCard,
   PipelineColumn,
 } from "@/features/applications/server/pipeline-board";
+import { cn } from "@/shared/lib/utils";
 
 type PipelineBoardPresenterProps = {
   columns: PipelineColumn[];
@@ -64,6 +73,11 @@ export function PipelineBoardPresenter({
   onColumnDragOver,
   onColumnDrop,
 }: PipelineBoardPresenterProps) {
+  const statusItems = applicationStatusValues.map((statusValue) => ({
+    value: statusValue,
+    label: applicationStatusLabels[statusValue],
+  }));
+
   return (
     <div className="space-y-4">
       {errorMessage ? (
@@ -97,24 +111,32 @@ export function PipelineBoardPresenter({
                         <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                           Move to
                         </span>
-                        <select
+                        <Select
+                          items={statusItems}
                           defaultValue={column.status}
                           disabled={isPending}
-                          onChange={(event) =>
-                            onCardStatusChange(
-                              item.id,
-                              event.currentTarget
-                                .value as ApplicationStatusValue,
-                            )
+                          onValueChange={(value) =>
+                            value
+                              ? onCardStatusChange(
+                                  item.id,
+                                  value as ApplicationStatusValue,
+                                )
+                              : undefined
                           }
-                          className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          {applicationStatusValues.map((statusValue) => (
-                            <option key={statusValue} value={statusValue}>
-                              {applicationStatusLabels[statusValue]}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger
+                            className={cn(compactControlClassName, "bg-background")}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {applicationStatusValues.map((statusValue) => (
+                              <SelectItem key={statusValue} value={statusValue}>
+                                {applicationStatusLabels[statusValue]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </label>
                     ) : null
                   }

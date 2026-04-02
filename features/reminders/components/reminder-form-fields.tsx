@@ -1,5 +1,21 @@
 import { Button } from "@/shared/ui/button";
+import {
+  FieldShell,
+  FormErrorMessage,
+  getFieldDescribedBy,
+} from "@/shared/ui/field";
+import {
+  compactControlClassName,
+  nativePickerAffordanceClassName,
+} from "@/shared/ui/form-controls";
 import { Input } from "@/shared/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
 import { Textarea } from "@/shared/ui/textarea";
 import type {
   ReminderApplicationOption,
@@ -16,9 +32,6 @@ type ReminderFormFieldsProps = {
   submittingLabel: string;
   values: ReminderFormValues;
 };
-
-const selectInputClasses =
-  "flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 dark:bg-input/30 dark:disabled:bg-input/80";
 
 export function ReminderFormFields({
   applicationOptions,
@@ -37,13 +50,7 @@ export function ReminderFormFields({
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <label
-          htmlFor={titleId}
-          className="text-sm font-medium text-foreground"
-        >
-          Title
-        </label>
+      <FieldShell htmlFor={titleId} label="Title">
         <Input
           id={titleId}
           name="title"
@@ -52,56 +59,67 @@ export function ReminderFormFields({
           disabled={isDisabled || isPending}
           required
         />
-      </div>
+      </FieldShell>
 
-      <div className="space-y-2">
-        <label
-          htmlFor={remindAtId}
-          className="text-sm font-medium text-foreground"
-        >
-          Remind at
-        </label>
+      <FieldShell
+        description="Uses your local time and will be saved consistently for reminders."
+        htmlFor={remindAtId}
+        label="Remind at"
+      >
         <Input
           id={remindAtId}
           name="remindAt"
           type="datetime-local"
           defaultValue={values.remindAt}
+          aria-describedby={getFieldDescribedBy(remindAtId, {
+            description:
+              "Uses your local time and will be saved consistently for reminders.",
+          })}
           disabled={isDisabled || isPending}
           required
+          className={`${compactControlClassName} ${nativePickerAffordanceClassName}`}
         />
-      </div>
+      </FieldShell>
 
-      <div className="space-y-2">
-        <label
-          htmlFor={applicationId}
-          className="text-sm font-medium text-foreground"
-        >
-          Linked application
-        </label>
-        <select
-          id={applicationId}
+      <FieldShell htmlFor={applicationId} label="Linked application">
+        <Select
+          items={[
+            { value: "", label: "No linked application" },
+            ...applicationOptions.map((application) => ({
+              value: application.id,
+              label: application.label,
+            })),
+          ]}
           name="applicationId"
           disabled={isDisabled || isPending}
           defaultValue={values.applicationId}
-          className={selectInputClasses}
         >
-          <option value="">No linked application</option>
-          {applicationOptions.map((application) => (
-            <option key={application.id} value={application.id}>
-              {application.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <SelectTrigger
+            id={applicationId}
+            className={compactControlClassName}
+          >
+            <SelectValue placeholder="No linked application" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">No linked application</SelectItem>
+            {applicationOptions.map((application) => (
+              <SelectItem key={application.id} value={application.id}>
+                {application.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FieldShell>
 
-      <div className="space-y-2">
-        <label
-          htmlFor={notesId}
-          className="text-sm font-medium text-foreground"
-        >
-          Notes{" "}
-          <span className="font-normal text-muted-foreground">(optional)</span>
-        </label>
+      <FieldShell
+        htmlFor={notesId}
+        label={
+          <>
+            Notes{" "}
+            <span className="font-normal text-muted-foreground">(optional)</span>
+          </>
+        }
+      >
         <Textarea
           id={notesId}
           name="notes"
@@ -111,12 +129,12 @@ export function ReminderFormFields({
           rows={3}
           className="resize-none"
         />
-      </div>
+      </FieldShell>
 
       {error ? (
-        <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <FormErrorMessage>
           {error}
-        </p>
+        </FormErrorMessage>
       ) : null}
 
       <Button type="submit" disabled={isDisabled || isPending}>
