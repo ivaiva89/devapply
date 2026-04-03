@@ -10,6 +10,7 @@ import {
 import { updateApplicationStatusForUser } from "@/entities/application/api/application-service";
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { REVALIDATE_PATHS } from "@/features/applications/server/revalidate-paths";
 import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
 type UpdateApplicationStatusResult =
@@ -68,9 +69,9 @@ export async function updateApplicationStatus(
     },
   });
 
-  revalidatePath("/applications");
-  revalidatePath("/pipeline");
-  revalidatePath("/dashboard");
+  REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
+    revalidatePath(path);
+  });
 
   return { status: "success" };
 }

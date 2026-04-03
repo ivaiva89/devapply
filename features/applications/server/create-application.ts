@@ -20,6 +20,7 @@ import {
   getPlanGate,
   getPlanLimitReachedMessage,
 } from "@/features/billing/server/plan-enforcement";
+import { REVALIDATE_PATHS } from "@/features/applications/server/revalidate-paths";
 import { prisma } from "@/shared/lib/prisma";
 
 export async function createApplication(
@@ -71,11 +72,9 @@ export async function createApplication(
       });
     }
 
-    revalidatePath("/applications");
-    revalidatePath("/dashboard");
-    revalidatePath("/pipeline");
-    revalidatePath("/reminders");
-    revalidatePath("/resumes");
+    REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
+      revalidatePath(path);
+    });
 
     return getApplicationFormSuccessState(createApplicationDefaultValues);
   } catch {
