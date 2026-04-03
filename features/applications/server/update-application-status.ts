@@ -45,33 +45,39 @@ export async function updateApplicationStatus(
   }
 
   const input = result.data;
+  try {
+    const user = await requireCurrentUser();
+    const updated = await updateApplicationStatusForUser(
+      user.id,
+      input.applicationId,
+      input.nextStatus,
+    );
 
-  const user = await requireCurrentUser();
-  const updated = await updateApplicationStatusForUser(
-    user.id,
-    input.applicationId,
-    input.nextStatus,
-  );
+    if (updated.count === 0) {
+      return {
+        status: "error",
+        message: "That application could not be found.",
+      };
+    }
 
-  if (updated.count === 0) {
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "application_status_changed",
+      properties: {
+        applicationId: input.applicationId,
+        status: input.nextStatus,
+      },
+    });
+
+    REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
+      revalidatePath(path);
+    });
+
+    return { status: "success" };
+  } catch {
     return {
       status: "error",
-      message: "That application could not be found.",
+      message: "The application status could not be updated. Try again.",
     };
   }
-
-  await trackServerEvent({
-    distinctId: user.id,
-    event: "application_status_changed",
-    properties: {
-      applicationId: input.applicationId,
-      status: input.nextStatus,
-    },
-  });
-
-  REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
-    revalidatePath(path);
-  });
-
-  return { status: "success" };
 }
