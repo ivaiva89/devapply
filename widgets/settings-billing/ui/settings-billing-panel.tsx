@@ -49,6 +49,17 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
     );
   }
 
+  if (billingState === "checkout_unavailable") {
+    return (
+      <section className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 shadow-sm">
+        <p className="text-sm text-amber-900">
+          Checkout could not be started for this account. Verify the Polar
+          billing configuration and try again.
+        </p>
+      </section>
+    );
+  }
+
   return null;
 }
 

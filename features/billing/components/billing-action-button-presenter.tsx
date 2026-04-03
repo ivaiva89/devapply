@@ -10,6 +10,7 @@ type BillingActionButtonPresenterProps = {
   error?: string;
   isPending?: boolean;
   label: string;
+  method?: ComponentProps<"form">["method"];
   pendingLabel: string;
   type?: "submit" | "button";
   variant?: "default" | "outline";
@@ -23,13 +24,14 @@ export function BillingActionButtonPresenter({
   error,
   isPending = false,
   label,
+  method,
   pendingLabel,
   type = "submit",
   variant = "default",
   onClick,
 }: BillingActionButtonPresenterProps) {
   return (
-    <form action={action} className="space-y-3">
+    <form action={action} method={method} className="space-y-3">
       {children}
       <Button
         type={type}
