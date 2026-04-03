@@ -1,6 +1,7 @@
 import { Checkout } from "@polar-sh/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { getCurrentUser } from "@/features/auth/server/session";
 import { getBillingConfig } from "@/features/billing/server/provider-config";
 import {
@@ -41,6 +42,15 @@ export async function GET(request: NextRequest) {
       plan,
       user,
     }).toString();
+
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "checkout_started",
+      properties: {
+        billingProvider: "polar",
+        plan,
+      },
+    });
 
     const checkoutRequest = new NextRequest(checkoutUrl, request);
 
