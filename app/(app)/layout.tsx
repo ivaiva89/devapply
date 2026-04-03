@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { headers } from "next/headers";
 import { Inter, Manrope, Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,6 +69,7 @@ export default async function AppLayout({
               <div className="grid min-w-0 gap-6">{children}</div>
             </main>
           </div>
+          <Analytics />
         </ClerkProvider>
       </body>
     </html>
