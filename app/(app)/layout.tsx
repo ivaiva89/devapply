@@ -28,7 +28,7 @@ import "@/app/globals.css";
 import { PostHogIdentify } from "@/features/analytics/components/posthog-identify";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { AppHeader } from "@/widgets/app-shell/ui/app-header";
-import { AppSidebar } from "@/widgets/app-shell/ui/app-sidebar";
+import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
 export const metadata: Metadata = {
   title: "DevApply",
@@ -64,7 +64,7 @@ export default async function AppLayout({
             <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8">
               <aside className="hidden lg:block">
                 <div className="sticky top-24 overflow-hidden rounded-[1.75rem] border border-border/70 bg-background shadow-sm">
-                  <AppSidebar currentPath={currentPath} />
+                  <AppSidebarPresenter currentPath={currentPath} />
                 </div>
               </aside>
               <div className="grid min-w-0 gap-6">{children}</div>
