@@ -14,12 +14,12 @@ type HostedCheckoutInput = {
   user: AuthenticatedAppUser;
 };
 
-export function getHostedCheckoutError() {
+export function getHostedCheckoutError(plan: "PRO" | "LIFETIME" = "PRO") {
   const config = getBillingConfig();
 
   switch (config.provider) {
     case "polar":
-      return getPolarCheckoutConfigError(config);
+      return getPolarCheckoutConfigError(config, plan);
   }
 }
 

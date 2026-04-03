@@ -34,7 +34,7 @@ export async function createCheckoutSession(
     };
   }
 
-  const configurationError = getHostedCheckoutError();
+  const configurationError = getHostedCheckoutError(plan);
 
   if (configurationError) {
     return {

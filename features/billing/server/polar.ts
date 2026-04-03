@@ -34,13 +34,20 @@ function getPolarEnvironmentLabel(environment: BillingEnvironment) {
   return environment === "production" ? "production" : "sandbox";
 }
 
-export function getPolarCheckoutConfigError(config: BillingConfig) {
+export function getPolarCheckoutConfigError(
+  config: BillingConfig,
+  plan: "PRO" | "LIFETIME" = "PRO",
+) {
   if (!config.appUrl) {
     return "Could not determine the application URL for Polar checkout. Set NEXT_PUBLIC_APP_URL.";
   }
 
   if (!config.polar.accessToken || !config.polar.productIdPro) {
     return "Polar billing is not configured yet. Add POLAR_ACCESS_TOKEN and POLAR_PRODUCT_ID_PRO to enable upgrades.";
+  }
+
+  if (plan === "LIFETIME" && !config.polar.productIdLifetime) {
+    return "Lifetime billing is not configured yet. Add POLAR_PRODUCT_ID_LIFETIME to enable lifetime purchases.";
   }
 
   return null;
