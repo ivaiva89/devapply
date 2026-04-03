@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -9,8 +8,8 @@ import {
   getPlanGate,
   getPlanLimitReachedMessage,
 } from "@/features/billing/server/plan-enforcement";
+import { reminderFormSchema } from "@/features/reminders/schemas/reminder-form-schema";
 import {
-  isValidDateTimeLocalValue,
   toUtcDateFromLocalInput,
 } from "@/features/reminders/reminder-form";
 import type { CreateReminderActionState } from "@/features/reminders/types";
@@ -19,36 +18,6 @@ import {
   getFormString,
   getValidationErrorMessage,
 } from "@/shared/lib/server-action-validation";
-
-const createReminderSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(1, "Enter a reminder title.")
-    .max(160, "Reminder title must be 160 characters or fewer."),
-  remindAt: z
-    .string()
-    .trim()
-    .min(1, "Choose when to remind yourself.")
-    .refine((value) => isValidDateTimeLocalValue(value), {
-      message: "Choose a valid reminder date and time.",
-    }),
-  timezoneOffsetMinutes: z.coerce
-    .number()
-    .int()
-    .min(-840, "Choose a valid reminder date and time.")
-    .max(840, "Choose a valid reminder date and time."),
-  applicationId: z
-    .string()
-    .trim()
-    .transform((value) => (value === "" ? undefined : value)),
-  notes: z
-    .string()
-    .trim()
-    .max(1000, "Notes must be 1000 characters or fewer.")
-    .optional()
-    .transform((value) => (value === "" ? undefined : value)),
-});
 
 export async function createReminder(
   _prevState: CreateReminderActionState,
@@ -62,7 +31,7 @@ export async function createReminder(
     notes: getFormString(formData, "notes"),
   };
 
-  const result = createReminderSchema.safeParse(rawValues);
+  const result = reminderFormSchema.safeParse(rawValues);
 
   if (!result.success) {
     return {
