@@ -94,10 +94,7 @@ export function ReminderFormFields({
           disabled={isDisabled || isPending}
           defaultValue={values.applicationId}
         >
-          <SelectTrigger
-            id={applicationId}
-            className={compactControlClassName}
-          >
+          <SelectTrigger id={applicationId} className={compactControlClassName}>
             <SelectValue placeholder="No linked application" />
           </SelectTrigger>
           <SelectContent>
@@ -116,7 +113,9 @@ export function ReminderFormFields({
         label={
           <>
             Notes{" "}
-            <span className="font-normal text-muted-foreground">(optional)</span>
+            <span className="font-normal text-muted-foreground">
+              (optional)
+            </span>
           </>
         }
       >
@@ -131,11 +130,7 @@ export function ReminderFormFields({
         />
       </FieldShell>
 
-      {error ? (
-        <FormErrorMessage>
-          {error}
-        </FormErrorMessage>
-      ) : null}
+      {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
 
       <Button type="submit" disabled={isDisabled || isPending}>
         {isPending ? submittingLabel : submitLabel}

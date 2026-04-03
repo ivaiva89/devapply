@@ -1,10 +1,7 @@
 import "server-only";
 
 import type { AuthenticatedAppUser } from "@/features/auth/server/session";
-import {
-  getBillingConfig,
-  type BillingPlan,
-} from "@/features/billing/server/provider-config";
+import { getBillingConfig } from "@/features/billing/server/provider-config";
 import {
   getPolarCheckoutConfigError,
   getPolarCheckoutUrl,
@@ -13,16 +10,16 @@ import {
 } from "@/features/billing/server/polar";
 
 type HostedCheckoutInput = {
-  plan: Extract<BillingPlan, "PRO">;
+  plan: "PRO" | "LIFETIME";
   user: AuthenticatedAppUser;
 };
 
-export function getHostedCheckoutError() {
+export function getHostedCheckoutError(plan: "PRO" | "LIFETIME" = "PRO") {
   const config = getBillingConfig();
 
   switch (config.provider) {
     case "polar":
-      return getPolarCheckoutConfigError(config);
+      return getPolarCheckoutConfigError(config, plan);
   }
 }
 
@@ -31,8 +28,7 @@ export function getHostedCheckoutUrl(input: HostedCheckoutInput) {
 
   switch (config.provider) {
     case "polar":
-      void input;
-      return getPolarCheckoutUrl();
+      return `${getPolarCheckoutUrl()}?plan=${input.plan}`;
   }
 }
 

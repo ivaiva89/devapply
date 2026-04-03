@@ -11,7 +11,7 @@ export type AuthenticatedAppUser = {
   clerkUserId: string | null;
   email: string;
   name: string | null;
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
 };
 
 export class AuthSyncError extends Error {

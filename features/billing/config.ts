@@ -9,4 +9,5 @@ export const PRO_PLAN_PRICE_MONTHLY = 9;
 export const PLAN_LABELS = {
   FREE: "Free",
   PRO: "Pro",
+  LIFETIME: "Lifetime",
 } as const;

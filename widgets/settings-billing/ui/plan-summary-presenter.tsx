@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { FREE_PLAN_LIMITS, PLAN_LABELS } from "@/features/billing/config";
 
 type PlanSummaryPresenterProps = {
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
   actions?: ReactNode;
 };
 
@@ -24,7 +24,9 @@ export function PlanSummaryPresenter({
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
           {plan === "PRO"
             ? "Your account currently has Pro access and should not be blocked by feature limits. Billing updates and cancellations can be managed through Polar's hosted customer portal."
-            : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
+            : plan === "LIFETIME"
+              ? "Your account has lifetime access with no subscription required. All limits are removed permanently."
+              : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
         </p>
       </CardHeader>
 
@@ -32,19 +34,25 @@ export function PlanSummaryPresenter({
         {plan === "FREE" ? (
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Applications</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Applications
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.applications}
               </p>
             </div>
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Resumes</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Resumes
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.resumes}
               </p>
             </div>
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Active reminders</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Active reminders
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.reminders}
               </p>

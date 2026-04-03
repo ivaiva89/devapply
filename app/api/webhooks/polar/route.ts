@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
   const config = getBillingConfig();
   const webhookSecret = config.polar.webhookSecret;
   const proProductId = config.polar.productIdPro;
+  const lifetimeProductId = config.polar.productIdLifetime;
 
   if (!webhookSecret) {
     return NextResponse.json(
@@ -46,6 +47,26 @@ export async function POST(request: NextRequest) {
     await syncUserPlanFromBillingPayload(payload, "PRO");
   }
 
+  function isLifetimeProductPayload(payload: {
+    data: { productId?: string | null };
+  }) {
+    return (
+      !!lifetimeProductId &&
+      !!payload.data.productId &&
+      payload.data.productId === lifetimeProductId
+    );
+  }
+
+  async function syncLifetimeAccess(payload: {
+    data: { productId?: string | null };
+  }) {
+    if (!isLifetimeProductPayload(payload)) {
+      return;
+    }
+
+    await syncUserPlanFromBillingPayload(payload, "LIFETIME");
+  }
+
   function shouldPromoteSubscriptionStatus(status?: string | null) {
     return status === "active" || status === "trialing";
   }
@@ -70,7 +91,11 @@ export async function POST(request: NextRequest) {
   return Webhooks({
     webhookSecret,
     onOrderPaid: async (payload) => {
-      await syncProAccess(payload);
+      if (isLifetimeProductPayload(payload)) {
+        await syncLifetimeAccess(payload);
+      } else {
+        await syncProAccess(payload);
+      }
     },
     onSubscriptionActive: async (payload) => {
       await syncProAccess(payload);
@@ -88,7 +113,9 @@ export async function POST(request: NextRequest) {
       await syncProAccess(payload);
     },
     onSubscriptionRevoked: async (payload) => {
-      await syncUserPlanFromBillingPayload(payload, "FREE");
+      if (!isLifetimeProductPayload(payload)) {
+        await syncUserPlanFromBillingPayload(payload, "FREE");
+      }
     },
     onCustomerCreated: async (payload) => {
       await syncBillingLinkageFromPayload(payload);

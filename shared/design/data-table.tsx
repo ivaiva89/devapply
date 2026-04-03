@@ -61,7 +61,10 @@ export function DataTable<T>({
             </TableHeader>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={getRowKey(row)} className="border-border/15 transition-colors hover:bg-muted/30">
+                <TableRow
+                  key={getRowKey(row)}
+                  className="border-border/15 transition-colors hover:bg-muted/30"
+                >
                   {columns.map((column) => (
                     <TableCell
                       key={column.key}

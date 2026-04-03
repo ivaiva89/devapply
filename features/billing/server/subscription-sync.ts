@@ -204,6 +204,11 @@ async function updateBillingStateForUser(
     throw new Error(`billing webhook user not found for id: ${userId}`);
   }
 
+  // Never downgrade a LIFETIME user via billing events
+  if (data.plan === "FREE" && currentUser.plan === "LIFETIME") {
+    return;
+  }
+
   await prisma.user.updateMany({
     where: {
       id: userId,
@@ -211,13 +216,17 @@ async function updateBillingStateForUser(
     data,
   });
 
-  if (data.plan === "PRO" && currentUser.plan !== "PRO") {
+  if (
+    (data.plan === "PRO" || data.plan === "LIFETIME") &&
+    currentUser.plan !== "PRO" &&
+    currentUser.plan !== "LIFETIME"
+  ) {
     await trackServerEvent({
       distinctId: userId,
       event: "checkout_success",
       properties: {
         billingProvider: "polar",
-        plan: "PRO",
+        plan: data.plan,
         sourceEvent: payload.type ?? "unknown",
       },
     });

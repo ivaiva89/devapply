@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/shared/design/data-table";
+import { DataTable, type DataTableColumn } from "@/shared/design/data-table";
 
 type Row = {
   id: string;

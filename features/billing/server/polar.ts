@@ -15,7 +15,7 @@ type CheckoutUser = {
 
 type PolarCheckoutUrlInput = {
   user: CheckoutUser;
-  plan: "PRO";
+  plan: "PRO" | "LIFETIME";
 };
 
 function getCheckoutSuccessUrl(appUrl: string) {
@@ -34,13 +34,20 @@ function getPolarEnvironmentLabel(environment: BillingEnvironment) {
   return environment === "production" ? "production" : "sandbox";
 }
 
-export function getPolarCheckoutConfigError(config: BillingConfig) {
+export function getPolarCheckoutConfigError(
+  config: BillingConfig,
+  plan: "PRO" | "LIFETIME" = "PRO",
+) {
   if (!config.appUrl) {
     return "Could not determine the application URL for Polar checkout. Set NEXT_PUBLIC_APP_URL.";
   }
 
   if (!config.polar.accessToken || !config.polar.productIdPro) {
     return "Polar billing is not configured yet. Add POLAR_ACCESS_TOKEN and POLAR_PRODUCT_ID_PRO to enable upgrades.";
+  }
+
+  if (plan === "LIFETIME" && !config.polar.productIdLifetime) {
+    return "Lifetime billing is not configured yet. Add POLAR_PRODUCT_ID_LIFETIME to enable lifetime purchases.";
   }
 
   return null;
@@ -106,12 +113,17 @@ export function getPolarCheckoutSearchParams(
   config: BillingConfig,
   input: PolarCheckoutUrlInput,
 ) {
-  if (!config.polar.productIdPro) {
-    throw new Error("Polar Pro product is not configured.");
+  const productId =
+    input.plan === "LIFETIME"
+      ? config.polar.productIdLifetime
+      : config.polar.productIdPro;
+
+  if (!productId) {
+    throw new Error(`Polar ${input.plan} product is not configured.`);
   }
 
   const params = new URLSearchParams({
-    products: config.polar.productIdPro,
+    products: productId,
     customerExternalId: input.user.id,
     customerEmail: input.user.email,
     metadata: JSON.stringify({

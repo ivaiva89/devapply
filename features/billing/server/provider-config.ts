@@ -1,13 +1,14 @@
 import "server-only";
 
 export type BillingProviderName = "polar";
-export type BillingPlan = "FREE" | "PRO";
+export type BillingPlan = "FREE" | "PRO" | "LIFETIME";
 export type BillingEnvironment = "sandbox" | "production";
 
 type PolarBillingConfig = {
   accessToken: string | null;
   environment: BillingEnvironment;
   productIdPro: string | null;
+  productIdLifetime: string | null;
   webhookSecret: string | null;
 };
 
@@ -35,6 +36,7 @@ export function getBillingConfig(): BillingConfig {
       accessToken: getOptionalEnv("POLAR_ACCESS_TOKEN"),
       environment: getBillingEnvironment(),
       productIdPro: getOptionalEnv("POLAR_PRODUCT_ID_PRO"),
+      productIdLifetime: getOptionalEnv("POLAR_PRODUCT_ID_LIFETIME"),
       webhookSecret: getOptionalEnv("POLAR_WEBHOOK_SECRET"),
     },
   };

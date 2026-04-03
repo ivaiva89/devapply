@@ -3,7 +3,7 @@ import { PlanSummary } from "@/widgets/settings-billing/ui/plan-summary";
 
 type SettingsBillingPanelProps = {
   billingState?: string;
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
 };
 
 function BillingStatusNotice({ billingState }: { billingState?: string }) {

@@ -166,7 +166,10 @@ export default async function MarketingHomePage() {
             boxShadow: "inset 0 0 0 1px hsl(var(--primary) / 0.12)",
           }}
         >
-          <Terminal className="size-3" style={{ color: "hsl(var(--accent))" }} />
+          <Terminal
+            className="size-3"
+            style={{ color: "hsl(var(--accent))" }}
+          />
           <span className="font-label text-[0.68rem] font-medium uppercase tracking-[0.22em] text-primary/90">
             Built for architects of the web
           </span>
@@ -315,9 +318,7 @@ export default async function MarketingHomePage() {
                     key={item.label}
                     className={cn(
                       "flex items-center gap-2 rounded-lg px-2 py-1.5",
-                      item.active
-                        ? "text-primary"
-                        : "text-muted-foreground/75",
+                      item.active ? "text-primary" : "text-muted-foreground/75",
                     )}
                     style={{
                       background: item.active
@@ -333,9 +334,7 @@ export default async function MarketingHomePage() {
                           : "hsl(var(--border)/0.3)",
                       }}
                     />
-                    <span className="font-label text-[11px]">
-                      {item.label}
-                    </span>
+                    <span className="font-label text-[11px]">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -403,9 +402,7 @@ export default async function MarketingHomePage() {
                       className="flex items-center gap-3 rounded-lg px-3 py-2"
                       style={{
                         background:
-                          i === 0
-                            ? "hsl(var(--secondary)/0.6)"
-                            : "transparent",
+                          i === 0 ? "hsl(var(--secondary)/0.6)" : "transparent",
                       }}
                     >
                       <div
@@ -734,8 +731,7 @@ export default async function MarketingHomePage() {
                         "w-full justify-center rounded-xl",
                       )}
                     />
-                  ) : tier.name === "The Architect" &&
-                    user?.plan === "PRO" ? (
+                  ) : tier.name === "The Architect" && user?.plan === "PRO" ? (
                     <Link
                       href="/dashboard"
                       className={cn(

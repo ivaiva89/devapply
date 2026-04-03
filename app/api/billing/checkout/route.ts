@@ -34,9 +34,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const planParam = request.nextUrl.searchParams.get("plan");
+    const plan: "PRO" | "LIFETIME" =
+      planParam === "LIFETIME" ? "LIFETIME" : "PRO";
+
     const checkoutUrl = request.nextUrl.clone();
     checkoutUrl.search = getPolarCheckoutSearchParams(config, {
-      plan: "PRO",
+      plan,
       user,
     }).toString();
 

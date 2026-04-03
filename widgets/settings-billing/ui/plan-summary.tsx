@@ -3,7 +3,7 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { PlanSummaryPresenter } from "@/widgets/settings-billing/ui/plan-summary-presenter";
 
 type PlanSummaryProps = {
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
 };
 
 export function PlanSummary({ plan }: PlanSummaryProps) {
@@ -14,6 +14,11 @@ export function PlanSummary({ plan }: PlanSummaryProps) {
         plan === "FREE" ? (
           <>
             <UpgradeButton />
+            <UpgradeButton
+              plan="LIFETIME"
+              label="Get lifetime access"
+              variant="outline"
+            />
             <CustomerPortalButton label="Manage existing billing" />
           </>
         ) : (

@@ -327,9 +327,7 @@ export function ApplicationFormModalPresenter({
           </div>
 
           {state.formError ? (
-            <FormErrorMessage>
-              {state.formError}
-            </FormErrorMessage>
+            <FormErrorMessage>{state.formError}</FormErrorMessage>
           ) : null}
 
           <DialogFooter>

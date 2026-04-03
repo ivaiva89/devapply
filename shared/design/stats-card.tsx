@@ -51,7 +51,9 @@ export function StatsCard({
           {value}
         </p>
         {helper ? (
-          <p className="font-label text-xs tracking-wide text-muted-foreground">{helper}</p>
+          <p className="font-label text-xs tracking-wide text-muted-foreground">
+            {helper}
+          </p>
         ) : null}
       </CardContent>
     </Card>

@@ -125,7 +125,10 @@ export function PipelineBoardPresenter({
                           }
                         >
                           <SelectTrigger
-                            className={cn(compactControlClassName, "bg-background")}
+                            className={cn(
+                              compactControlClassName,
+                              "bg-background",
+                            )}
                           >
                             <SelectValue />
                           </SelectTrigger>

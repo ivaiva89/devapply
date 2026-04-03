@@ -73,7 +73,7 @@ export async function getApplicationsForUser(
   items: ApplicationListItem[];
   state: ApplicationsQueryState;
   totalCount: number;
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
 }> {
   const state = parseApplicationsQueryState(searchParams);
   const [{ items, totalCount }, user] = await Promise.all([
