@@ -22,7 +22,7 @@ function formatDate(value: string) {
 export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3 sm:pb-4">
         <p className="font-display text-lg font-semibold tracking-tight text-foreground">
           Recent Applications
         </p>
@@ -34,7 +34,7 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="group -mx-2 flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40"
+                className="group -mx-2 flex flex-col gap-2 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">
@@ -44,7 +44,7 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
                     {item.role}
                   </p>
                 </div>
-                <div className="ml-4 flex shrink-0 items-center justify-end gap-3 text-right">
+                <div className="flex flex-wrap items-center gap-2 text-left sm:ml-4 sm:shrink-0 sm:justify-end sm:gap-3 sm:text-right">
                   <span className="font-label text-xs tabular-nums text-muted-foreground">
                     {formatDate(item.updatedAt)}
                   </span>

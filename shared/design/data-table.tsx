@@ -38,9 +38,9 @@ export function DataTable<T>({
   header,
 }: DataTableProps<T>) {
   return (
-    <Card className="rounded-3xl border-none bg-card shadow-sm">
+    <Card className="min-w-0 rounded-3xl border-none bg-card shadow-sm">
       {header ? <CardHeader>{header}</CardHeader> : null}
-      <CardContent className={header ? "pt-0" : undefined}>
+      <CardContent className={cn("min-w-0", header ? "pt-0" : undefined)}>
         {rows.length > 0 ? (
           <Table>
             <TableHeader>

@@ -25,7 +25,7 @@ function isOverdue(value: string) {
 export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3 sm:pb-4">
         <p className="font-display text-lg font-semibold tracking-tight text-foreground">
           Upcoming Reminders
         </p>
@@ -40,7 +40,7 @@ export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
               return (
                 <div
                   key={item.id}
-                  className="group -mx-2 flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40"
+                  className="group -mx-2 flex flex-col gap-2 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">
@@ -52,7 +52,7 @@ export function UpcomingRemindersCard({ items }: UpcomingRemindersCardProps) {
                   </div>
                   <Badge
                     variant={overdue ? "destructive" : "outline"}
-                    className="ml-4 shrink-0 font-label tabular-nums"
+                    className="w-fit font-label tabular-nums sm:ml-4 sm:shrink-0"
                   >
                     {overdue ? "Overdue" : formatDate(item.dueAt)}
                   </Badge>
