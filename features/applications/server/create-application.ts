@@ -38,7 +38,7 @@ export async function createApplication(
 
   try {
     const user = await requireCurrentUser();
-    const gate = await getPlanGate(user.id, "applications");
+    const gate = await getPlanGate(user, "applications");
 
     if (!gate.allowed) {
       return getApplicationFormErrorState(values, {

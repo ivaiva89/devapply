@@ -3,6 +3,7 @@ import "server-only";
 import type { Plan } from "@prisma/client";
 
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
+import type { AuthenticatedAppUser } from "@/features/auth/server/session";
 import { prisma } from "@/shared/lib/prisma";
 
 export type LimitResource = keyof typeof FREE_PLAN_LIMITS;
@@ -14,6 +15,7 @@ const PLAN_LIMIT_REACHED_MESSAGES: Record<LimitResource, string> = {
 };
 
 type SupportedPlan = Plan | "FREE" | "PRO" | "LIFETIME";
+type PlanGateUser = Pick<AuthenticatedAppUser, "id" | "plan">;
 
 export async function getUserPlan(userId: string) {
   return prisma.user.findUnique({
@@ -75,8 +77,12 @@ export async function getUsageCount(userId: string, resource: LimitResource) {
   }
 }
 
-export async function getPlanGate(userId: string, resource: LimitResource) {
-  const user = await getUserPlan(userId);
+export async function getPlanGate(
+  userOrId: string | PlanGateUser,
+  resource: LimitResource,
+) {
+  const user =
+    typeof userOrId === "string" ? await getUserPlan(userOrId) : userOrId;
 
   if (!user) {
     return {

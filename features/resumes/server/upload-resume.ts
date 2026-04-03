@@ -92,7 +92,7 @@ export async function uploadResume(
     };
   }
 
-  const gate = await getPlanGate(user.id, "resumes");
+  const gate = await getPlanGate(user, "resumes");
 
   if (!gate.allowed) {
     return {

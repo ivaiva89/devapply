@@ -44,7 +44,7 @@ export async function createReminder(
   }
 
   const user = await requireCurrentUser();
-  const gate = await getPlanGate(user.id, "reminders");
+  const gate = await getPlanGate(user, "reminders");
 
   if (!gate.allowed) {
     return {
