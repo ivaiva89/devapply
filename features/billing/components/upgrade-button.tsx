@@ -13,6 +13,8 @@ import {
 type UpgradeButtonProps = {
   className?: string;
   label?: string;
+  plan?: "PRO" | "LIFETIME";
+  variant?: "default" | "outline";
 };
 
 const initialState: CreateCheckoutSessionState = {
@@ -22,6 +24,8 @@ const initialState: CreateCheckoutSessionState = {
 export function UpgradeButton({
   className,
   label = "Upgrade to Pro",
+  plan = "PRO",
+  variant = "default",
 }: UpgradeButtonProps) {
   const pathname = usePathname();
   const [state, formAction, isPending] = useActionState(
@@ -37,6 +41,7 @@ export function UpgradeButton({
       isPending={isPending}
       label={label}
       pendingLabel="Redirecting..."
+      variant={variant}
       onClick={() => {
         trackClientEvent({
           event: "upgrade_clicked",
@@ -46,6 +51,8 @@ export function UpgradeButton({
           },
         });
       }}
-    />
+    >
+      <input type="hidden" name="plan" value={plan} />
+    </BillingActionButtonPresenter>
   );
 }

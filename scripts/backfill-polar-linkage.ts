@@ -34,7 +34,7 @@ function createPrismaClient() {
 type CandidateUser = {
   id: string;
   email: string;
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
   billingProvider: "POLAR" | null;
   billingCustomerId: string | null;
   billingSubscriptionId: string | null;

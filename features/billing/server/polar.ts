@@ -15,7 +15,7 @@ type CheckoutUser = {
 
 type PolarCheckoutUrlInput = {
   user: CheckoutUser;
-  plan: "PRO";
+  plan: "PRO" | "LIFETIME";
 };
 
 function getCheckoutSuccessUrl(appUrl: string) {
@@ -106,12 +106,17 @@ export function getPolarCheckoutSearchParams(
   config: BillingConfig,
   input: PolarCheckoutUrlInput,
 ) {
-  if (!config.polar.productIdPro) {
-    throw new Error("Polar Pro product is not configured.");
+  const productId =
+    input.plan === "LIFETIME"
+      ? config.polar.productIdLifetime
+      : config.polar.productIdPro;
+
+  if (!productId) {
+    throw new Error(`Polar ${input.plan} product is not configured.`);
   }
 
   const params = new URLSearchParams({
-    products: config.polar.productIdPro,
+    products: productId,
     customerExternalId: input.user.id,
     customerEmail: input.user.email,
     metadata: JSON.stringify({

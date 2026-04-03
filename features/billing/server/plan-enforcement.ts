@@ -8,12 +8,12 @@ import { prisma } from "@/shared/lib/prisma";
 export type LimitResource = keyof typeof FREE_PLAN_LIMITS;
 
 const PLAN_LIMIT_REACHED_MESSAGES: Record<LimitResource, string> = {
-  applications: `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to keep adding applications.`,
-  resumes: `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to store multiple versions.`,
-  reminders: `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more reminders.`,
+  applications: `Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro or Lifetime to keep adding applications.`,
+  resumes: `Free plan users can upload ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro or Lifetime to store multiple versions.`,
+  reminders: `Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro or Lifetime to create more reminders.`,
 };
 
-type SupportedPlan = Plan | "FREE" | "PRO";
+type SupportedPlan = Plan | "FREE" | "PRO" | "LIFETIME";
 
 export async function getUserPlan(userId: string) {
   return prisma.user.findUnique({
@@ -27,8 +27,8 @@ export async function getUserPlan(userId: string) {
   });
 }
 
-export function hasUnlimitedAccess(plan: Plan) {
-  return plan === "PRO";
+export function hasUnlimitedAccess(plan: SupportedPlan) {
+  return plan === "PRO" || plan === "LIFETIME";
 }
 
 export function getPlanLimit(resource: LimitResource) {

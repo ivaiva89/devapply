@@ -1,10 +1,11 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { FormErrorMessage } from "@/shared/ui/field";
 
 type BillingActionButtonPresenterProps = {
   action?: ComponentProps<"form">["action"];
+  children?: ReactNode;
   className?: string;
   error?: string;
   isPending?: boolean;
@@ -17,6 +18,7 @@ type BillingActionButtonPresenterProps = {
 
 export function BillingActionButtonPresenter({
   action,
+  children,
   className,
   error,
   isPending = false,
@@ -28,6 +30,7 @@ export function BillingActionButtonPresenter({
 }: BillingActionButtonPresenterProps) {
   return (
     <form action={action} className="space-y-3">
+      {children}
       <Button
         type={type}
         variant={variant}

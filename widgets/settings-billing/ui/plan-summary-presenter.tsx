@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { FREE_PLAN_LIMITS, PLAN_LABELS } from "@/features/billing/config";
 
 type PlanSummaryPresenterProps = {
-  plan: "FREE" | "PRO";
+  plan: "FREE" | "PRO" | "LIFETIME";
   actions?: ReactNode;
 };
 
@@ -24,7 +24,9 @@ export function PlanSummaryPresenter({
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
           {plan === "PRO"
             ? "Your account currently has Pro access and should not be blocked by feature limits. Billing updates and cancellations can be managed through Polar's hosted customer portal."
-            : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
+            : plan === "LIFETIME"
+              ? "Your account has lifetime access with no subscription required. All limits are removed permanently."
+              : "Your account is currently on the Free plan with server-enforced usage limits and a hosted checkout upgrade path."}
         </p>
       </CardHeader>
 

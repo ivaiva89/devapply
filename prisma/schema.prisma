@@ -44,6 +44,7 @@ enum InterviewResult {
 enum Plan {
   FREE
   PRO
+  LIFETIME
 }
 
 enum BillingProvider {
