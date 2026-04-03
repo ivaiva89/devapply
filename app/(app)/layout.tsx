@@ -25,6 +25,7 @@ const spaceGrotesk = Space_Grotesk({
 
 import "@/app/globals.css";
 
+import { PostHogIdentify } from "@/features/analytics/components/posthog-identify";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { AppHeader } from "@/widgets/app-shell/ui/app-header";
 import { AppSidebar } from "@/widgets/app-shell/ui/app-sidebar";
@@ -69,6 +70,12 @@ export default async function AppLayout({
               <div className="grid min-w-0 gap-6">{children}</div>
             </main>
           </div>
+          <PostHogIdentify
+            userId={user.id}
+            email={user.email}
+            name={user.name}
+            plan={user.plan}
+          />
           <Analytics />
         </ClerkProvider>
       </body>

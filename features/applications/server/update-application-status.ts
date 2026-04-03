@@ -8,6 +8,7 @@ import {
   type ApplicationStatusValue,
 } from "@/entities/application/model/config";
 import { updateApplicationStatusForUser } from "@/entities/application/api/application-service";
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
@@ -57,6 +58,15 @@ export async function updateApplicationStatus(
       message: "That application could not be found.",
     };
   }
+
+  await trackServerEvent({
+    distinctId: user.id,
+    event: "application_status_changed",
+    properties: {
+      applicationId: input.applicationId,
+      status: input.nextStatus,
+    },
+  });
 
   revalidatePath("/applications");
   revalidatePath("/pipeline");

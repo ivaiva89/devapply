@@ -12,7 +12,8 @@ type TrackServerEventInput = {
 };
 
 function getAnalyticsConfig() {
-  const apiKey = process.env.POSTHOG_KEY;
+  const apiKey =
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN ?? process.env.POSTHOG_KEY;
 
   if (!apiKey) {
     return null;
@@ -20,7 +21,10 @@ function getAnalyticsConfig() {
 
   return {
     apiKey,
-    host: process.env.POSTHOG_HOST ?? "https://us.i.posthog.com",
+    host:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST ??
+      process.env.POSTHOG_HOST ??
+      "https://us.i.posthog.com",
   };
 }
 

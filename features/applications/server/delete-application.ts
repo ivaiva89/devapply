@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { DeleteApplicationActionState } from "@/features/applications/application-delete";
 import { deleteApplicationForUser } from "@/entities/application/api/application-service";
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
@@ -48,6 +49,14 @@ export async function deleteApplication(
         error: "That application could not be found.",
       };
     }
+
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "application_deleted",
+      properties: {
+        applicationId: result.data.applicationId,
+      },
+    });
 
     revalidatePath("/applications");
     revalidatePath("/dashboard");
