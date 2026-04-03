@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { Inter, Manrope, Space_Grotesk } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -232,6 +233,7 @@ export default async function MarketingLayout({
               </footer>
             </div>
           </div>
+          <Analytics />
         </ClerkProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { prisma } from "@/shared/lib/prisma";
 
 export type AuthenticatedAppUser = {
@@ -165,7 +166,7 @@ async function syncClerkUserToDatabase(
   }
 
   try {
-    return await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         clerkUserId,
         email,
@@ -180,6 +181,17 @@ async function syncClerkUserToDatabase(
         plan: true,
       },
     });
+
+    await trackServerEvent({
+      distinctId: newUser.id,
+      event: "signup",
+      properties: {
+        email: newUser.email,
+        name: newUser.name ?? undefined,
+      },
+    });
+
+    return newUser;
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&

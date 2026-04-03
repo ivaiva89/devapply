@@ -1,6 +1,7 @@
 import { Checkout } from "@polar-sh/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
+import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { getCurrentUser } from "@/features/auth/server/session";
 import { getBillingConfig } from "@/features/billing/server/provider-config";
 import {
@@ -19,18 +20,16 @@ export async function GET(request: NextRequest) {
     const config = getBillingConfig();
 
     if (config.provider !== "polar") {
-      return NextResponse.json(
-        { error: "Unsupported billing provider." },
-        { status: 500 },
+      return NextResponse.redirect(
+        new URL("/settings?billing=checkout_unavailable", request.url),
       );
     }
 
     const checkoutConfig = getPolarCheckoutHandlerConfig(config);
 
     if (!checkoutConfig) {
-      return NextResponse.json(
-        { error: "Polar billing checkout is not configured." },
-        { status: 500 },
+      return NextResponse.redirect(
+        new URL("/settings?billing=checkout_unavailable", request.url),
       );
     }
 
@@ -44,6 +43,15 @@ export async function GET(request: NextRequest) {
       user,
     }).toString();
 
+    await trackServerEvent({
+      distinctId: user.id,
+      event: "checkout_started",
+      properties: {
+        billingProvider: "polar",
+        plan,
+      },
+    });
+
     const checkoutRequest = new NextRequest(checkoutUrl, request);
 
     return await Checkout(checkoutConfig)(checkoutRequest);
@@ -55,23 +63,13 @@ export async function GET(request: NextRequest) {
       "statusCode" in error &&
       error.statusCode === 401
     ) {
-      return NextResponse.json(
-        {
-          error:
-            "Polar rejected the configured access token. Replace POLAR_ACCESS_TOKEN with a valid sandbox organization access token.",
-        },
-        { status: 500 },
+      return NextResponse.redirect(
+        new URL("/settings?billing=checkout_unavailable", request.url),
       );
     }
 
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Polar checkout route failed.",
-      },
-      { status: 500 },
+    return NextResponse.redirect(
+      new URL("/settings?billing=checkout_unavailable", request.url),
     );
   }
 }
