@@ -66,11 +66,7 @@ export function AttachResumeFormPresenter({
         </Select>
       </FieldShell>
 
-      {error ? (
-        <FormErrorMessage>
-          {error}
-        </FormErrorMessage>
-      ) : null}
+      {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
 
       <Button type="submit" variant="outline" size="sm" disabled={disabled}>
         {isPending ? "Attaching..." : "Attach resume"}

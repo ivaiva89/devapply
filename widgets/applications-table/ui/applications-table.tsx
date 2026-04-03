@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 
-import {
-  DataTable,
-  type DataTableColumn,
-} from "@/shared/design/data-table";
+import { DataTable, type DataTableColumn } from "@/shared/design/data-table";
 import { SectionHeader } from "@/shared/design/section-header";
 import { ApplicationStatusBadge } from "@/entities/application/ui/application-status-badge";
 import type {

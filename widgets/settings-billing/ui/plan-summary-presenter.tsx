@@ -34,19 +34,25 @@ export function PlanSummaryPresenter({
         {plan === "FREE" ? (
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Applications</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Applications
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.applications}
               </p>
             </div>
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Resumes</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Resumes
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.resumes}
               </p>
             </div>
             <div className="rounded-2xl bg-muted/30 p-5">
-              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">Active reminders</p>
+              <p className="font-label text-xs uppercase tracking-wide text-muted-foreground">
+                Active reminders
+              </p>
               <p className="mt-2 font-display text-3xl font-semibold text-foreground">
                 {FREE_PLAN_LIMITS.reminders}
               </p>

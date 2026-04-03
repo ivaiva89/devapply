@@ -67,7 +67,10 @@ export function AppSidebarPresenter({ currentPath }: AppSidebarPresenterProps) {
               variant={isActive ? "secondary" : "ghost"}
               className="h-11 w-full justify-start rounded-xl"
             >
-              <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+              <Link
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+              >
                 <Icon />
                 {item.label}
               </Link>

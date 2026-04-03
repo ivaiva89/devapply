@@ -78,11 +78,7 @@ export function UploadResumeFormPresenter({
           />
         </FieldShell>
 
-        {error ? (
-          <FormErrorMessage>
-            {error}
-          </FormErrorMessage>
-        ) : null}
+        {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
 
         <Button type="submit" disabled={!canUpload || isPending}>
           {isPending ? "Uploading..." : "Upload resume"}

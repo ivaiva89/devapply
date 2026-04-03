@@ -150,9 +150,7 @@ export function AppHeaderPresenter({
                         {planLabel}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {userEmail}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{userEmail}</p>
                   </div>
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
