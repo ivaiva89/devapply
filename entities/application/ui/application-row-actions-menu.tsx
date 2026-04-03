@@ -1,55 +1,62 @@
-import type { MouseEvent } from "react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/ui/dropdown-menu";
 
 type ApplicationRowActionsMenuProps = {
   onDelete?: () => void;
   onEdit?: () => void;
 };
 
-function closeActionsMenu(event: MouseEvent<HTMLButtonElement>) {
-  const menu = event.currentTarget.closest("details");
-
-  if (menu instanceof HTMLDetailsElement) {
-    menu.open = false;
-  }
-}
-
 export function ApplicationRowActionsMenu({
   onDelete,
   onEdit,
 }: ApplicationRowActionsMenuProps) {
   return (
-    <details className="relative">
-      <summary className="list-none rounded-full border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition hover:border-foreground hover:text-foreground">
-        Actions
-      </summary>
-      <div className="absolute right-0 top-full z-10 mt-2 w-40 rounded-2xl border border-border bg-card p-2 shadow-lg">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={(event) => {
-            closeActionsMenu(event);
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-9 rounded-full border border-border/70 text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
+            aria-label="Open application actions"
+          />
+        }
+      >
+        <MoreHorizontal className="size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        sideOffset={8}
+        className="w-44 rounded-2xl p-1.5"
+      >
+        <DropdownMenuItem
+          onClick={() => {
             onEdit?.();
           }}
-          className="w-full justify-start rounded-xl px-3"
+          className="min-h-10 rounded-xl px-3"
         >
+          <Pencil className="size-4" />
           Edit
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={(event) => {
-            closeActionsMenu(event);
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
             onDelete?.();
           }}
-          className="mt-1 w-full justify-start rounded-xl px-3 text-destructive hover:bg-destructive/10 hover:text-destructive"
+          variant="destructive"
+          className="min-h-10 rounded-xl px-3"
         >
+          <Trash2 className="size-4" />
           Delete
-        </Button>
-      </div>
-    </details>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -10,7 +10,7 @@ Use:
 - `stories/` for isolated component states
 - `app/(v0)/preview/page.tsx` for in-app screen composition with shared
   mock data
-- `lib/mocks/ui-fixtures.ts` as the shared fixture source
+- `shared/mocks/ui-fixtures.ts` as the shared fixture source
 
 ## When to use which
 
@@ -41,7 +41,9 @@ For feature UI that needs Storybook or `/preview` coverage:
 - presenters render the visual surface and stay backend-agnostic
 - wrappers handle auth, server actions, mutations, refresh logic, and
   provider/session wiring
-- presenters live beside wrappers in `features/*/components/`
+- presenters may live beside wrappers in `features/*/components/` or in
+  canonical `widgets/*/ui` and `entities/*/ui` locations, depending on
+  whether the surface is feature-local or broadly reusable
 - preview and Storybook should import presenters or already-pure
   presentational components, not wrappers that depend on backend state
 
@@ -63,63 +65,63 @@ Keep wrappers thin:
 
 Covered now:
 
-- `components/ui/button.tsx`
-- `components/ui/badge.tsx`
-- `components/ui/card.tsx`
-- `components/ui/input.tsx`
-- `components/ui/table.tsx`
-- `components/ui/tabs.tsx`
-- `components/ui/tooltip.tsx`
-- `components/design/data-table.tsx`
-- `components/design/empty-state.tsx`
-- `components/design/section-header.tsx`
-- `components/design/stats-card.tsx`
-- `components/design/status-badge.tsx`
+- `shared/ui/button.tsx`
+- `shared/ui/badge.tsx`
+- `shared/ui/card.tsx`
+- `shared/ui/field.tsx`
+- `shared/ui/input.tsx`
+- `shared/ui/select.tsx`
+- `shared/ui/table.tsx`
+- `shared/ui/tabs.tsx`
+- `shared/ui/tooltip.tsx`
+- `shared/design/data-table.tsx`
+- `shared/design/empty-state.tsx`
+- `shared/design/section-header.tsx`
+- `shared/design/stats-card.tsx`
+- `shared/design/status-badge.tsx`
 
 Follow-up refactor needed before Storybook coverage:
 
-- `components/ui/dialog.tsx`
-- `components/ui/dropdown-menu.tsx`
-- `components/ui/sonner.tsx`
+- none for the current shared primitive set
 
 ## Major presentational feature components
 
 Covered now:
 
-- `features/dashboard/components/dashboard-header.tsx`
-- `features/dashboard/components/dashboard-loading-state.tsx`
-- `features/dashboard/components/dashboard-error-state.tsx`
-- `features/navigation/components/app-header-presenter.tsx`
-- `features/navigation/components/app-sidebar-presenter.tsx`
-- `features/dashboard/components/stats-grid.tsx`
-- `features/dashboard/components/dashboard-empty-state.tsx`
-- `features/dashboard/components/pipeline-overview-card.tsx`
-- `features/dashboard/components/applications-over-time-chart-section.tsx`
-- `features/dashboard/components/conversion-summary-section.tsx`
-- `features/dashboard/components/recent-applications-card.tsx`
-- `features/dashboard/components/upcoming-reminders-card.tsx`
-- `features/reminders/components/reminders-list-presenter.tsx`
+- `widgets/dashboard/ui/dashboard-header.tsx`
+- `widgets/dashboard/ui/dashboard-loading-state.tsx`
+- `widgets/dashboard/ui/dashboard-error-state.tsx`
+- `widgets/app-shell/ui/app-header-presenter.tsx`
+- `widgets/app-shell/ui/app-sidebar-presenter.tsx`
+- `widgets/dashboard/ui/stats-grid.tsx`
+- `widgets/dashboard/ui/dashboard-empty-state.tsx`
+- `widgets/dashboard/ui/pipeline-overview-card.tsx`
+- `widgets/dashboard/ui/applications-over-time-chart-section.tsx`
+- `widgets/dashboard/ui/conversion-summary-section.tsx`
+- `widgets/dashboard/ui/recent-applications-card.tsx`
+- `widgets/dashboard/ui/upcoming-reminders-card.tsx`
+- `widgets/reminders-panel/ui/reminders-list-presenter.tsx`
 - `features/reminders/components/create-reminder-form-presenter.tsx`
-- `features/resumes/components/resume-list-presenter.tsx`
+- `widgets/resumes-panel/ui/resume-list-presenter.tsx`
 - `features/resumes/components/upload-resume-form-presenter.tsx`
 - `features/resumes/components/attach-resume-form-presenter.tsx`
-- `features/billing/components/plan-summary-presenter.tsx`
+- `widgets/settings-billing/ui/plan-summary-presenter.tsx`
 - `features/billing/components/billing-action-button-presenter.tsx`
-- `features/applications/components/application-status-badge.tsx`
+- `entities/application/ui/application-status-badge.tsx`
 - `features/applications/components/applications-filters-presenter.tsx`
 - `features/applications/components/application-form-modal-presenter.tsx`
 - `features/applications/components/application-delete-dialog-presenter.tsx`
 - `features/applications/components/new-application-trigger.tsx`
-- `features/applications/components/application-row-actions-menu.tsx`
-- `features/applications/components/application-card.tsx`
-- `features/applications/components/application-kanban-column.tsx`
+- `entities/application/ui/application-row-actions-menu.tsx`
+- `entities/application/ui/application-card.tsx`
+- `widgets/pipeline-board/ui/application-kanban-column.tsx`
 - `features/applications/components/applications-empty-state.tsx`
-- `features/applications/components/applications-table.tsx`
-- `features/applications/components/pipeline-board-presenter.tsx`
+- `widgets/applications-table/ui/applications-table.tsx`
+- `widgets/pipeline-board/ui/pipeline-board-presenter.tsx`
 - `features/applications/components/pipeline-empty-state.tsx`
 - `features/billing/components/upgrade-prompt.tsx`
-- `features/reminders/components/reminders-empty-state.tsx`
-- `features/resumes/components/resumes-empty-state.tsx`
+- `widgets/reminders-panel/ui/reminders-empty-state.tsx`
+- `widgets/resumes-panel/ui/resumes-empty-state.tsx`
 
 Story-safe refactor still needed:
 
@@ -139,9 +141,9 @@ The preview route should keep static showcase coverage for:
 
 Rules:
 
-- preview data must come from `lib/mocks/ui-fixtures.ts`
+- preview data must come from `shared/mocks/ui-fixtures.ts`
 - no server actions, Prisma, Clerk, or authenticated data loading
 - ESLint enforces restricted imports in `stories/`,
-  `app/(v0)/preview`, and `lib/mocks`
+  `app/(v0)/preview`, and `shared/mocks`
 - when a reusable screen section changes materially, update Storybook
   and `/preview` in the same task

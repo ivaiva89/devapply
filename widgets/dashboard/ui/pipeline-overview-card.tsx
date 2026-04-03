@@ -22,7 +22,7 @@ export function PipelineOverviewCard({
 }: PipelineOverviewCardProps) {
   return (
     <Card>
-      <CardHeader className="pb-6">
+      <CardHeader className="pb-4 sm:pb-6">
         <p className="font-display text-lg font-semibold tracking-tight text-foreground">
           Pipeline Distribution
         </p>
@@ -30,14 +30,14 @@ export function PipelineOverviewCard({
           Applications by current status.
         </p>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-2 sm:pt-4">
         {!isEmpty ? (
           <div className="space-y-3">
             {items.map((item) => (
               <div key={item.status} className="space-y-1">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <ApplicationStatusBadge status={item.status} />
-                  <div className="flex items-center gap-3 font-label text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 font-label text-xs text-muted-foreground sm:gap-3">
                     <span className="tabular-nums">{item.count}</span>
                     <span className="w-8 text-right tabular-nums">
                       {formatPercentage(item.percentage)}

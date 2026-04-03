@@ -61,23 +61,17 @@ Deployment notes:
 
 ## Folder Structure
 
-app/ Next.js routes, layouts, pages
-
-components/ Shared UI components
-
-.storybook/ Storybook configuration
-
-stories/ Storybook stories for presentational UI
-
-features/ Domain modules organized by capability
-
-features/\*/server/ Feature-local server actions and services
-
-lib/ Shared infrastructure utilities
-
-prisma/ Database schema and migrations
-
-docs/ Project documentation
+- `app/` — Next.js routes, layouts, and page composition
+- `shared/` — shared UI primitives, layout helpers, lib utilities, and mocks
+- `entities/` — domain display/model layers such as `entities/application`
+- `widgets/` — composed screen sections such as app shell, dashboard, and pipeline
+- `features/` — feature actions, server logic, and feature-local UI wrappers
+- `features/*/server/` — feature-local server actions and services
+- `.storybook/` — Storybook configuration
+- `stories/` — Storybook stories for shared, entity, widget, and feature UI
+- `prisma/` — database schema and migrations
+- `docs/` — project documentation
+- `tests/` — targeted automated tests
 
 ## Domain Modules
 
@@ -92,21 +86,21 @@ auth --- authentication and session access
 
 ## Feature Module Convention
 
-features/`<feature>`{=html}/ components/ schemas/ server/ types/ utils/
+Preferred feature layout:
 
-Guidelines:
+- `features/<feature>/components` — feature-owned wrappers and action-oriented UI
+- `features/<feature>/server` — server actions and data/services
+- `features/<feature>/schemas` — Zod validation when needed
+- `features/<feature>/types.ts` — local TypeScript types
+- `features/<feature>/utils` — pure helpers
 
-- components: UI specific to the feature
-- schemas: Zod validation schemas
-- server: feature-local server actions and services
-- types: local TypeScript types
-- utils: pure helper logic
+Current UI layering:
 
-UI layering convention:
-
-- `components/ui`: low-level primitives
-- `components/design`: reusable presentational building blocks
-- `features/*/components`: feature-specific composition
+- `shared/ui` — low-level primitives such as button, input, select, dialog
+- `shared/*` — shared layout, form, and utility helpers
+- `entities/*` — domain-level display/model pieces
+- `widgets/*/ui` — composed screen sections
+- `features/*/components` — feature-specific wrappers around auth, server actions, or client state
 
 ## Rendering Strategy
 
@@ -140,7 +134,7 @@ Possible side effects:
 
 Free plan example limits:
 
-- 30 applications
+- 10 applications
 - 1 resume
 - 3 reminders
 

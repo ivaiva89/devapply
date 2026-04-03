@@ -40,16 +40,16 @@ export default async function ApplicationsPage({
       : `${totalCount} ${totalCount === 1 ? "application" : "applications"}`;
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
+    <div className="min-w-0 space-y-6">
+      <section className="min-w-0 rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
         <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             eyebrow="Applications"
             title="Applications table"
             description="Search, filter, and sort the authenticated user's applications without exposing any cross-user data."
           />
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="min-w-0 rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
               {resultsLabel}
             </div>
             <NewApplicationModal disabled={!canCreateApplication} />

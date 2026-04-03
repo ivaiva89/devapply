@@ -65,7 +65,7 @@ export default async function AppLayout({
                   <AppSidebar currentPath={currentPath} />
                 </div>
               </aside>
-              <div className="grid gap-6">{children}</div>
+              <div className="grid min-w-0 gap-6">{children}</div>
             </main>
           </div>
         </ClerkProvider>

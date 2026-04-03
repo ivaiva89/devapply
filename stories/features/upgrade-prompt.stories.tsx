@@ -8,7 +8,7 @@ const meta = {
   args: {
     title: "Upgrade to keep tracking more applications.",
     description:
-      "Free plan users can track 30 applications. Upgrade to Pro to remove the application limit and keep a larger search pipeline active.",
+      "Free plan users can track 10 applications. Upgrade to Pro to remove the application limit and keep a larger search pipeline active.",
   },
 } satisfies Meta<typeof UpgradePrompt>;
 

@@ -17,7 +17,7 @@ export function ApplicationsOverTimeChartSection({
 
   return (
     <Card>
-      <CardHeader className="pb-6">
+      <CardHeader className="pb-4 sm:pb-6">
         <p className="font-display text-lg font-semibold tracking-tight text-foreground">
           Applications Over Time
         </p>
@@ -25,9 +25,9 @@ export function ApplicationsOverTimeChartSection({
           Monthly volume — last 6 months.
         </p>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="px-4 pt-2 sm:px-6 sm:pt-4">
         {!isEmpty ? (
-          <div className="flex h-28 items-end gap-2">
+          <div className="flex h-32 items-end gap-1.5 sm:h-28 sm:gap-2">
             {items.map((item) => {
               const heightPct =
                 maxCount === 0
@@ -40,7 +40,7 @@ export function ApplicationsOverTimeChartSection({
               return (
                 <div
                   key={item.label}
-                  className="group flex flex-1 flex-col items-center gap-1.5"
+                  className="group flex min-w-0 flex-1 flex-col items-center gap-1.5"
                   style={{ height: "100%" }}
                 >
                   <div className="relative flex w-full flex-1 items-end">
@@ -50,11 +50,11 @@ export function ApplicationsOverTimeChartSection({
                       style={{ height: `${heightPct}%` }}
                     />
                   </div>
-                  <div className="flex flex-col items-center gap-px">
+                  <div className="flex min-w-0 flex-col items-center gap-px">
                     <span className="text-xs tabular-nums text-foreground">
                       {item.count}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="max-w-full truncate text-[10px] text-muted-foreground sm:text-[11px]">
                       {item.label}
                     </span>
                   </div>
