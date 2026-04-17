@@ -17,10 +17,10 @@ export function ConversionSummarySection({
   return (
     <Card>
       <CardHeader className="pb-6">
-        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+        <p className="font-display text-lg font-semibold tracking-tight text-text">
           Funnel Snapshot
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-text-3">
           Response, interview, and offer conversion rates.
         </p>
       </CardHeader>
@@ -32,11 +32,11 @@ export function ConversionSummarySection({
                 key={item.label}
                 className="flex flex-col gap-1 rounded-xl bg-muted/20 px-4 py-4"
               >
-                <p className="text-sm text-muted-foreground">{item.label}</p>
-                <p className="font-display text-3xl font-semibold tabular-nums tracking-tight text-foreground">
+                <p className="text-sm text-text-3">{item.label}</p>
+                <p className="font-display text-3xl font-semibold tabular-nums tracking-tight text-text">
                   {item.value}
                 </p>
-                <p className="font-label text-xs text-muted-foreground">
+                <p className="font-label text-xs text-text-3">
                   {item.helper}
                 </p>
               </div>

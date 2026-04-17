@@ -22,7 +22,7 @@ export function DashboardErrorState({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>
+        <p className="max-w-2xl text-sm text-text-3">{description}</p>
         {action ? <div>{action}</div> : null}
       </CardContent>
     </Card>

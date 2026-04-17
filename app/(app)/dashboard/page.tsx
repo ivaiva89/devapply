@@ -16,8 +16,24 @@ export default async function DashboardPage() {
 
   const isEmpty = data.isEmpty;
 
+  const now = new Date();
+  const todayEnd = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  );
+
+  const todayItems = data.reminders
+    .filter((r) => new Date(r.dueAt) <= todayEnd)
+    .map((r) => {
+      const isOverdue = new Date(r.dueAt) < now;
+      return {
+        id: r.id,
+        label: r.company ? `${r.title} — ${r.company}` : r.title,
+        tone: isOverdue ? ("danger" as const) : ("warning" as const),
+      };
+    });
+
   return (
-    <DashboardShell>
+    <DashboardShell userName={user.name ?? undefined} todayItems={todayItems}>
       <DashboardHeader
         title="Dashboard"
         description="Job search overview — pipeline volume, recent activity, and follow-ups."
