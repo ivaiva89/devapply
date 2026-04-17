@@ -2,38 +2,20 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { headers } from "next/headers";
-import { Inter, Manrope, Space_Grotesk } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/next";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  display: "swap",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
 
 import "@/app/globals.css";
 
 import { PostHogIdentify } from "@/features/analytics/components/posthog-identify";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { AppHeader } from "@/widgets/app-shell/ui/app-header";
 import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
 export const metadata: Metadata = {
   title: "DevApply",
-  description:
-    "Production-quality foundation for a developer job application tracker SaaS.",
+  description: "Developer job application tracker.",
 };
 
 export default async function AppLayout({
@@ -48,36 +30,35 @@ export default async function AppLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${manrope.variable} ${spaceGrotesk.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
     >
-      <body className="bg-background text-foreground antialiased">
-        <ClerkProvider>
-          <div className="min-h-screen bg-muted/40">
-            <AppHeader
-              currentPath={currentPath}
-              title="DevApply"
-              description="Track applications, reminders, resumes, and billing in one workspace."
-              userName={user.name ?? "Developer"}
-              userEmail={user.email}
-              planLabel={user.plan}
-            />
-            <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8">
-              <aside className="hidden lg:block">
-                <div className="sticky top-24 overflow-hidden rounded-[1.75rem] border border-border/70 bg-background shadow-sm">
+      <body className="bg-canvas text-text antialiased">
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="light"
+          enableSystem
+        >
+          <ClerkProvider>
+            <div className="flex min-h-screen">
+              <aside className="hidden w-60 shrink-0 lg:flex">
+                <div className="sticky top-0 flex h-screen w-full flex-col border-r border-border bg-surface-1">
                   <AppSidebarPresenter currentPath={currentPath} />
                 </div>
               </aside>
-              <div className="grid min-w-0 gap-6">{children}</div>
-            </main>
-          </div>
-          <PostHogIdentify
-            userId={user.id}
-            email={user.email}
-            name={user.name}
-            plan={user.plan}
-          />
-          <Analytics />
-        </ClerkProvider>
+              <main className="min-w-0 flex-1 px-8 py-6">
+                {children}
+              </main>
+            </div>
+            <PostHogIdentify
+              userId={user.id}
+              email={user.email}
+              name={user.name}
+              plan={user.plan}
+            />
+            <Analytics />
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
