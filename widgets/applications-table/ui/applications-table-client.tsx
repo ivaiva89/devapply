@@ -122,8 +122,8 @@ export function ApplicationsTableClient({
         <div
           className={`rounded-2xl border px-4 py-3 text-sm ${
             feedback.tone === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-200"
-              : "border-red-200 bg-red-50 text-red-700 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-200"
+              ? "border border-success-soft bg-success-soft text-success"
+              : "border border-danger-soft bg-danger-soft text-danger"
           }`}
         >
           <div className="flex items-start justify-between gap-4">

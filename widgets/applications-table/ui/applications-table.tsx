@@ -116,6 +116,7 @@ export function ApplicationsTable({
     <div className="flex flex-wrap gap-1.5 px-4 pb-3 pt-1">
       <button
         type="button"
+        aria-pressed={activeStatus === null}
         onClick={() => onStatusFilter(null)}
         className={cn(
           chipBaseClassName,
@@ -134,6 +135,7 @@ export function ApplicationsTable({
           <button
             key={status}
             type="button"
+            aria-pressed={isActive}
             onClick={() => onStatusFilter(isActive ? null : status)}
             className={cn(
               chipBaseClassName,
