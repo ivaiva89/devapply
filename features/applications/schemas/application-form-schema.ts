@@ -4,7 +4,6 @@ import {
   applicationSourceValues,
   applicationStatusValues,
 } from "@/entities/application/model/config";
-import type { ApplicationFormInput } from "@/entities/application/model/types";
 import {
   createApplicationDefaultValues,
   createApplicationFieldNames,
@@ -121,10 +120,6 @@ export const applicationFormSchema = z
 export type ParsedApplicationFormValues = z.output<
   typeof applicationFormSchema
 >;
-
-// Compile-time assertion: schema output must satisfy the entity's form input contract
-type _ParsedFormInputCheck =
-  ParsedApplicationFormValues extends ApplicationFormInput ? true : never;
 
 export function getApplicationFormFieldErrors(
   error: z.ZodError,
