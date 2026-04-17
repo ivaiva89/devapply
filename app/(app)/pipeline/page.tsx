@@ -1,4 +1,5 @@
 import { PipelineBoard } from "@/widgets/pipeline-board/ui/pipeline-board";
+import { MobilePipeline } from "@/widgets/pipeline-board/ui/mobile-pipeline";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";
 import { getPipelineColumnsForUser } from "@/features/applications/server/pipeline-board";
 import { requireCurrentUser } from "@/features/auth/server/session";
@@ -34,7 +35,14 @@ export default async function PipelinePage() {
         </div>
       </section>
       {totalApplications > 0 ? (
-        <PipelineBoard initialColumns={columns} />
+        <>
+          <div className="hidden md:block">
+            <PipelineBoard initialColumns={columns} />
+          </div>
+          <div className="block md:hidden">
+            <MobilePipeline initialColumns={columns} />
+          </div>
+        </>
       ) : (
         <PipelineEmptyState />
       )}
