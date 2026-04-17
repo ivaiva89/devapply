@@ -5,6 +5,20 @@ import type {
   ApplicationStatusValue,
 } from "@/entities/application/model/config";
 
+export type ApplicationFormInput = {
+  company: string;
+  role: string;
+  location: string | undefined;
+  source: ApplicationSourceValue;
+  status: ApplicationStatusValue;
+  salaryMin: number | undefined;
+  salaryMax: number | undefined;
+  currency: string;
+  jobUrl: string | undefined;
+  notes: string | undefined;
+  appliedDate: Date | undefined;
+};
+
 export type ApplicationListItem = Pick<
   Application,
   | "id"

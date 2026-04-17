@@ -3,8 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
-import { Chip, type ChipTone } from "@/components/design/chip";
-import { DesignCard } from "@/components/design/card";
+import { Chip, type ChipTone } from "@/shared/design/chip";
+import { DesignCard } from "@/shared/design/card";
 import { updateApplicationStatus } from "@/features/applications/server/update-application-status";
 import type { PipelineColumn, PipelineApplicationCard } from "@/features/applications/server/pipeline-board";
 import {

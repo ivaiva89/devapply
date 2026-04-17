@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/design/page-header";
+import { PageHeader } from "@/shared/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";

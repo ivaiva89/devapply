@@ -1,6 +1,6 @@
 import type { DragEventHandler, ReactNode } from "react";
 import { cn } from "@/shared/lib/utils";
-import { Chip, type ChipTone } from "@/components/design/chip";
+import { Chip, type ChipTone } from "@/shared/design/chip";
 import type { ApplicationStatusValue } from "@/entities/application/model/config";
 import type { ApplicationCardData } from "@/entities/application/ui/application-card";
 

@@ -8,7 +8,7 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
-import { PageHeader } from "@/components/design/page-header";
+import { PageHeader } from "@/shared/design/page-header";
 
 type ApplicationsPageProps = {
   searchParams?: Promise<{

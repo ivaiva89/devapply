@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { DesignInput } from "@/components/design/input";
+import { DesignInput } from "@/shared/design/input";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { createApplication } from "@/features/applications/server/create-application";
 import { getCreateApplicationInitialState } from "@/features/applications/create-application-form";
