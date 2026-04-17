@@ -33,9 +33,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         title="Access the job tracker workspace."
         description="Sign in with your DevApply account to manage applications, reminders, and resume versions in the protected workspace."
       >
-        <div className="mt-8 rounded-3xl border border-border/70 bg-card/80 p-6 shadow-sm">
+        <div className="mt-8 rounded-3xl border border-border/70 bg-surface/80 p-6 shadow-sm">
           {authErrorMessage ? (
-            <div className="mb-4 rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <div className="mb-4 rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
               {authErrorMessage}
             </div>
           ) : null}

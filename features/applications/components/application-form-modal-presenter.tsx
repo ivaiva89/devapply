@@ -94,7 +94,7 @@ export function ApplicationFormModalPresenter({
     >
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto rounded-[2rem] p-6 sm:p-8">
         <DialogHeader>
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-[0.24em] text-text-3">
             Applications
           </p>
           <DialogTitle className="text-2xl tracking-tight">{title}</DialogTitle>

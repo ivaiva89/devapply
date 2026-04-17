@@ -23,10 +23,10 @@ export function PipelineOverviewCard({
   return (
     <Card>
       <CardHeader className="pb-4 sm:pb-6">
-        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+        <p className="font-display text-lg font-semibold tracking-tight text-text">
           Pipeline Distribution
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-text-3">
           Applications by current status.
         </p>
       </CardHeader>
@@ -37,14 +37,14 @@ export function PipelineOverviewCard({
               <div key={item.status} className="space-y-1">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <ApplicationStatusBadge status={item.status} />
-                  <div className="flex items-center gap-2 font-label text-xs text-muted-foreground sm:gap-3">
+                  <div className="flex items-center gap-2 font-label text-xs text-text-3 sm:gap-3">
                     <span className="tabular-nums">{item.count}</span>
                     <span className="w-8 text-right tabular-nums">
                       {formatPercentage(item.percentage)}
                     </span>
                   </div>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-1.5 overflow-hidden rounded-full bg-surface-1">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-primary-container transition-all"
                     style={{

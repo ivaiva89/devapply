@@ -89,12 +89,12 @@ export function AppHeaderPresenter({
           </Sheet>
           <div className="min-w-0">
             {title ? (
-              <p className="truncate text-sm font-semibold text-foreground sm:text-base">
+              <p className="truncate text-sm font-semibold text-text sm:text-base">
                 {title}
               </p>
             ) : null}
             {description ? (
-              <p className="hidden truncate text-xs text-muted-foreground xl:block">
+              <p className="hidden truncate text-xs text-text-3 xl:block">
                 {description}
               </p>
             ) : null}
@@ -102,7 +102,7 @@ export function AppHeaderPresenter({
         </div>
 
         <div className="relative ml-auto hidden w-full max-w-sm items-center md:flex">
-          <Search className="pointer-events-none absolute left-3 size-4 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-3 size-4 text-text-3" />
           <Input
             type="search"
             aria-label="Search workspace"
@@ -114,7 +114,7 @@ export function AppHeaderPresenter({
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
-            className="hidden rounded-full px-2.5 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-muted-foreground sm:inline-flex"
+            className="hidden rounded-full px-2.5 py-1 font-label text-[10px] uppercase tracking-[0.18em] text-text-3 sm:inline-flex"
           >
             {planLabel}
           </Badge>
@@ -136,21 +136,21 @@ export function AppHeaderPresenter({
                   {userName}
                 </span>
               </span>
-              <ChevronDown className="text-muted-foreground" />
+              <ChevronDown className="text-text-3" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64">
               <DropdownMenuGroup>
                 <DropdownMenuLabel>
                   <div className="space-y-1">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm font-semibold text-foreground">
+                      <span className="text-sm font-semibold text-text">
                         {userName}
                       </span>
                       <Badge variant="outline" className="rounded-full">
                         {planLabel}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">{userEmail}</p>
+                    <p className="text-xs text-text-3">{userEmail}</p>
                   </div>
                 </DropdownMenuLabel>
               </DropdownMenuGroup>

@@ -14,15 +14,15 @@ export function DashboardErrorState({
   action,
 }: DashboardErrorStateProps) {
   return (
-    <Card className="border-destructive/30 bg-card">
+    <Card className="border-danger/30 bg-surface">
       <CardHeader className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-destructive">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-danger">
           Dashboard error
         </p>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>
+        <p className="max-w-2xl text-sm text-text-3">{description}</p>
         {action ? <div>{action}</div> : null}
       </CardContent>
     </Card>

@@ -18,10 +18,10 @@ export function ApplicationsOverTimeChartSection({
   return (
     <Card>
       <CardHeader className="pb-4 sm:pb-6">
-        <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+        <p className="font-display text-lg font-semibold tracking-tight text-text">
           Applications Over Time
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-text-3">
           Monthly volume — last 6 months.
         </p>
       </CardHeader>
@@ -44,17 +44,17 @@ export function ApplicationsOverTimeChartSection({
                   style={{ height: "100%" }}
                 >
                   <div className="relative flex w-full flex-1 items-end">
-                    <div className="absolute inset-0 rounded-sm bg-muted/30" />
+                    <div className="absolute inset-0 rounded-sm bg-surface-1/30" />
                     <div
                       className="relative w-full rounded-t-sm bg-gradient-to-t from-primary/80 to-primary-container transition-all group-hover:from-primary group-hover:to-primary"
                       style={{ height: `${heightPct}%` }}
                     />
                   </div>
                   <div className="flex min-w-0 flex-col items-center gap-px">
-                    <span className="text-xs tabular-nums text-foreground">
+                    <span className="text-xs tabular-nums text-text">
                       {item.count}
                     </span>
-                    <span className="max-w-full truncate text-[10px] text-muted-foreground sm:text-[11px]">
+                    <span className="max-w-full truncate text-[10px] text-text-3 sm:text-[11px]">
                       {item.label}
                     </span>
                   </div>

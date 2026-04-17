@@ -1,4 +1,6 @@
+import { PageHeader } from "@/components/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { getPlanGate } from "@/features/billing/server/plan-enforcement";
 import { SettingsBillingPanel } from "@/widgets/settings-billing/ui/settings-billing-panel";
 
 type SettingsPageProps = {
@@ -16,23 +18,24 @@ export default async function SettingsPage({
     ? resolvedSearchParams?.billing[0]
     : resolvedSearchParams?.billing;
 
+  const applicationsGate =
+    user.plan === "FREE"
+      ? await getPlanGate(user, "applications")
+      : null;
+
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border-none bg-card p-8 shadow-sm">
-        <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-          Settings
-        </p>
-        <div className="mt-3 space-y-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-            Account and Billing
-          </h1>
-          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Review your current plan, understand the MVP limits, start hosted
-            checkout to upgrade, or manage an existing Polar subscription.
-          </p>
-        </div>
-      </section>
-      <SettingsBillingPanel billingState={billingState} plan={user.plan} />
+      <PageHeader
+        title="Settings"
+        description="Review your current plan, understand the MVP limits, start hosted checkout to upgrade, or manage an existing Polar subscription."
+        breadcrumb="settings"
+      />
+      <SettingsBillingPanel
+        billingState={billingState}
+        plan={user.plan}
+        applicationsUsed={applicationsGate?.used}
+        applicationsLimit={applicationsGate?.limit}
+      />
     </div>
   );
 }

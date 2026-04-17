@@ -1,46 +1,26 @@
-import { Briefcase, CalendarPlus, MessageSquare, Trophy } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { DesignCard } from "@/components/design/card";
 
-import { StatsCard } from "@/shared/design/stats-card";
-
-type StatsGridItem = {
+type KpiItem = {
   label: string;
-  value: number;
-  helper: string;
+  value: number | string;
+  helper?: string;
 };
 
 type StatsGridProps = {
-  items: StatsGridItem[];
+  items: KpiItem[];
 };
-
-// Ordered to match the four KPIs returned from getDashboardDataForUser.
-const SLOT_ICONS: [LucideIcon, LucideIcon, LucideIcon, LucideIcon] = [
-  Briefcase,
-  CalendarPlus,
-  MessageSquare,
-  Trophy,
-];
-
-const SLOT_VALUE_CLASSNAMES: [undefined, undefined, string, string] = [
-  undefined, // slot 0: total applications — default (primary card handles color)
-  undefined, // slot 1: applications this month
-  "text-violet-400", // slot 2: interviews
-  "text-emerald-400", // slot 3: offers
-];
 
 export function StatsGrid({ items }: StatsGridProps) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-      {items.map((item, index) => (
-        <StatsCard
-          key={item.label}
-          label={item.label}
-          value={item.value}
-          helper={item.helper}
-          icon={SLOT_ICONS[index]}
-          highlight={index === 0}
-          valueClassName={SLOT_VALUE_CLASSNAMES[index]}
-        />
+    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      {items.map((item) => (
+        <DesignCard key={item.label} className="flex flex-col gap-1 p-4">
+          <p className="text-xs text-text-3">{item.label}</p>
+          <p className="text-2xl font-semibold tabular-nums text-text">{item.value}</p>
+          {item.helper ? (
+            <p className="text-xs text-text-4">{item.helper}</p>
+          ) : null}
+        </DesignCard>
       ))}
     </div>
   );

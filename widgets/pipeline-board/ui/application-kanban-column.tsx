@@ -1,19 +1,33 @@
 import type { DragEventHandler, ReactNode } from "react";
-
-import type { ApplicationCardData } from "@/entities/application/ui/application-card";
-import { ApplicationStatusBadge } from "@/entities/application/ui/application-status-badge";
+import { cn } from "@/shared/lib/utils";
+import { Chip, type ChipTone } from "@/components/design/chip";
 import type { ApplicationStatusValue } from "@/entities/application/model/config";
-import { EmptyState } from "@/shared/design/empty-state";
-import { SectionHeader } from "@/shared/design/section-header";
-import { Badge } from "@/shared/ui/badge";
-import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import type { ApplicationCardData } from "@/entities/application/ui/application-card";
+
+const stageTone: Record<ApplicationStatusValue, ChipTone> = {
+  WISHLIST:  "slate",
+  APPLIED:   "primary",
+  INTERVIEW: "accent",
+  OFFER:     "success",
+  REJECTED:  "danger",
+};
+
+const stageHotkey: Record<ApplicationStatusValue, string> = {
+  WISHLIST:  "1",
+  APPLIED:   "2",
+  INTERVIEW: "3",
+  OFFER:     "4",
+  REJECTED:  "",
+};
 
 type ApplicationKanbanColumnProps = {
   label: string;
   status: ApplicationStatusValue;
   items: ApplicationCardData[];
   children: ReactNode;
+  isDragTarget?: boolean;
   onDragOver?: DragEventHandler<HTMLElement>;
+  onDragEnter?: DragEventHandler<HTMLElement>;
   onDrop?: DragEventHandler<HTMLElement>;
 };
 
@@ -22,35 +36,39 @@ export function ApplicationKanbanColumn({
   status,
   items,
   children,
+  isDragTarget = false,
   onDragOver,
+  onDragEnter,
   onDrop,
 }: ApplicationKanbanColumnProps) {
+  const hotkey = stageHotkey[status];
+
   return (
-    <Card
+    <div
       onDragOver={onDragOver}
+      onDragEnter={onDragEnter}
       onDrop={onDrop}
-      className="min-h-[24rem] rounded-3xl bg-card transition-colors hover:bg-card/80"
+      className={cn(
+        "flex min-h-96 flex-col rounded-card transition-colors duration-[200ms]",
+        isDragTarget
+          ? "border-2 border-dashed border-primary bg-primary-soft"
+          : "border border-border bg-surface-1",
+      )}
     >
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between gap-3">
-          <ApplicationStatusBadge status={status} />
-          <Badge variant="secondary" className="rounded-full px-2.5 py-1">
-            {items.length}
-          </Badge>
+      <div className="flex items-center justify-between px-3 py-2.5">
+        <Chip tone={stageTone[status]} label={label} />
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10.5px] text-text-4">{items.length}</span>
+          {hotkey ? (
+            <kbd className="inline-flex h-5 items-center rounded px-1 font-mono text-[10px] text-text-4 ring-1 ring-border">
+              {hotkey}
+            </kbd>
+          ) : null}
         </div>
-        <SectionHeader title={label} className="pt-3" />
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {items.length > 0 ? (
-          children
-        ) : (
-          <EmptyState
-            compact
-            title="No applications in this column yet."
-            description="Move cards here as the pipeline changes."
-          />
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      <div className="flex flex-col gap-2 px-2 pb-2">
+        {children}
+      </div>
+    </div>
   );
 }

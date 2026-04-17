@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
@@ -13,25 +14,16 @@ export default async function ResumesPage() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-          Resumes
-        </p>
-        <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-              Resume library
-            </h1>
-            <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Upload resume versions, keep file links in one place, and attach
-              them to the right applications.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+      <PageHeader
+        title="Resumes"
+        description="Upload resume versions and attach them to your applications."
+        breadcrumb="resumes"
+        actions={
+          <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
             {data.resumeCount} {data.resumeCount === 1 ? "resume" : "resumes"}
           </div>
-        </div>
-      </section>
+        }
+      />
       {!data.canUpload ? (
         <>
           <UpgradePrompt
