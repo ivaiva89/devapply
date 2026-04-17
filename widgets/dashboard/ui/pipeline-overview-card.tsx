@@ -44,7 +44,7 @@ export function PipelineOverviewCard({
                     </span>
                   </div>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-1.5 overflow-hidden rounded-full bg-surface-1">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-primary-container transition-all"
                     style={{

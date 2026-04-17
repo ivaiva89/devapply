@@ -35,28 +35,28 @@ export function RemindersListPresenter({
         return (
           <Card
             key={reminder.id}
-            className="rounded-3xl border-none bg-card shadow-sm"
+            className="rounded-3xl border-none bg-surface shadow-sm"
           >
             <CardContent className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <p className="font-display text-xl font-semibold tracking-tight text-foreground">
+                  <p className="font-display text-xl font-semibold tracking-tight text-text">
                     {reminder.title}
                   </p>
                   <Badge variant={overdue ? "destructive" : "outline"}>
                     {overdue ? "Overdue" : "Upcoming"}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-text-3">
                   Remind at {formatDate(reminder.remindAt)}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-text-3">
                   {reminder.application
                     ? `${reminder.application.company} - ${reminder.application.role}`
                     : "General reminder"}
                 </p>
                 {reminder.notes ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-text-3">
                     {reminder.notes}
                   </p>
                 ) : null}

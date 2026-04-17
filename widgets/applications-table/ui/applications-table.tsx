@@ -60,7 +60,7 @@ const columns: DataTableColumn<ApplicationTableRow>[] = [
     header: "Company",
     cell: (row) => (
       <div>
-        <p className="font-medium text-foreground">{row.company}</p>
+        <p className="font-medium text-text">{row.company}</p>
       </div>
     ),
   },

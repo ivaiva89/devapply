@@ -33,16 +33,16 @@ export function UploadResumeFormPresenter({
     <form
       ref={formRef}
       action={action}
-      className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm"
+      className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm"
     >
       <CardHeader className="space-y-2 px-0">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-text-3">
           Upload resume
         </p>
         <CardTitle className="text-xl tracking-tight">
           Add a resume version
         </CardTitle>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-sm leading-6 text-text-3">
           Upload PDF, DOC, or DOCX files to Blob storage and keep a title you
           can recognize later.
         </p>

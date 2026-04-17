@@ -52,19 +52,19 @@ const sections = [
 export default function TermsOfServicePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <section className="rounded-[2rem] border border-border/70 bg-card/90 p-8 shadow-sm">
+      <section className="rounded-[2rem] border border-border/70 bg-surface/90 p-8 shadow-sm">
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-text-3">
             Terms of service
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          <h1 className="text-3xl font-semibold tracking-tight text-text">
             Terms for using DevApply
           </h1>
-          <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
+          <p className="max-w-3xl text-sm leading-7 text-text-3">
             These terms describe the current MVP usage expectations for DevApply
             and should be read together with the privacy policy.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-text-3">
             Effective date: March 30, 2026
           </p>
         </div>
@@ -74,16 +74,16 @@ export default function TermsOfServicePage() {
         {sections.map((section) => (
           <article
             key={section.title}
-            className="rounded-[1.75rem] border border-border/70 bg-card/90 p-6 shadow-sm"
+            className="rounded-[1.75rem] border border-border/70 bg-surface/90 p-6 shadow-sm"
           >
-            <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            <h2 className="text-xl font-semibold tracking-tight text-text">
               {section.title}
             </h2>
             <div className="mt-3 space-y-3">
               {section.body.map((paragraph) => (
                 <p
                   key={paragraph}
-                  className="text-sm leading-7 text-muted-foreground"
+                  className="text-sm leading-7 text-text-3"
                 >
                   {section.title === "Contact" ? (
                     <>

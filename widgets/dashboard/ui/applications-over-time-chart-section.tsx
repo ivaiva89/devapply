@@ -44,7 +44,7 @@ export function ApplicationsOverTimeChartSection({
                   style={{ height: "100%" }}
                 >
                   <div className="relative flex w-full flex-1 items-end">
-                    <div className="absolute inset-0 rounded-sm bg-muted/30" />
+                    <div className="absolute inset-0 rounded-sm bg-surface-1/30" />
                     <div
                       className="relative w-full rounded-t-sm bg-gradient-to-t from-primary/80 to-primary-container transition-all group-hover:from-primary group-hover:to-primary"
                       style={{ height: `${heightPct}%` }}

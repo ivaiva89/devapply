@@ -30,7 +30,7 @@ export function ConversionSummarySection({
             {items.map((item) => (
               <div
                 key={item.label}
-                className="flex flex-col gap-1 rounded-xl bg-muted/20 px-4 py-4"
+                className="flex flex-col gap-1 rounded-xl bg-surface-1/20 px-4 py-4"
               >
                 <p className="text-sm text-text-3">{item.label}</p>
                 <p className="font-display text-3xl font-semibold tabular-nums tracking-tight text-text">

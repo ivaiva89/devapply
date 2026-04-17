@@ -68,7 +68,7 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 
 function BillingSupportCard() {
   return (
-    <section className="rounded-3xl border-none bg-card p-6 shadow-sm">
+    <section className="rounded-3xl border-none bg-surface p-6 shadow-sm">
       <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-text-3">
         Support
       </p>

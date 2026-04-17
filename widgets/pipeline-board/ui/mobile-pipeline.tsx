@@ -133,7 +133,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
       {/* Cards */}
       <div className="mt-3 flex flex-col gap-3">
         {visibleCards.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
+          <p className="py-8 text-center text-sm text-text-3">
             No applications in this stage.
           </p>
         ) : (
@@ -141,8 +141,8 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
             <DesignCard key={card.id} className={cn(isPending && "opacity-60")}>
               <div className="space-y-2">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{card.company}</p>
-                  <p className="text-xs text-muted-foreground">{card.role}</p>
+                  <p className="text-sm font-semibold text-text">{card.company}</p>
+                  <p className="text-xs text-text-3">{card.role}</p>
                 </div>
 
                 {/* Stage chips — tap to move */}
@@ -190,7 +190,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
           <Link
             key={href}
             href={href}
-            className="flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+            className="flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-medium text-text-3 hover:text-text"
           >
             {label}
           </Link>

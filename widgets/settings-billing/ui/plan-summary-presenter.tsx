@@ -13,7 +13,7 @@ export function PlanSummaryPresenter({
   actions,
 }: PlanSummaryPresenterProps) {
   return (
-    <Card className="rounded-3xl border-none bg-card shadow-sm">
+    <Card className="rounded-3xl border-none bg-surface shadow-sm">
       <CardHeader className="space-y-2">
         <p className="font-label text-[11px] font-semibold uppercase tracking-[0.18em] text-text-3">
           Billing

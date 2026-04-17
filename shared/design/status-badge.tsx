@@ -2,11 +2,11 @@ import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
 
 const toneClasses = {
-  neutral: "border-transparent bg-slate-800/60 text-slate-400",
+  neutral: "border-transparent bg-surface-2 text-text-3",
   info: "border-transparent bg-blue-950/60 text-blue-300",
-  warning: "border-transparent bg-violet-950/60 text-violet-300", // intentionally violet — maps to Interview status
-  success: "border-transparent bg-emerald-950/60 text-emerald-300",
-  danger: "border-transparent bg-red-950/60 text-red-300",
+  warning: "border-transparent bg-warning-soft text-warning", // intentionally violet — maps to Interview status
+  success: "border-transparent bg-success-soft text-success",
+  danger: "border-transparent bg-danger-soft text-danger",
 } as const;
 
 type StatusBadgeProps = {

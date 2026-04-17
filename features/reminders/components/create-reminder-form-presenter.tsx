@@ -42,17 +42,17 @@ export function CreateReminderFormPresenter({
       ref={formRef}
       action={action}
       onSubmit={onSubmit}
-      className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm"
+      className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm"
     >
       <input type="hidden" name="timezoneOffsetMinutes" defaultValue="" />
       <CardHeader className="space-y-2 px-0">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-text-3">
           New reminder
         </p>
         <CardTitle className="text-xl tracking-tight">
           Schedule a follow-up
         </CardTitle>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-sm leading-6 text-text-3">
           Create reminders for outreach, status checks, or interview follow-ups.
         </p>
       </CardHeader>

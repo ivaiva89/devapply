@@ -14,9 +14,9 @@ export function DashboardErrorState({
   action,
 }: DashboardErrorStateProps) {
   return (
-    <Card className="border-destructive/30 bg-card">
+    <Card className="border-danger/30 bg-surface">
       <CardHeader className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-destructive">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-danger">
           Dashboard error
         </p>
         <CardTitle>{title}</CardTitle>

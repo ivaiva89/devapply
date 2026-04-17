@@ -59,9 +59,9 @@ import {
 
 export default function PreviewPage() {
   return (
-    <div className="min-h-screen bg-muted/40">
+    <div className="min-h-screen bg-surface-1/40">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-6 py-6">
-        <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
+        <section className="rounded-[2rem] border border-border/70 bg-surface p-8 shadow-sm">
           <SectionHeader
             eyebrow="Preview workspace"
             title="UI-only product showcase"
@@ -81,13 +81,13 @@ export default function PreviewPage() {
           </TabsList>
 
           <TabsContent value="shell" className="space-y-6">
-            <section className="rounded-[2rem] border border-border/70 bg-card p-6 shadow-sm">
+            <section className="rounded-[2rem] border border-border/70 bg-surface p-6 shadow-sm">
               <SectionHeader
                 eyebrow="Navigation shell"
                 title="App chrome preview"
                 description="Sticky header, desktop nav, search, and the mobile drawer mirror the authenticated app shell without auth or route dependencies."
               />
-              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-muted/40">
+              <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-border/70 bg-surface-1/40">
                 <AppHeaderPresenter
                   currentPath="/applications"
                   title="Application tracker"
@@ -120,7 +120,7 @@ export default function PreviewPage() {
           </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
-            <section className="rounded-[2rem] border border-border/70 bg-card p-8 shadow-sm">
+            <section className="rounded-[2rem] border border-border/70 bg-surface p-8 shadow-sm">
               <DashboardShell>
                 <DashboardHeader
                   title="Dashboard"
@@ -149,7 +149,7 @@ export default function PreviewPage() {
             </section>
 
             <div className="grid gap-6 xl:grid-cols-3">
-              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+              <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
                 <SectionHeader
                   eyebrow="Dashboard state"
                   title="Empty"
@@ -160,7 +160,7 @@ export default function PreviewPage() {
                 </div>
               </section>
 
-              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+              <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
                 <SectionHeader
                   eyebrow="Dashboard state"
                   title="Loading"
@@ -171,7 +171,7 @@ export default function PreviewPage() {
                 </div>
               </section>
 
-              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+              <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
                 <SectionHeader
                   eyebrow="Dashboard state"
                   title="Error"
@@ -224,7 +224,7 @@ export default function PreviewPage() {
           </TabsContent>
 
           <TabsContent value="pipeline" className="space-y-6">
-            <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+            <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
               <SectionHeader
                 eyebrow="Pipeline"
                 title="Kanban composition preview"
@@ -242,7 +242,7 @@ export default function PreviewPage() {
 
           <TabsContent value="organize" className="space-y-6">
             <div className="grid gap-6 xl:grid-cols-2">
-              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+              <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
                 <SectionHeader
                   eyebrow="Reminders"
                   title="Follow-up list mock"
@@ -287,7 +287,7 @@ export default function PreviewPage() {
                 </div>
               </section>
 
-              <section className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
+              <section className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm">
                 <SectionHeader
                   eyebrow="Resumes"
                   title="Resume library mock"
