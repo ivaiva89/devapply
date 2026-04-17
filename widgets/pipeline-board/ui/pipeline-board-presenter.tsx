@@ -92,7 +92,7 @@ export function PipelineBoardPresenter({
                 key={item.id}
                 interactive
                 tabIndex={0}
-                draggable={onCardDragStart ? !isPending : undefined}
+                draggable={!!onCardDragStart && !isPending}
                 data-card-id={item.id}
                 className={cn(
                   "animate-cardIn",
