@@ -1,4 +1,4 @@
-import { DesignCard } from "@/components/design/card";
+import { DesignCard } from "@/shared/design/card";
 
 type KpiItem = {
   label: string;

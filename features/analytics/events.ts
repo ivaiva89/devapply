@@ -1,19 +1,5 @@
-export const analyticsEventNames = [
-  "signup",
-  "application_created",
-  "first_application_created",
-  "application_deleted",
-  "application_status_changed",
-  "reminder_created",
-  "resume_uploaded",
-  "upgrade_clicked",
-  "checkout_started",
-  "checkout_success",
-] as const;
-
-export type AnalyticsEventName = (typeof analyticsEventNames)[number];
-
-export type AnalyticsEventProperties = Record<
-  string,
-  boolean | null | number | string | undefined
->;
+export { analyticsEventNames } from "@/shared/lib/analytics/events";
+export type {
+  AnalyticsEventName,
+  AnalyticsEventProperties,
+} from "@/shared/lib/analytics/events";

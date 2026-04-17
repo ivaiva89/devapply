@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/design/page-header";
+import { PageHeader } from "@/shared/design/page-header";
 
 type DashboardHeaderProps = {
   title: string;

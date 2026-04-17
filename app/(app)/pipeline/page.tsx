@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/design/page-header";
+import { PageHeader } from "@/shared/design/page-header";
 import { PipelineBoard } from "@/widgets/pipeline-board/ui/pipeline-board";
 import { MobilePipeline } from "@/widgets/pipeline-board/ui/mobile-pipeline";
 import { PipelineEmptyState } from "@/features/applications/components/pipeline-empty-state";

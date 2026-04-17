@@ -1,8 +1,8 @@
 import type { DragEventHandler } from "react";
 import { cn } from "@/shared/lib/utils";
 import { ApplicationKanbanColumn } from "@/widgets/pipeline-board/ui/application-kanban-column";
-import { DesignCard } from "@/components/design/card";
-import { Chip, type ChipTone } from "@/components/design/chip";
+import { DesignCard } from "@/shared/design/card";
+import { Chip, type ChipTone } from "@/shared/design/chip";
 import {
   applicationStatusLabels,
   type ApplicationStatusValue,
