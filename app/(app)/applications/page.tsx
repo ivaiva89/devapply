@@ -8,7 +8,7 @@ import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
 import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
-import { SectionHeader } from "@/shared/design/section-header";
+import { PageHeader } from "@/components/design/page-header";
 
 type ApplicationsPageProps = {
   searchParams?: Promise<{
@@ -41,21 +41,19 @@ export default async function ApplicationsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <section className="min-w-0 rounded-3xl border border-border/70 bg-card p-8 shadow-sm">
-        <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <SectionHeader
-            eyebrow="Applications"
-            title="Applications table"
-            description="Search, filter, and sort the authenticated user's applications without exposing any cross-user data."
-          />
-          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="min-w-0 rounded-2xl border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
+      <PageHeader
+        title="Applications"
+        description="Search, filter, and sort your job applications."
+        breadcrumb="applications"
+        actions={
+          <>
+            <div className="min-w-0 rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
               {resultsLabel}
             </div>
             <NewApplicationModal disabled={!canCreateApplication} />
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      />
       {!canCreateApplication ? (
         <>
           <UpgradePrompt
