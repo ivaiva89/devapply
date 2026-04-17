@@ -12,8 +12,8 @@ type SettingsBillingPanelProps = {
 function BillingStatusNotice({ billingState }: { billingState?: string }) {
   if (billingState === "success") {
     return (
-      <section className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 shadow-sm">
-        <p className="text-sm text-emerald-800">
+      <section className="rounded-3xl border border-success-soft bg-success-soft p-6 shadow-sm">
+        <p className="text-sm text-success">
           Checkout completed. Plan changes take effect after Polar webhook
           delivery updates your account.
         </p>
@@ -43,8 +43,8 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 
   if (billingState === "portal_unavailable") {
     return (
-      <section className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 shadow-sm">
-        <p className="text-sm text-amber-900">
+      <section className="rounded-3xl border border-warning-soft bg-warning-soft p-6 shadow-sm">
+        <p className="text-sm text-warning">
           Billing portal is not available for this account yet. Complete a Pro
           checkout first or verify the Polar customer linkage for this user.
         </p>
@@ -54,8 +54,8 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 
   if (billingState === "checkout_unavailable") {
     return (
-      <section className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 shadow-sm">
-        <p className="text-sm text-amber-900">
+      <section className="rounded-3xl border border-warning-soft bg-warning-soft p-6 shadow-sm">
+        <p className="text-sm text-warning">
           Checkout could not be started for this account. Verify the Polar
           billing configuration and try again.
         </p>
