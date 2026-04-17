@@ -1,9 +1,12 @@
 import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/shared/lib/support";
+import { UpgradeButton } from "@/features/billing/components/upgrade-button";
 import { PlanSummary } from "@/widgets/settings-billing/ui/plan-summary";
 
 type SettingsBillingPanelProps = {
   billingState?: string;
   plan: "FREE" | "PRO" | "LIFETIME";
+  applicationsUsed?: number;
+  applicationsLimit?: number;
 };
 
 function BillingStatusNotice({ billingState }: { billingState?: string }) {
@@ -20,8 +23,8 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 
   if (billingState === "cancelled") {
     return (
-      <section className="rounded-3xl border border-border bg-muted/40 p-6 shadow-sm">
-        <p className="text-sm text-foreground/80">
+      <section className="rounded-3xl border border-border bg-surface-1/40 p-6 shadow-sm">
+        <p className="text-sm text-text/80">
           Checkout was cancelled. You can restart it whenever you are ready.
         </p>
       </section>
@@ -30,8 +33,8 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 
   if (billingState === "portal_return") {
     return (
-      <section className="rounded-3xl border border-border bg-muted/40 p-6 shadow-sm">
-        <p className="text-sm text-foreground/80">
+      <section className="rounded-3xl border border-border bg-surface-1/40 p-6 shadow-sm">
+        <p className="text-sm text-text/80">
           Returned from the billing portal.
         </p>
       </section>
@@ -66,14 +69,14 @@ function BillingStatusNotice({ billingState }: { billingState?: string }) {
 function BillingSupportCard() {
   return (
     <section className="rounded-3xl border-none bg-card p-6 shadow-sm">
-      <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+      <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-text-3">
         Support
       </p>
       <div className="mt-3 space-y-2">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-text">
           Need account or billing help?
         </h2>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-sm leading-6 text-text-3">
           Contact the DevApply team directly for billing questions, access
           issues, or support requests.
         </p>
@@ -88,14 +91,54 @@ function BillingSupportCard() {
   );
 }
 
+function UpgradeCallout({
+  applicationsUsed,
+  applicationsLimit,
+}: {
+  applicationsUsed: number;
+  applicationsLimit: number;
+}) {
+  const applicationsRemaining = applicationsLimit - applicationsUsed;
+
+  return (
+    <div className="rounded-card border border-warning/30 bg-warning-soft p-4">
+      <p className="text-sm font-medium text-text">
+        You have {applicationsUsed} of {applicationsLimit} applications tracked
+        {applicationsRemaining <= 0
+          ? " — you've hit the free plan limit"
+          : ""}
+      </p>
+      <p className="mt-1 text-sm text-text-3">
+        Upgrade to track unlimited applications and attachments.
+      </p>
+      <div className="mt-3">
+        <UpgradeButton />
+      </div>
+    </div>
+  );
+}
+
 export function SettingsBillingPanel({
   billingState,
   plan,
+  applicationsUsed,
+  applicationsLimit,
 }: SettingsBillingPanelProps) {
+  const showUpgradeCallout =
+    plan === "FREE" &&
+    applicationsUsed !== undefined &&
+    applicationsLimit !== undefined;
+
   return (
     <div className="space-y-6">
       <BillingStatusNotice billingState={billingState} />
       <PlanSummary plan={plan} />
+      {showUpgradeCallout && (
+        <UpgradeCallout
+          applicationsUsed={applicationsUsed}
+          applicationsLimit={applicationsLimit}
+        />
+      )}
       <BillingSupportCard />
     </div>
   );
