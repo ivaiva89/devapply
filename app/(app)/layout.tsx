@@ -11,6 +11,8 @@ import "@/app/globals.css";
 
 import { PostHogIdentify } from "@/features/analytics/components/posthog-identify";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { FREE_PLAN_LIMITS, PLAN_LABELS } from "@/features/billing/config";
+import { prisma } from "@/shared/lib/prisma";
 import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
 export const metadata: Metadata = {
@@ -21,11 +23,33 @@ export const metadata: Metadata = {
 export default async function AppLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const [user, headerStore] = await Promise.all([
-    requireCurrentUser(),
+  const user = await requireCurrentUser();
+
+  const [headerStore, statusGroups, remindersUsed] = await Promise.all([
     headers(),
+    prisma.application.groupBy({
+      by: ["status"],
+      where: { userId: user.id },
+      _count: { status: true },
+    }),
+    prisma.reminder.count({
+      where: { userId: user.id, completedAt: null },
+    }),
   ]);
+
   const currentPath = headerStore.get("x-current-path") ?? "/dashboard";
+
+  const statusCounts: Record<string, number> = {};
+  let applicationsUsed = 0;
+  for (const group of statusGroups) {
+    statusCounts[group.status] = group._count.status;
+    applicationsUsed += group._count.status;
+  }
+
+  const applicationsLimit =
+    user.plan === "FREE" ? FREE_PLAN_LIMITS.applications : Infinity;
+  const remindersLimit =
+    user.plan === "FREE" ? FREE_PLAN_LIMITS.reminders : Infinity;
 
   return (
     <html
@@ -43,7 +67,15 @@ export default async function AppLayout({
             <div className="flex min-h-screen">
               <aside className="hidden w-60 shrink-0 lg:flex">
                 <div className="sticky top-0 flex h-screen w-full flex-col border-r border-border bg-surface-1">
-                  <AppSidebarPresenter currentPath={currentPath} />
+                  <AppSidebarPresenter
+                    currentPath={currentPath}
+                    applicationsUsed={applicationsUsed}
+                    applicationsLimit={applicationsLimit === Infinity ? undefined : applicationsLimit}
+                    remindersUsed={remindersUsed}
+                    remindersLimit={remindersLimit === Infinity ? undefined : remindersLimit}
+                    planLabel={PLAN_LABELS[user.plan] ?? "Free"}
+                    statusCounts={statusCounts}
+                  />
                 </div>
               </aside>
               <main className="min-w-0 flex-1 px-8 py-6">
