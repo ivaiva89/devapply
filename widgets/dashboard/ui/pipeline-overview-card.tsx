@@ -3,6 +3,14 @@ import type { ApplicationStatusValue } from "@/entities/application/model/config
 import { EmptyState } from "@/shared/design/empty-state";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 
+const statusBarColor: Record<ApplicationStatusValue, string> = {
+  WISHLIST: "var(--text-4)",
+  APPLIED: "var(--primary)",
+  INTERVIEW: "var(--accent)",
+  OFFER: "var(--success)",
+  REJECTED: "var(--danger)",
+};
+
 type PipelineOverviewCardProps = {
   items: Array<{
     status: ApplicationStatusValue;
@@ -44,14 +52,15 @@ export function PipelineOverviewCard({
                     </span>
                   </div>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-surface-1">
+                <div className="h-1 overflow-hidden rounded-full bg-surface-2">
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-primary-container transition-all"
+                    className="h-full rounded-full transition-all"
                     style={{
                       width:
                         item.percentage === 0
                           ? "0%"
                           : `${Math.max(item.percentage, 3)}%`,
+                      background: statusBarColor[item.status],
                       opacity: item.percentage === 0 ? 0 : 1,
                     }}
                   />
