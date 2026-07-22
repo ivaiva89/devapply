@@ -16,10 +16,6 @@ import { createApplicationWithCountForUser } from "@/entities/application/api/ap
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import {
-  getPlanGate,
-  getPlanLimitReachedMessage,
-} from "@/features/billing/server/plan-enforcement";
 import { REVALIDATE_PATHS } from "@/features/applications/server/revalidate-paths";
 import { prisma } from "@/shared/lib/prisma";
 
@@ -38,14 +34,6 @@ export async function createApplication(
 
   try {
     const user = await requireCurrentUser();
-    const gate = await getPlanGate(user, "applications");
-
-    if (!gate.allowed) {
-      return getApplicationFormErrorState(values, {
-        formError: getPlanLimitReachedMessage("applications"),
-      });
-    }
-
     const input = result.data;
 
     const { application, totalApplications } = await prisma.$transaction((tx) =>

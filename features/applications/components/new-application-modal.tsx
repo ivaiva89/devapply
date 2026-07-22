@@ -7,20 +7,10 @@ import { NewApplicationTrigger } from "@/features/applications/components/new-ap
 import { createApplicationDefaultValues } from "@/features/applications/create-application-form";
 import { createApplication } from "@/features/applications/server/create-application";
 
-type NewApplicationModalProps = {
-  disabled?: boolean;
-};
-
-export function NewApplicationModal({
-  disabled = false,
-}: NewApplicationModalProps) {
+export function NewApplicationModal() {
   const [isOpen, setIsOpen] = useState(false);
 
   function openModal() {
-    if (disabled) {
-      return;
-    }
-
     setIsOpen(true);
   }
 
@@ -30,7 +20,7 @@ export function NewApplicationModal({
 
   return (
     <>
-      <NewApplicationTrigger onClick={openModal} disabled={disabled} />
+      <NewApplicationTrigger onClick={openModal} />
       {isOpen ? (
         <ApplicationFormModal
           action={createApplication}

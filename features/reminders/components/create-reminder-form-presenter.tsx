@@ -1,17 +1,13 @@
 import type { ComponentProps, RefObject } from "react";
 
 import { CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import {
-  createEmptyReminderFormValues,
-  toReminderFormValues,
-} from "@/features/reminders/reminder-form";
+import { createEmptyReminderFormValues } from "@/features/reminders/reminder-form";
 import { ReminderFormFields } from "@/features/reminders/components/reminder-form-fields";
 import type { ReminderApplicationOption } from "@/features/reminders/types";
 
 type CreateReminderFormPresenterProps = {
   action?: ComponentProps<"form">["action"];
   applicationOptions: ReminderApplicationOption[];
-  canCreate: boolean;
   error?: string;
   formRef?: RefObject<HTMLFormElement | null>;
   idPrefix?: string;
@@ -22,20 +18,13 @@ type CreateReminderFormPresenterProps = {
 export function CreateReminderFormPresenter({
   action,
   applicationOptions,
-  canCreate,
   error,
   formRef,
   idPrefix = "create-reminder",
   isPending = false,
   onSubmit,
 }: CreateReminderFormPresenterProps) {
-  const values = canCreate
-    ? createEmptyReminderFormValues()
-    : toReminderFormValues({
-        applicationId: "",
-        remindAt: "",
-        title: "",
-      });
+  const values = createEmptyReminderFormValues();
 
   return (
     <form
@@ -62,7 +51,6 @@ export function CreateReminderFormPresenter({
           applicationOptions={applicationOptions}
           error={error}
           idPrefix={idPrefix}
-          isDisabled={!canCreate}
           isPending={isPending}
           submitLabel="Create reminder"
           submittingLabel="Saving..."

@@ -8,7 +8,6 @@ const meta = {
   component: CreateReminderFormPresenter,
   args: {
     applicationOptions: mockReminderApplicationOptions,
-    canCreate: true,
   },
 } satisfies Meta<typeof CreateReminderFormPresenter>;
 
@@ -21,11 +20,5 @@ export const Default: Story = {};
 export const WithError: Story = {
   args: {
     error: "Choose when to remind yourself.",
-  },
-};
-
-export const DisabledByPlan: Story = {
-  args: {
-    canCreate: false,
   },
 };

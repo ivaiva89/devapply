@@ -11,7 +11,6 @@ import "@/app/globals.css";
 
 import { PostHogIdentify } from "@/features/analytics/components/posthog-identify";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { FREE_PLAN_LIMITS, PLAN_LABELS } from "@/features/billing/config";
 import { prisma } from "@/shared/lib/prisma";
 import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
 
@@ -46,11 +45,6 @@ export default async function AppLayout({
     applicationsUsed += group._count.status;
   }
 
-  const applicationsLimit =
-    user.plan === "FREE" ? FREE_PLAN_LIMITS.applications : Infinity;
-  const remindersLimit =
-    user.plan === "FREE" ? FREE_PLAN_LIMITS.reminders : Infinity;
-
   return (
     <html
       lang="en"
@@ -70,10 +64,7 @@ export default async function AppLayout({
                   <AppSidebarPresenter
                     currentPath={currentPath}
                     applicationsUsed={applicationsUsed}
-                    applicationsLimit={applicationsLimit === Infinity ? undefined : applicationsLimit}
                     remindersUsed={remindersUsed}
-                    remindersLimit={remindersLimit === Infinity ? undefined : remindersLimit}
-                    planLabel={PLAN_LABELS[user.plan] ?? "Free"}
                     statusCounts={statusCounts}
                   />
                 </div>

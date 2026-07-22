@@ -24,10 +24,7 @@ const pipelineStatuses = [
 type AppSidebarPresenterProps = {
   currentPath?: string;
   applicationsUsed?: number;
-  applicationsLimit?: number;
   remindersUsed?: number;
-  remindersLimit?: number;
-  planLabel?: string;
   statusCounts?: Record<string, number>;
 };
 
@@ -39,18 +36,11 @@ function isItemActive(currentPath: string, href: string): boolean {
 export function AppSidebarPresenter({
   currentPath,
   applicationsUsed = 0,
-  applicationsLimit = 10,
   remindersUsed = 0,
-  remindersLimit = 3,
-  planLabel = "Free",
   statusCounts = {},
 }: AppSidebarPresenterProps) {
   const pathname = usePathname();
   const activePath = pathname ?? currentPath ?? "/dashboard";
-
-  const appUsagePct = Math.min((applicationsUsed / applicationsLimit) * 100, 100);
-  const reminderUsagePct = Math.min((remindersUsed / remindersLimit) * 100, 100);
-  const isPro = planLabel !== "Free";
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -66,9 +56,6 @@ export function AppSidebarPresenter({
           />
           <span className="text-sm font-semibold text-text">DevApply</span>
         </Link>
-        <span className="shrink-0 rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-text-3">
-          {planLabel}
-        </span>
       </div>
 
       {/* Main nav */}
@@ -163,44 +150,6 @@ export function AppSidebarPresenter({
           </Link>
         </div>
       </nav>
-
-      {/* Usage card */}
-      <div className="border-t border-border p-3">
-        <div className="rounded-md border border-border bg-surface p-3">
-          <div className="mb-1 flex items-center justify-between text-xs text-text-2">
-            <span>Applications</span>
-            <span className="font-mono text-text tabular-nums">
-              {applicationsUsed} / {applicationsLimit}
-            </span>
-          </div>
-          <div className="mb-2.5 h-1 overflow-hidden rounded-full bg-surface-2">
-            <div
-              className="h-full rounded-full bg-primary transition-all"
-              style={{ width: `${appUsagePct}%` }}
-            />
-          </div>
-          <div className="mb-1 flex items-center justify-between text-xs text-text-2">
-            <span>Reminders</span>
-            <span className="font-mono text-text tabular-nums">
-              {remindersUsed} / {remindersLimit}
-            </span>
-          </div>
-          <div className={cn("h-1 overflow-hidden rounded-full bg-surface-2", !isPro && "mb-3")}>
-            <div
-              className="h-full rounded-full bg-accent transition-all"
-              style={{ width: `${reminderUsagePct}%` }}
-            />
-          </div>
-          {!isPro ? (
-            <Link
-              href="/settings"
-              className="mt-3 block w-full rounded-button bg-text py-1.5 text-center text-xs font-medium text-canvas transition-colors hover:bg-text-2"
-            >
-              Upgrade to Pro
-            </Link>
-          ) : null}
-        </div>
-      </div>
     </div>
   );
 }

@@ -5,19 +5,10 @@ import { ResumesEmptyState } from "@/widgets/resumes-panel/ui/resumes-empty-stat
 const meta = {
   title: "Features/ResumesEmptyState",
   component: ResumesEmptyState,
-  args: {
-    canUpload: true,
-  },
 } satisfies Meta<typeof ResumesEmptyState>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const CanUpload: Story = {};
-
-export const LimitReached: Story = {
-  args: {
-    canUpload: false,
-  },
-};
+export const Default: Story = {};

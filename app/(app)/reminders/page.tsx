@@ -1,8 +1,5 @@
 import { PageHeader } from "@/shared/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { UpgradeButton } from "@/features/billing/components/upgrade-button";
-import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { CreateReminderForm } from "@/features/reminders/components/create-reminder-form";
 import { RemindersEmptyState } from "@/widgets/reminders-panel/ui/reminders-empty-state";
 import { RemindersList } from "@/widgets/reminders-panel/ui/reminders-list";
@@ -27,20 +24,8 @@ export default async function RemindersPage() {
           </div>
         }
       />
-      {!data.canCreate ? (
-        <>
-          <UpgradePrompt
-            title="Upgrade to keep more active reminders."
-            description={`Free plan users can keep ${FREE_PLAN_LIMITS.reminders} active reminders. Upgrade to Pro to create more follow-ups and outreach tracking tasks.`}
-          />
-          <UpgradeButton />
-        </>
-      ) : null}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-        <CreateReminderForm
-          applicationOptions={data.applicationOptions}
-          canCreate={data.canCreate}
-        />
+        <CreateReminderForm applicationOptions={data.applicationOptions} />
         <div className="space-y-4">
           {data.reminders.length > 0 ? (
             <RemindersList
@@ -48,7 +33,7 @@ export default async function RemindersPage() {
               reminders={data.reminders}
             />
           ) : (
-            <RemindersEmptyState canCreate={data.canCreate} />
+            <RemindersEmptyState />
           )}
         </div>
       </div>

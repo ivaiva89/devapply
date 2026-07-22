@@ -4,10 +4,6 @@ import { ApplicationsTableClient } from "@/widgets/applications-table/ui/applica
 import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { UpgradeButton } from "@/features/billing/components/upgrade-button";
-import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
-import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { PageHeader } from "@/shared/design/page-header";
 
 type ApplicationsPageProps = {
@@ -23,17 +19,12 @@ export default async function ApplicationsPage({
 }: ApplicationsPageProps) {
   const user = await requireCurrentUser();
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const { items, state, totalCount, plan } = await getApplicationsForUser(
+  const { items, state, totalCount } = await getApplicationsForUser(
     user.id,
     resolvedSearchParams,
   );
   const hasFilters = Boolean(state.query) || state.status !== "ALL";
   const hasActiveSort = state.sort !== "updated-desc";
-  const canCreateApplication = getPlanGateFromUsage(
-    plan,
-    totalCount,
-    "applications",
-  ).allowed;
   const resultsLabel =
     hasFilters || hasActiveSort
       ? `${items.length} of ${totalCount} ${totalCount === 1 ? "application" : "applications"}`
@@ -50,19 +41,10 @@ export default async function ApplicationsPage({
             <div className="min-w-0 rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
               {resultsLabel}
             </div>
-            <NewApplicationModal disabled={!canCreateApplication} />
+            <NewApplicationModal />
           </>
         }
       />
-      {!canCreateApplication ? (
-        <>
-          <UpgradePrompt
-            title="Upgrade to keep tracking more applications."
-            description={`Free plan users can track ${FREE_PLAN_LIMITS.applications} applications. Upgrade to Pro to remove the application limit and keep a larger search pipeline active.`}
-          />
-          <UpgradeButton />
-        </>
-      ) : null}
       <ApplicationsFilters state={state} />
       {items.length > 0 ? (
         <ApplicationsTableClient applications={items} />

@@ -251,7 +251,6 @@ export default function PreviewPage() {
                 <div className="mt-6 space-y-6">
                   <CreateReminderFormPresenter
                     applicationOptions={mockReminderApplicationOptions}
-                    canCreate
                   />
                   <RemindersListPresenter
                     reminders={mockReminderListItems}
@@ -294,7 +293,7 @@ export default function PreviewPage() {
                   description="Upload, attach, and list presenters now mirror the production resume surface with static fixtures."
                 />
                 <div className="mt-6 space-y-6">
-                  <UploadResumeFormPresenter canUpload />
+                  <UploadResumeFormPresenter />
                   <ResumeListPresenter
                     resumes={mockResumeListItems}
                     renderAttachForm={(resume) => (
@@ -308,8 +307,8 @@ export default function PreviewPage() {
               </section>
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
-              <RemindersEmptyState canCreate />
-              <ResumesEmptyState canUpload />
+              <RemindersEmptyState />
+              <ResumesEmptyState />
             </div>
           </TabsContent>
 

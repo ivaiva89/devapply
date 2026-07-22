@@ -2,7 +2,6 @@ import "server-only";
 
 import { ApplicationStatus } from "@prisma/client";
 
-import { getUserPlan } from "@/features/billing/server/plan-enforcement";
 import { getApplicationListDataForUser } from "@/entities/application/api/application-service";
 import {
   type ApplicationListItem,
@@ -73,18 +72,13 @@ export async function getApplicationsForUser(
   items: ApplicationListItem[];
   state: ApplicationsQueryState;
   totalCount: number;
-  plan: "FREE" | "PRO" | "LIFETIME";
 }> {
   const state = parseApplicationsQueryState(searchParams);
-  const [{ items, totalCount }, user] = await Promise.all([
-    getApplicationListDataForUser(userId, state),
-    getUserPlan(userId),
-  ]);
+  const { items, totalCount } = await getApplicationListDataForUser(userId, state);
 
   return {
     items,
     state,
     totalCount,
-    plan: user?.plan ?? "FREE",
   };
 }

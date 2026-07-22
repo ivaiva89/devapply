@@ -1,8 +1,5 @@
 import { PageHeader } from "@/shared/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { UpgradeButton } from "@/features/billing/components/upgrade-button";
-import { UpgradePrompt } from "@/features/billing/components/upgrade-prompt";
-import { FREE_PLAN_LIMITS } from "@/features/billing/config";
 import { ResumeList } from "@/widgets/resumes-panel/ui/resume-list";
 import { ResumesEmptyState } from "@/widgets/resumes-panel/ui/resumes-empty-state";
 import { UploadResumeForm } from "@/features/resumes/components/upload-resume-form";
@@ -24,17 +21,8 @@ export default async function ResumesPage() {
           </div>
         }
       />
-      {!data.canUpload ? (
-        <>
-          <UpgradePrompt
-            title="Upgrade to keep multiple resume versions."
-            description={`Free plan users can store ${FREE_PLAN_LIMITS.resumes} resume. Upgrade to Pro to keep multiple role-specific versions and tailor attachments per application.`}
-          />
-          <UpgradeButton />
-        </>
-      ) : null}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-        <UploadResumeForm canUpload={data.canUpload} />
+        <UploadResumeForm />
         <div className="space-y-4">
           {data.resumes.length > 0 ? (
             <ResumeList
@@ -42,7 +30,7 @@ export default async function ResumesPage() {
               resumes={data.resumes}
             />
           ) : (
-            <ResumesEmptyState canUpload={data.canUpload} />
+            <ResumesEmptyState />
           )}
         </div>
       </div>

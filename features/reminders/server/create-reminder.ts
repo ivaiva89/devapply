@@ -4,10 +4,6 @@ import { revalidatePath } from "next/cache";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import {
-  getPlanGate,
-  getPlanLimitReachedMessage,
-} from "@/features/billing/server/plan-enforcement";
 import { reminderFormSchema } from "@/features/reminders/schemas/reminder-form-schema";
 import {
   toUtcDateFromLocalInput,
@@ -44,15 +40,6 @@ export async function createReminder(
   }
 
   const user = await requireCurrentUser();
-  const gate = await getPlanGate(user, "reminders");
-
-  if (!gate.allowed) {
-    return {
-      status: "error",
-      error: getPlanLimitReachedMessage("reminders"),
-    };
-  }
-
   const input = result.data;
   const dueAt = toUtcDateFromLocalInput(
     input.remindAt,

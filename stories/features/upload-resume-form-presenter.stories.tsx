@@ -5,9 +5,6 @@ import { UploadResumeFormPresenter } from "@/features/resumes/components/upload-
 const meta = {
   title: "Features/Resumes/UploadResumeFormPresenter",
   component: UploadResumeFormPresenter,
-  args: {
-    canUpload: true,
-  },
 } satisfies Meta<typeof UploadResumeFormPresenter>;
 
 export default meta;
@@ -19,11 +16,5 @@ export const Default: Story = {};
 export const WithError: Story = {
   args: {
     error: "Upload a PDF, DOC, or DOCX resume file.",
-  },
-};
-
-export const DisabledByPlan: Story = {
-  args: {
-    canUpload: false,
   },
 };

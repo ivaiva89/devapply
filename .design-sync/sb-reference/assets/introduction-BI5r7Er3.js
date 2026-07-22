@@ -1,0 +1,3 @@
+import{n as e}from"./chunk-vNrZSFDR.js";import{_ as t}from"./iframe-DtGyfQJJ.js";import{r as n,t as r}from"./react-BX_1ZP09.js";import{a as i,o as a}from"./blocks-F5b9bhlf.js";var o=e((()=>{r()}));function s(e){let t={h1:`h1`,p:`p`,...n(),...e.components};return(0,l.jsxs)(l.Fragment,{children:[(0,l.jsx)(i,{title:`Introduction/Storybook`}),`
+`,(0,l.jsx)(t.h1,{id:`storybook`,children:`Storybook`}),`
+`,(0,l.jsx)(t.p,{children:`Use stories in this directory for UI-only development with mock props.`})]})}function c(e={}){let{wrapper:t}={...n(),...e.components};return t?(0,l.jsx)(t,{...e,children:(0,l.jsx)(s,{...e})}):s(e)}var l;e((()=>{l=t(),o(),a()}))();export{c as default};

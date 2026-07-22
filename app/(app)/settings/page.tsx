@@ -1,6 +1,5 @@
 import { PageHeader } from "@/shared/design/page-header";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import { getPlanGate } from "@/features/billing/server/plan-enforcement";
 import { SettingsBillingPanel } from "@/widgets/settings-billing/ui/settings-billing-panel";
 
 type SettingsPageProps = {
@@ -18,11 +17,6 @@ export default async function SettingsPage({
     ? resolvedSearchParams?.billing[0]
     : resolvedSearchParams?.billing;
 
-  const applicationsGate =
-    user.plan === "FREE"
-      ? await getPlanGate(user, "applications")
-      : null;
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -33,8 +27,6 @@ export default async function SettingsPage({
       <SettingsBillingPanel
         billingState={billingState}
         plan={user.plan}
-        applicationsUsed={applicationsGate?.used}
-        applicationsLimit={applicationsGate?.limit}
       />
     </div>
   );
