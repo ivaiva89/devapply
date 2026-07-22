@@ -61,7 +61,7 @@ export function AppHeaderPresenter({
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 border-b border-border bg-surface-1/90 backdrop-blur supports-[backdrop-filter]:bg-surface-1/90">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
           <Sheet>

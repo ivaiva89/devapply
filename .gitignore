@@ -71,3 +71,9 @@ AGENTS.md
 CLAUDE.md
 posthog-setup-report.md
 
+
+# local design scratch / exports (not source)
+.playwright-mcp/
+new-design/
+_archive/
+/DevApply_Marketing_Campaign_Plan.md

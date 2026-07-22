@@ -3,7 +3,7 @@ import { cn } from "@/shared/lib/utils";
 
 const toneClasses = {
   neutral: "border-transparent bg-surface-2 text-text-3",
-  info: "border-transparent bg-blue-950/60 text-blue-300",
+  info: "border-transparent bg-info-soft text-info",
   warning: "border-transparent bg-warning-soft text-warning", // intentionally violet — maps to Interview status
   success: "border-transparent bg-success-soft text-success",
   danger: "border-transparent bg-danger-soft text-danger",

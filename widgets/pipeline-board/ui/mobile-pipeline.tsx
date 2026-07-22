@@ -105,7 +105,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
               className={cn(
                 "flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-foreground text-background"
+                  ? "bg-text text-canvas"
                   : "bg-surface-2 text-text-3 hover:bg-surface-3",
               )}
             >
@@ -113,7 +113,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
               <span
                 className={cn(
                   "flex h-4.5 min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] font-semibold tabular-nums",
-                  isActive ? "bg-background/20 text-background" : "bg-surface-3 text-text-3",
+                  isActive ? "bg-canvas/20 text-canvas" : "bg-surface-3 text-text-3",
                 )}
               >
                 {count}
@@ -178,7 +178,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
       </div>
 
       {/* Bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-border bg-background">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-border bg-surface">
         {(
           [
             { href: "/dashboard", label: "Dashboard" },

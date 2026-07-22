@@ -32,7 +32,7 @@ export const WithColoredValue: Story = {
   args: {
     label: "Interviews",
     value: 6,
-    valueClassName: "text-violet-400",
+    valueClassName: "text-primary",
   },
 };
 

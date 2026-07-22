@@ -56,9 +56,9 @@ export default async function MarketingLayout({
               <header
                 className="flex flex-col gap-3 rounded-2xl px-5 py-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
                 style={{
-                  background: "hsl(var(--card) / 0.7)",
+                  background: "color-mix(in srgb, var(--surface-1) 70%, transparent)",
                   boxShadow:
-                    "0 1px 0 0 hsl(var(--border) / 0.15), 0 8px 24px var(--shadow-sm)",
+                    "0 1px 0 0 color-mix(in srgb, var(--border) 15%, transparent), 0 8px 24px var(--shadow-sm)",
                 }}
               >
                 <Link
@@ -90,7 +90,7 @@ export default async function MarketingLayout({
                         href="/sign-in"
                         className="rounded-button px-4 py-2 text-sm font-medium text-text/90 transition-colors duration-200 hover:text-text"
                         style={{
-                          background: "hsl(var(--canvas) / 0.6)",
+                          background: "color-mix(in srgb, var(--canvas) 60%, transparent)",
                         }}
                       >
                         Sign in
@@ -110,7 +110,7 @@ export default async function MarketingLayout({
                         href="/dashboard"
                         className="rounded-button px-4 py-2 text-sm font-medium text-text/90 transition-colors duration-200 hover:text-text"
                         style={{
-                          background: "hsl(var(--canvas) / 0.6)",
+                          background: "color-mix(in srgb, var(--canvas) 60%, transparent)",
                         }}
                       >
                         Dashboard
@@ -126,7 +126,7 @@ export default async function MarketingLayout({
               {/* ── Footer — multi-column, tonal shift, no border ── */}
               <footer
                 className="mt-4 rounded-2xl px-8 py-10"
-                style={{ background: "hsl(var(--card))" }}
+                style={{ background: "var(--surface-1)" }}
               >
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                   {/* Brand column */}

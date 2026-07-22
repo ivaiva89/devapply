@@ -11,7 +11,7 @@ const preview: Preview = {
     (Story) =>
       createElement(
         "div",
-        { className: "min-h-screen bg-background p-6 text-foreground" },
+        { className: "min-h-screen bg-canvas p-6 text-text" },
         createElement(Story),
       ),
   ],
