@@ -3,29 +3,20 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
-import { Chip, type ChipTone } from "@/shared/design/chip";
+import { Chip } from "@/shared/design/chip";
 import { DesignCard } from "@/shared/design/card";
 import { updateApplicationStatus } from "@/features/applications/server/update-application-status";
 import type { PipelineColumn, PipelineApplicationCard } from "@/features/applications/server/pipeline-board";
 import {
+  applicationStatusChipTones,
   applicationStatusLabels,
+  pipelineStageValues,
   type ApplicationStatusValue,
 } from "@/entities/application/model/config";
 
-const stageTone: Record<ApplicationStatusValue, ChipTone> = {
-  WISHLIST:  "slate",
-  APPLIED:   "primary",
-  INTERVIEW: "accent",
-  OFFER:     "success",
-  REJECTED:  "danger",
-};
-
-const NON_REJECTED_STATUSES: ApplicationStatusValue[] = [
-  "WISHLIST",
-  "APPLIED",
-  "INTERVIEW",
-  "OFFER",
-];
+const stageTone = applicationStatusChipTones;
+const NON_REJECTED_STATUSES: readonly ApplicationStatusValue[] =
+  pipelineStageValues;
 
 function moveCard(
   columns: PipelineColumn[],

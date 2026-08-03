@@ -2,9 +2,9 @@ import type { DragEventHandler } from "react";
 import { cn } from "@/shared/lib/utils";
 import { ApplicationKanbanColumn } from "@/widgets/pipeline-board/ui/application-kanban-column";
 import { DesignCard } from "@/shared/design/card";
-import { Chip, type ChipTone } from "@/shared/design/chip";
 import {
-  applicationStatusLabels,
+  applicationSourceLabels,
+  type ApplicationSourceValue,
   type ApplicationStatusValue,
 } from "@/entities/application/model/config";
 import type {
@@ -12,13 +12,9 @@ import type {
   PipelineColumn,
 } from "@/features/applications/server/pipeline-board";
 
-const stageTone: Record<ApplicationStatusValue, ChipTone> = {
-  WISHLIST:  "slate",
-  APPLIED:   "primary",
-  INTERVIEW: "accent",
-  OFFER:     "success",
-  REJECTED:  "danger",
-};
+function initials(company: string) {
+  return company.slice(0, 2).toUpperCase();
+}
 
 function formatDate(value: string | null) {
   if (!value) return "—";
@@ -69,57 +65,72 @@ export function PipelineBoardPresenter({
       ) : null}
 
       <div className="grid gap-3 xl:grid-cols-5">
-        {columns.map((column) => (
-          <ApplicationKanbanColumn
-            key={column.status}
-            label={column.label}
-            status={column.status}
-            items={column.items.map((item) => ({
-              id: item.id,
-              company: item.company,
-              role: item.role,
-              appliedDate: formatDate(item.appliedDate),
-              sourceLabel: item.source,
-              updatedAt: formatDate(item.updatedAt),
-            }))}
-            isDragTarget={dragTargetStatus === column.status}
-            onDragOver={onColumnDragOver}
-            onDragEnter={onColumnDragEnter ? () => onColumnDragEnter(column.status) : undefined}
-            onDrop={onColumnDrop ? () => onColumnDrop(column.status) : undefined}
-          >
-            {column.items.map((item) => (
-              <DesignCard
-                key={item.id}
-                interactive
-                tabIndex={0}
-                draggable={!!onCardDragStart && !isPending}
-                data-card-id={item.id}
-                className={cn(
-                  "animate-cardIn",
-                  flashCardId === item.id && "animate-dropFlash",
-                  focusedCardId === item.id && "ring-2 ring-primary ring-offset-2",
-                )}
-                onFocus={() => onFocusCard?.(item.id)}
-                onBlur={() => onFocusCard?.(null)}
-                onDragStart={onCardDragStart ? () => onCardDragStart(item.id) : undefined}
-                onDragEnd={onCardDragEnd}
-              >
-                <p className="truncate text-sm font-medium text-text">{item.company}</p>
-                <p className="truncate text-sm text-text-2">{item.role}</p>
-                <div className="mt-2 flex items-center justify-between">
-                  <Chip
-                    tone={stageTone[column.status]}
-                    label={applicationStatusLabels[column.status]}
-                    size="sm"
-                  />
-                  <span className="font-mono text-[10.5px] text-text-4 tabular-nums">
-                    {formatDate(item.appliedDate)}
-                  </span>
-                </div>
-              </DesignCard>
-            ))}
-          </ApplicationKanbanColumn>
-        ))}
+        {columns.map((column, columnIndex) => {
+          const progressPct = Math.round(
+            ((columnIndex + 1) / columns.length) * 100,
+          );
+          return (
+            <ApplicationKanbanColumn
+              key={column.status}
+              label={column.label}
+              status={column.status}
+              hotkey={String(columnIndex + 1)}
+              items={column.items.map((item) => ({
+                id: item.id,
+                company: item.company,
+                role: item.role,
+                appliedDate: formatDate(item.appliedDate),
+                sourceLabel: item.source,
+                updatedAt: formatDate(item.updatedAt),
+              }))}
+              isDragTarget={dragTargetStatus === column.status}
+              onDragOver={onColumnDragOver}
+              onDragEnter={onColumnDragEnter ? () => onColumnDragEnter(column.status) : undefined}
+              onDrop={onColumnDrop ? () => onColumnDrop(column.status) : undefined}
+            >
+              {column.items.map((item) => (
+                <DesignCard
+                  key={item.id}
+                  interactive
+                  tabIndex={0}
+                  draggable={!!onCardDragStart && !isPending}
+                  data-card-id={item.id}
+                  className={cn(
+                    "animate-cardIn cursor-grab space-y-1.5",
+                    flashCardId === item.id && "animate-dropFlash",
+                    focusedCardId === item.id && "ring-2 ring-primary ring-offset-2",
+                  )}
+                  onFocus={() => onFocusCard?.(item.id)}
+                  onBlur={() => onFocusCard?.(null)}
+                  onDragStart={onCardDragStart ? () => onCardDragStart(item.id) : undefined}
+                  onDragEnd={onCardDragEnd}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="grid size-5 shrink-0 place-items-center rounded bg-surface-2 font-mono text-[11px] font-semibold text-text-2">
+                      {initials(item.company)}
+                    </span>
+                    <p className="truncate text-sm font-medium text-text">{item.company}</p>
+                  </div>
+                  <p className="truncate text-sm text-text-2">{item.role}</p>
+                  <div className="flex items-center gap-2 font-mono text-[10.5px] text-text-4 tabular-nums">
+                    <span className="truncate">
+                      {applicationSourceLabels[item.source as ApplicationSourceValue] ??
+                        item.source}
+                    </span>
+                    <span className="size-[3px] shrink-0 rounded-full bg-text-4" />
+                    <span className="shrink-0">{formatDate(item.updatedAt)}</span>
+                  </div>
+                  <div className="h-0.5 overflow-hidden rounded-full bg-surface-2">
+                    <div
+                      className="h-full rounded-full bg-primary"
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
+                </DesignCard>
+              ))}
+            </ApplicationKanbanColumn>
+          );
+        })}
       </div>
     </div>
   );

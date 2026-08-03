@@ -1,30 +1,18 @@
 import type { DragEventHandler, ReactNode } from "react";
 import { cn } from "@/shared/lib/utils";
-import { Chip, type ChipTone } from "@/shared/design/chip";
-import type { ApplicationStatusValue } from "@/entities/application/model/config";
+import { Chip } from "@/shared/design/chip";
+import {
+  applicationStatusChipTones,
+  type ApplicationStatusValue,
+} from "@/entities/application/model/config";
 import type { ApplicationCardData } from "@/entities/application/ui/application-card";
-
-const stageTone: Record<ApplicationStatusValue, ChipTone> = {
-  WISHLIST:  "slate",
-  APPLIED:   "primary",
-  INTERVIEW: "accent",
-  OFFER:     "success",
-  REJECTED:  "danger",
-};
-
-const stageHotkey: Record<ApplicationStatusValue, string> = {
-  WISHLIST:  "1",
-  APPLIED:   "2",
-  INTERVIEW: "3",
-  OFFER:     "4",
-  REJECTED:  "",
-};
 
 type ApplicationKanbanColumnProps = {
   label: string;
   status: ApplicationStatusValue;
   items: ApplicationCardData[];
   children: ReactNode;
+  hotkey?: string;
   isDragTarget?: boolean;
   onDragOver?: DragEventHandler<HTMLElement>;
   onDragEnter?: DragEventHandler<HTMLElement>;
@@ -36,13 +24,12 @@ export function ApplicationKanbanColumn({
   status,
   items,
   children,
+  hotkey,
   isDragTarget = false,
   onDragOver,
   onDragEnter,
   onDrop,
 }: ApplicationKanbanColumnProps) {
-  const hotkey = stageHotkey[status];
-
   return (
     <div
       onDragOver={onDragOver}
@@ -56,7 +43,7 @@ export function ApplicationKanbanColumn({
       )}
     >
       <div className="flex items-center justify-between px-3 py-2.5">
-        <Chip tone={stageTone[status]} label={label} />
+        <Chip tone={applicationStatusChipTones[status]} label={label} />
         <div className="flex items-center gap-2">
           <span className="font-mono text-[10.5px] text-text-4">{items.length}</span>
           {hotkey ? (

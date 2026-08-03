@@ -2,7 +2,10 @@ import "server-only";
 
 import { ApplicationStatus } from "@prisma/client";
 
-import { applicationStatusLabels } from "@/entities/application/model/config";
+import {
+  applicationStatusLabels,
+  pipelineStageValues,
+} from "@/entities/application/model/config";
 import { prisma } from "@/shared/lib/prisma";
 
 type DashboardKpi = {
@@ -207,6 +210,7 @@ export async function getDashboardDataForUser(
     {
       WISHLIST: 0,
       APPLIED: 0,
+      SCREEN: 0,
       INTERVIEW: 0,
       OFFER: 0,
       REJECTED: 0,
@@ -214,9 +218,15 @@ export async function getDashboardDataForUser(
   );
 
   const respondedCount =
-    countsByStatus.INTERVIEW + countsByStatus.OFFER + countsByStatus.REJECTED;
+    countsByStatus.SCREEN +
+    countsByStatus.INTERVIEW +
+    countsByStatus.OFFER +
+    countsByStatus.REJECTED;
   const activePipelineCount =
-    countsByStatus.WISHLIST + countsByStatus.APPLIED + countsByStatus.INTERVIEW;
+    countsByStatus.WISHLIST +
+    countsByStatus.APPLIED +
+    countsByStatus.SCREEN +
+    countsByStatus.INTERVIEW;
   const applicationsOverTimeByMonth = monthBuckets.map((bucket) => ({
     label: bucket.label,
     count: applicationsOverTime.filter(
@@ -256,15 +266,7 @@ export async function getDashboardDataForUser(
       },
     ],
     applicationsOverTime: applicationsOverTimeByMonth,
-    statuses: (
-      [
-        "WISHLIST",
-        "APPLIED",
-        "INTERVIEW",
-        "OFFER",
-        "REJECTED",
-      ] as ApplicationStatus[]
-    ).map((status) => ({
+    statuses: pipelineStageValues.map((status) => ({
       status,
       count: countsByStatus[status],
       percentage:

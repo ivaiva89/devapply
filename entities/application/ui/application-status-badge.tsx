@@ -1,21 +1,24 @@
-import { StatusBadge } from "@/shared/design/status-badge";
+import { Chip } from "@/shared/design/chip";
 import {
+  applicationStatusChipTones,
   applicationStatusLabels,
-  applicationStatusTones,
   type ApplicationStatusValue,
 } from "@/entities/application/model/config";
 
 type ApplicationStatusBadgeProps = {
   status: ApplicationStatusValue;
+  size?: "sm" | "default";
 };
 
 export function ApplicationStatusBadge({
   status,
+  size = "sm",
 }: ApplicationStatusBadgeProps) {
   return (
-    <StatusBadge
+    <Chip
+      tone={applicationStatusChipTones[status]}
       label={applicationStatusLabels[status]}
-      tone={applicationStatusTones[status]}
+      size={size}
     />
   );
 }

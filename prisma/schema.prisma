@@ -9,6 +9,7 @@ datasource db {
 enum ApplicationStatus {
   WISHLIST
   APPLIED
+  SCREEN
   INTERVIEW
   OFFER
   REJECTED

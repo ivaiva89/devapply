@@ -4,11 +4,13 @@ import { DataTable, type DataTableColumn } from "@/shared/design/data-table";
 import { SectionHeader } from "@/shared/design/section-header";
 import { ApplicationStatusBadge } from "@/entities/application/ui/application-status-badge";
 import {
+  applicationStatusChipTones,
   applicationStatusLabels,
   applicationStatusValues,
   type ApplicationSourceValue,
   type ApplicationStatusValue,
 } from "@/entities/application/model/config";
+import type { ChipTone } from "@/shared/design/chip";
 import { cn } from "@/shared/lib/utils";
 
 export type ApplicationTableRow = {
@@ -22,16 +24,6 @@ export type ApplicationTableRow = {
   source: ApplicationSourceValue;
   lastActivity: string;
   actions?: ReactNode;
-};
-
-type ChipTone = "slate" | "primary" | "info" | "accent" | "success" | "danger";
-
-const statusTones: Record<ApplicationStatusValue, ChipTone> = {
-  WISHLIST: "slate",
-  APPLIED: "primary",
-  INTERVIEW: "accent",
-  OFFER: "success",
-  REJECTED: "danger",
 };
 
 const chipToneStyles: Record<
@@ -128,7 +120,7 @@ export function ApplicationsTable({
         All
       </button>
       {applicationStatusValues.map((status) => {
-        const tone = statusTones[status];
+        const tone = applicationStatusChipTones[status];
         const styles = chipToneStyles[tone];
         const isActive = activeStatus === status;
         return (

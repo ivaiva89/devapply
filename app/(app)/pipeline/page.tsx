@@ -17,7 +17,7 @@ export default async function PipelinePage() {
     <>
       <PageHeader
         title="Pipeline"
-        description="Drag cards or press 1–4 to move between stages."
+        description="Drag cards, or focus one and press 1–5 to move · J K to navigate."
         breadcrumb="pipeline"
       />
       {totalApplications > 0 ? (

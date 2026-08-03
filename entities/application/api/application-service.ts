@@ -6,6 +6,7 @@ import {
   applicationStatusLabels,
   applicationStatusValues,
   applicationSourceLabels,
+  pipelineStageValues,
 } from "@/entities/application/model/config";
 import type {
   ApplicationFormInput,
@@ -146,14 +147,14 @@ export async function getPipelineColumnsForUser(
     where: {
       userId,
       status: {
-        in: [...applicationStatusValues] as ApplicationStatus[],
+        in: [...pipelineStageValues] as ApplicationStatus[],
       },
     },
     orderBy: [{ updatedAt: "desc" }],
     select: pipelineApplicationSelect,
   });
 
-  return applicationStatusValues.map((status) => ({
+  return pipelineStageValues.map((status) => ({
     status,
     label: applicationStatusLabels[status],
     items: applications

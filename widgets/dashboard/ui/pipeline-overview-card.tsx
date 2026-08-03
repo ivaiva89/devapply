@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 const statusBarColor: Record<ApplicationStatusValue, string> = {
   WISHLIST: "var(--text-4)",
   APPLIED: "var(--primary)",
+  SCREEN: "var(--info)",
   INTERVIEW: "var(--accent)",
   OFFER: "var(--success)",
   REJECTED: "var(--danger)",
