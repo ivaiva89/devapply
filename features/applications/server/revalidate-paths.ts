@@ -1,3 +1,9 @@
 export const REVALIDATE_PATHS = {
-  APPLICATIONS: ["/applications", "/dashboard", "/pipeline"] as const,
+  APPLICATIONS: [
+    "/applications",
+    "/dashboard",
+    "/pipeline",
+    "/reminders",
+    "/resumes",
+  ] as const,
 } as const;
