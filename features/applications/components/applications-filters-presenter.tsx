@@ -11,10 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import {
-  applicationSortSelectOptions,
-  applicationStatusFilterOptions,
-} from "@/entities/application/model/config";
+import { applicationSortSelectOptions } from "@/entities/application/model/config";
 import type { ApplicationsQueryState } from "@/entities/application/model/types";
 
 type ApplicationsFiltersPresenterProps = {
@@ -33,9 +30,9 @@ export function ApplicationsFiltersPresenter({
   return (
     <form
       action={action}
-      className="rounded-3xl border border-border/70 bg-surface p-5 shadow-sm"
+      className="rounded-card border border-border bg-surface p-4"
     >
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_220px_220px_auto] lg:items-end">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_auto] lg:items-end">
         <FieldShell htmlFor={`${idPrefix}-query`} label="Search">
           <Input
             id={`${idPrefix}-query`}
@@ -43,28 +40,6 @@ export function ApplicationsFiltersPresenter({
             defaultValue={state.query}
             placeholder="Search by company or role"
           />
-        </FieldShell>
-
-        <FieldShell htmlFor={`${idPrefix}-status`} label="Status">
-          <Select
-            items={applicationStatusFilterOptions}
-            name="status"
-            defaultValue={state.status}
-          >
-            <SelectTrigger
-              id={`${idPrefix}-status`}
-              className={compactControlClassName}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {applicationStatusFilterOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </FieldShell>
 
         <FieldShell htmlFor={`${idPrefix}-sort`} label="Sort by">

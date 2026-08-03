@@ -21,6 +21,7 @@ import type { ApplicationListItem } from "@/entities/application/model/types";
 
 type ApplicationsTableClientProps = {
   applications: ApplicationListItem[];
+  statusCounts?: Record<string, number>;
 };
 
 type TableFeedback = {
@@ -70,6 +71,7 @@ function parseActiveStatus(
 
 export function ApplicationsTableClient({
   applications,
+  statusCounts,
 }: ApplicationsTableClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -120,7 +122,7 @@ export function ApplicationsTableClient({
     <div className="space-y-4">
       {feedback ? (
         <div
-          className={`rounded-2xl border px-4 py-3 text-sm ${
+          className={`rounded-card border px-4 py-3 text-sm ${
             feedback.tone === "success"
               ? "border border-success-soft bg-success-soft text-success"
               : "border border-danger-soft bg-danger-soft text-danger"
@@ -141,6 +143,7 @@ export function ApplicationsTableClient({
       <ApplicationsTable
         applications={rows}
         activeStatus={activeStatus}
+        statusCounts={statusCounts}
         onStatusFilter={handleStatusFilter}
       />
       {editingApplication ? (

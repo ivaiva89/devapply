@@ -16,27 +16,20 @@ export default async function RemindersPage() {
         description="Track outreach, status checks, and next steps."
         breadcrumb="reminders"
         actions={
-          <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
-            {data.activeReminderCount}{" "}
-            {data.activeReminderCount === 1
-              ? "active reminder"
-              : "active reminders"}
-          </div>
+          <span className="rounded-card border border-border bg-surface px-3 py-1.5 font-mono text-[11.5px] tabular-nums text-text-3">
+            {data.activeReminderCount} active
+          </span>
         }
       />
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-        <CreateReminderForm applicationOptions={data.applicationOptions} />
-        <div className="space-y-4">
-          {data.reminders.length > 0 ? (
-            <RemindersList
-              applicationOptions={data.applicationOptions}
-              reminders={data.reminders}
-            />
-          ) : (
-            <RemindersEmptyState />
-          )}
-        </div>
-      </div>
+      <CreateReminderForm applicationOptions={data.applicationOptions} />
+      {data.reminders.length > 0 ? (
+        <RemindersList
+          applicationOptions={data.applicationOptions}
+          reminders={data.reminders}
+        />
+      ) : (
+        <RemindersEmptyState />
+      )}
     </div>
   );
 }

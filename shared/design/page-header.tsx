@@ -13,9 +13,13 @@ export function PageHeader({ title, description, actions, breadcrumb, className 
   return (
     <div className={cn("mb-6", className)}>
       {breadcrumb ? (
-        <div className="mb-1 flex items-center justify-between">
-          <span className="font-mono text-[10.5px] text-text-4">{breadcrumb}</span>
-          <span className="font-mono text-[10.5px] text-text-4">⌘K to search</span>
+        <div className="mb-2 flex items-center gap-2 font-mono text-[11px] text-text-3">
+          <span>Workspace</span>
+          <span className="text-text-4">/</span>
+          <span className="capitalize text-text">{breadcrumb}</span>
+          <span className="ml-auto inline-flex items-center rounded-xs border border-border bg-surface-2 px-1.5 py-0.5 text-[10.5px] text-text-3">
+            ⌘K to search
+          </span>
         </div>
       ) : null}
       <div className="flex items-start justify-between gap-4">

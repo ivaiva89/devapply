@@ -31,14 +31,14 @@ export function CreateReminderFormPresenter({
       ref={formRef}
       action={action}
       onSubmit={onSubmit}
-      className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm"
+      className="rounded-card border border-border bg-surface p-5"
     >
       <input type="hidden" name="timezoneOffsetMinutes" defaultValue="" />
       <CardHeader className="space-y-2 px-0">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-text-3">
           New reminder
         </p>
-        <CardTitle className="text-xl tracking-tight">
+        <CardTitle className="text-base tracking-tight">
           Schedule a follow-up
         </CardTitle>
         <p className="text-sm leading-6 text-text-3">

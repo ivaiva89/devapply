@@ -43,15 +43,23 @@ type ApplicationsTableProps = {
   title?: string;
   description?: string;
   activeStatus?: ApplicationStatusValue | null;
+  statusCounts?: Record<string, number>;
   onStatusFilter?: (status: ApplicationStatusValue | null) => void;
 };
+
+function companyInitials(company: string) {
+  return company.slice(0, 2).toUpperCase();
+}
 
 const columns: DataTableColumn<ApplicationTableRow>[] = [
   {
     key: "company",
     header: "Company",
     cell: (row) => (
-      <div>
+      <div className="flex items-center gap-2.5">
+        <span className="grid size-[22px] shrink-0 place-items-center rounded bg-surface-2 font-mono text-[11px] font-semibold text-text-2">
+          {companyInitials(row.company)}
+        </span>
         <p className="font-medium text-text">{row.company}</p>
       </div>
     ),
@@ -102,10 +110,15 @@ export function ApplicationsTable({
   title = "Tracked applications",
   description = "Review current applications, statuses, and source channels from a single table.",
   activeStatus = null,
+  statusCounts,
   onStatusFilter,
 }: ApplicationsTableProps) {
+  const totalCount = statusCounts
+    ? Object.values(statusCounts).reduce((sum, count) => sum + count, 0)
+    : undefined;
+
   const filterChips = onStatusFilter ? (
-    <div className="flex flex-wrap gap-1.5 px-4 pb-3 pt-1">
+    <div className="flex flex-wrap items-center gap-1.5 px-4 pb-3 pt-1">
       <button
         type="button"
         aria-pressed={activeStatus === null}
@@ -118,11 +131,15 @@ export function ApplicationsTable({
         )}
       >
         All
+        {totalCount !== undefined ? (
+          <span className="ml-1.5 tabular-nums opacity-70">{totalCount}</span>
+        ) : null}
       </button>
       {applicationStatusValues.map((status) => {
         const tone = applicationStatusChipTones[status];
         const styles = chipToneStyles[tone];
         const isActive = activeStatus === status;
+        const count = statusCounts?.[status];
         return (
           <button
             key={status}
@@ -135,9 +152,21 @@ export function ApplicationsTable({
             )}
           >
             {applicationStatusLabels[status]}
+            {count !== undefined ? (
+              <span className="ml-1.5 tabular-nums opacity-70">{count}</span>
+            ) : null}
           </button>
         );
       })}
+      {activeStatus !== null ? (
+        <button
+          type="button"
+          onClick={() => onStatusFilter(null)}
+          className="ml-1 font-mono text-[11px] text-text-3 underline-offset-2 hover:text-text hover:underline"
+        >
+          clear
+        </button>
+      ) : null}
     </div>
   ) : null;
 

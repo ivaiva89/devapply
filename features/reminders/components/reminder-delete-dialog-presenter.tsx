@@ -49,7 +49,7 @@ export function ReminderDeleteDialogPresenter({
         </DialogHeader>
 
         {error ? (
-          <p className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+          <p className="rounded-card border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
             {error}
           </p>
         ) : null}

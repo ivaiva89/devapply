@@ -8,7 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/next";
 
-
 import "@/app/globals.css";
 
 import { TrackedLink } from "@/features/analytics/components/tracked-link";
@@ -20,22 +19,12 @@ export const metadata: Metadata = {
     "Production-quality foundation for a developer job application tracker SaaS.",
 };
 
-const footerLinks = {
-  product: [
-    { label: "Features", href: "/#features" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "Changelog", href: "#" },
-  ],
-  company: [
-    { label: "About", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Github", href: "#" },
-  ],
-  legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-  ],
-};
+const footerLinks = [
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+];
 
 export default async function MarketingLayout({
   children,
@@ -50,20 +39,20 @@ export default async function MarketingLayout({
     >
       <body className="bg-canvas text-text antialiased">
         <ClerkProvider>
-          <div className="min-h-screen bg-[radial-gradient(circle_at_top,_var(--primary-soft),_transparent_28%),linear-gradient(180deg,_hsl(var(--canvas))_0%,_color-mix(in_oklab,_hsl(var(--canvas))_92%,_hsl(var(--card))_8%)_100%)]">
-            <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-6">
-              {/* ── Header — glassmorphism nav, no explicit border ── */}
-              <header
-                className="flex flex-col gap-3 rounded-2xl px-5 py-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
-                style={{
-                  background: "color-mix(in srgb, var(--surface-1) 70%, transparent)",
-                  boxShadow:
-                    "0 1px 0 0 color-mix(in srgb, var(--border) 15%, transparent), 0 8px 24px var(--shadow-sm)",
-                }}
-              >
+          <div
+            className="min-h-screen"
+            style={{
+              background:
+                "radial-gradient(ellipse 800px 400px at 8% 0%, color-mix(in srgb, var(--primary) 9%, transparent), transparent 60%), radial-gradient(ellipse 600px 400px at 100% 4%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--canvas)",
+            }}
+          >
+            <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6">
+              {/* ── Flat top nav ── */}
+              <header className="flex items-center gap-6 py-5">
                 <Link
                   href="/"
-                  className="text-sm font-semibold tracking-tight text-text"
+                  className="flex items-center gap-2.5 text-text"
+                  aria-label="DevApply home"
                 >
                   <Image
                     src="/devapply-logo-optimized.svg"
@@ -71,27 +60,26 @@ export default async function MarketingLayout({
                     width={1200}
                     height={360}
                     priority
-                    className="inline-block h-10 w-auto"
+                    className="h-8 w-auto"
                   />
                 </Link>
-                <nav className="flex flex-wrap items-center gap-5 text-sm text-text-3 sm:justify-end">
+                <nav className="ml-4 hidden items-center gap-5 text-sm text-text-2 sm:flex">
                   {marketingNavigation.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="transition-colors duration-200 hover:text-text"
+                      className="transition-colors duration-150 hover:text-text"
                     >
                       {item.label}
                     </Link>
                   ))}
+                </nav>
+                <div className="ml-auto flex items-center gap-2">
                   {!userId ? (
                     <>
                       <Link
                         href="/sign-in"
-                        className="rounded-button px-4 py-2 text-sm font-medium text-text/90 transition-colors duration-200 hover:text-text"
-                        style={{
-                          background: "color-mix(in srgb, var(--canvas) 60%, transparent)",
-                        }}
+                        className="rounded-button px-3 py-1.5 text-sm font-medium text-text-2 transition-colors duration-150 hover:bg-surface-1 hover:text-text"
                       >
                         Sign in
                       </Link>
@@ -99,122 +87,47 @@ export default async function MarketingLayout({
                         href="/sign-up"
                         event="signup"
                         properties={{ source: "marketing_header" }}
-                        className="rounded-button bg-primary px-4 py-2 text-sm font-semibold text-primary-on transition-opacity hover:opacity-90"
+                        className="inline-flex items-center gap-1.5 rounded-button bg-text px-4 py-1.5 text-sm font-medium text-canvas transition-colors duration-150 hover:bg-text-2"
                       >
                         Start free
+                        <span aria-hidden className="font-mono text-xs opacity-60">
+                          →
+                        </span>
                       </TrackedLink>
                     </>
                   ) : (
                     <>
                       <Link
                         href="/dashboard"
-                        className="rounded-button px-4 py-2 text-sm font-medium text-text/90 transition-colors duration-200 hover:text-text"
-                        style={{
-                          background: "color-mix(in srgb, var(--canvas) 60%, transparent)",
-                        }}
+                        className="rounded-button px-3 py-1.5 text-sm font-medium text-text-2 transition-colors duration-150 hover:bg-surface-1 hover:text-text"
                       >
                         Dashboard
                       </Link>
                       <UserButton />
                     </>
                   )}
-                </nav>
+                </div>
               </header>
 
-              <main className="flex-1 py-12">{children}</main>
+              <main className="flex-1">{children}</main>
 
-              {/* ── Footer — multi-column, tonal shift, no border ── */}
-              <footer
-                className="mt-4 rounded-2xl px-8 py-10"
-                style={{ background: "var(--surface-1)" }}
-              >
-                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-                  {/* Brand column */}
-                  <div className="space-y-3 lg:col-span-1">
-                    <Image
-                      src="/devapply-logo-optimized.svg"
-                      alt="DevApply logo"
-                      width={1200}
-                      height={360}
-                      className="h-8 w-auto opacity-70"
-                    />
-                    <p className="text-xs leading-relaxed text-text-3/75">
-                      Built for architects of the web.
-                      <br />
-                      Manage your career like a codebase.
-                    </p>
-                  </div>
-
-                  {/* Product */}
-                  <div className="space-y-3">
-                    <h4 className="font-label text-[11px] font-semibold uppercase tracking-[0.2em] text-text-3/85">
-                      Product
-                    </h4>
-                    <ul className="space-y-2">
-                      {footerLinks.product.map((link) => (
-                        <li key={link.label}>
-                          <Link
-                            href={link.href}
-                            className="text-sm text-text-3/85 transition-colors duration-200 hover:text-text"
-                          >
-                            {link.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Company */}
-                  <div className="space-y-3">
-                    <h4 className="font-label text-[11px] font-semibold uppercase tracking-[0.2em] text-text-3/85">
-                      Company
-                    </h4>
-                    <ul className="space-y-2">
-                      {footerLinks.company.map((link) => (
-                        <li key={link.label}>
-                          <Link
-                            href={link.href}
-                            className="text-sm text-text-3/85 transition-colors duration-200 hover:text-text"
-                          >
-                            {link.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Legal */}
-                  <div className="space-y-3">
-                    <h4 className="font-label text-[11px] font-semibold uppercase tracking-[0.2em] text-text-3/85">
-                      Legal
-                    </h4>
-                    <ul className="space-y-2">
-                      {footerLinks.legal.map((link) => (
-                        <li key={link.label}>
-                          <Link
-                            href={link.href}
-                            className="text-sm text-text-3/85 transition-colors duration-200 hover:text-text"
-                          >
-                            {link.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Copyright — ghost border separator */}
-                <div
-                  className="mt-8 pt-6 text-center"
-                  style={{
-                    borderTop: "1px solid hsl(var(--border) / 0.15)",
-                  }}
-                >
-                  <p className="font-label text-[11px] text-text-3/85">
-                    © {new Date().getFullYear()} DevApply. Built for architects
-                    of the web.
-                  </p>
-                </div>
+              {/* ── Light, token-driven footer ── */}
+              <footer className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border py-8 sm:flex-row">
+                <p className="font-mono text-xs text-text-3">
+                  © {new Date().getFullYear()} DevApply · Manage your career like a
+                  codebase.
+                </p>
+                <nav className="flex items-center gap-5 text-sm text-text-3">
+                  {footerLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="transition-colors duration-150 hover:text-text"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
               </footer>
             </div>
           </div>

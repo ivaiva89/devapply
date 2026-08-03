@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 import { Button } from "@/shared/ui/button";
 import { ReminderDeleteDialog } from "@/features/reminders/components/reminder-delete-dialog";
 import { ReminderEditDialog } from "@/features/reminders/components/reminder-edit-dialog";
@@ -20,20 +22,30 @@ export function RemindersList({
   return (
     <RemindersListPresenter
       reminders={reminders}
+      renderCheckbox={(reminder) => {
+        const action = completeReminder.bind(null, reminder.id);
+
+        return (
+          <form action={action}>
+            <input type="hidden" name="actionType" value="done" />
+            <button
+              type="submit"
+              aria-label={`Mark "${reminder.title}" done`}
+              className="grid size-[18px] place-items-center rounded-[4px] border-[1.5px] border-border-strong text-transparent transition-colors duration-[120ms] hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <Check className="size-3" aria-hidden />
+            </button>
+          </form>
+        );
+      }}
       renderActions={(reminder) => {
         const action = completeReminder.bind(null, reminder.id);
 
         return (
           <>
             <form action={action}>
-              <input type="hidden" name="actionType" value="done" />
-              <Button type="submit" variant="outline" size="sm">
-                Mark done
-              </Button>
-            </form>
-            <form action={action}>
               <input type="hidden" name="actionType" value="sent" />
-              <Button type="submit" size="sm">
+              <Button type="submit" variant="ghost" size="sm">
                 Mark sent
               </Button>
             </form>

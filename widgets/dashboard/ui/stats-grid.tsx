@@ -25,7 +25,12 @@ export function StatsGrid({ items }: StatsGridProps) {
           <div className="mb-1.5 flex items-center justify-between">
             <p className="text-xs text-text-3">{item.label}</p>
             {item.delta ? (
-              <span className="font-mono text-[11px] text-success">
+              <span
+                className={cn(
+                  "font-mono text-[11px]",
+                  item.delta.startsWith("-") ? "text-text-4" : "text-success",
+                )}
+              >
                 {item.delta}
               </span>
             ) : null}

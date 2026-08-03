@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ApplicationStatusBadge } from "@/entities/application/ui/application-status-badge";
 import type { ApplicationStatusValue } from "@/entities/application/model/config";
 import { EmptyState } from "@/shared/design/empty-state";
@@ -32,12 +33,16 @@ export function PipelineOverviewCard({
   return (
     <Card>
       <CardHeader className="pb-4 sm:pb-6">
-        <p className="font-display text-lg font-semibold tracking-tight text-text">
-          Pipeline Distribution
-        </p>
-        <p className="text-sm text-text-3">
-          Applications by current status.
-        </p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-text">Pipeline</p>
+          <Link
+            href="/pipeline"
+            className="text-xs text-text-3 transition-colors hover:text-text"
+          >
+            Open board →
+          </Link>
+        </div>
+        <p className="text-sm text-text-3">Applications by current status.</p>
       </CardHeader>
       <CardContent className="pt-2 sm:pt-4">
         {!isEmpty ? (

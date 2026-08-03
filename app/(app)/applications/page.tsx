@@ -4,6 +4,7 @@ import { ApplicationsTableClient } from "@/widgets/applications-table/ui/applica
 import { NewApplicationButton } from "@/features/applications/components/new-application-button";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { prisma } from "@/shared/lib/prisma";
 import { PageHeader } from "@/shared/design/page-header";
 
 type ApplicationsPageProps = {
@@ -19,10 +20,18 @@ export default async function ApplicationsPage({
 }: ApplicationsPageProps) {
   const user = await requireCurrentUser();
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const { items, state, totalCount } = await getApplicationsForUser(
-    user.id,
-    resolvedSearchParams,
-  );
+  const [{ items, state, totalCount }, statusGroups] = await Promise.all([
+    getApplicationsForUser(user.id, resolvedSearchParams),
+    prisma.application.groupBy({
+      by: ["status"],
+      where: { userId: user.id },
+      _count: { status: true },
+    }),
+  ]);
+  const statusCounts: Record<string, number> = {};
+  for (const group of statusGroups) {
+    statusCounts[group.status] = group._count.status;
+  }
   const hasFilters = Boolean(state.query) || state.status !== "ALL";
   const hasActiveSort = state.sort !== "updated-desc";
   const resultsLabel =
@@ -47,7 +56,10 @@ export default async function ApplicationsPage({
       />
       <ApplicationsFilters state={state} />
       {items.length > 0 ? (
-        <ApplicationsTableClient applications={items} />
+        <ApplicationsTableClient
+          applications={items}
+          statusCounts={statusCounts}
+        />
       ) : (
         <ApplicationsEmptyState hasFilters={hasFilters || hasActiveSort} />
       )}
