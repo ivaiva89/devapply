@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { PipelineOverviewCard } from "@/widgets/dashboard/ui/pipeline-overview-card";
-import { mockApplicationsStatusDistribution } from "@/shared/mocks/ui-fixtures";
+import { mockApplicationsStatusDistribution } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/Dashboard/PipelineOverviewCard",

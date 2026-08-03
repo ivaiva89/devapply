@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { Button } from "@/shared/ui/button";
 import { RemindersListPresenter } from "@/widgets/reminders-panel/ui/reminders-list-presenter";
-import { mockReminderListItems } from "@/shared/mocks/ui-fixtures";
+import { mockReminderListItems } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/Reminders/RemindersListPresenter",

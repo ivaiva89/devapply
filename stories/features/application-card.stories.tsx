@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ApplicationCard } from "@/entities/application/ui/application-card";
-import { mockApplicationCard } from "@/shared/mocks/ui-fixtures";
+import { mockApplicationCard } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/ApplicationCard",

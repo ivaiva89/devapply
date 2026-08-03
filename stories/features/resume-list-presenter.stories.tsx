@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ResumeListPresenter } from "@/widgets/resumes-panel/ui/resume-list-presenter";
-import { mockResumeListItems } from "@/shared/mocks/ui-fixtures";
+import { mockResumeListItems } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/Resumes/ResumeListPresenter",
