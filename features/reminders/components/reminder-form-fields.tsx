@@ -113,7 +113,7 @@ export function ReminderFormFields({
         label={
           <>
             Notes{" "}
-            <span className="font-normal text-muted-foreground">
+            <span className="font-normal text-text-3">
               (optional)
             </span>
           </>

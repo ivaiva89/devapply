@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { ApplicationCard } from "@/entities/application/ui/application-card";
 import { ApplicationKanbanColumn } from "@/widgets/pipeline-board/ui/application-kanban-column";
-import { mockPipelineColumns } from "@/shared/mocks/ui-fixtures";
+import { mockPipelineColumns } from "@/tests/fixtures/ui-fixtures";
 
 function FilledColumn() {
   const column = mockPipelineColumns[1];

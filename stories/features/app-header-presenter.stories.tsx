@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { AppHeaderPresenter } from "@/widgets/app-shell/ui/app-header-presenter";
-import { mockNavigationShellUser } from "@/shared/mocks/ui-fixtures";
+import { mockNavigationShellUser } from "@/tests/fixtures/ui-fixtures";
 import { Button } from "@/shared/ui/button";
 
 const meta = {

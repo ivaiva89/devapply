@@ -1,0 +1,5 @@
+import{n as e}from"./chunk-vNrZSFDR.js";import{_ as t}from"./iframe-DtGyfQJJ.js";import{r as n,t as r}from"./button-C1BGWU3y.js";function i({disabled:e=!1,onClick:t}){return(0,a.jsx)(r,{type:`button`,onClick:t,disabled:e,children:`New application`})}var a,o=e((()=>{a=t(),n(),i.__docgenInfo={description:``,methods:[],displayName:`NewApplicationTrigger`,props:{disabled:{required:!1,tsType:{name:`boolean`},description:``,defaultValue:{value:`false`,computed:!1}},onClick:{required:!1,tsType:{name:`signature`,type:`function`,raw:`() => void`,signature:{arguments:[],return:{name:`void`}}},description:``}}}})),s,c,l,u;e((()=>{o(),s={title:`Features/Applications/NewApplicationTrigger`,component:i},c={},l={args:{disabled:!0}},c.parameters={...c.parameters,docs:{...c.parameters?.docs,source:{originalSource:`{}`,...c.parameters?.docs?.source}}},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  args: {
+    disabled: true
+  }
+}`,...l.parameters?.docs?.source}}},u=[`Default`,`Disabled`]}))();export{c as Default,l as Disabled,u as __namedExportsOrder,s as default};

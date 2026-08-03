@@ -1,7 +1,6 @@
 import { ApplicationsOverTimeChartSection } from "@/widgets/dashboard/ui/applications-over-time-chart-section";
 import { ConversionSummarySection } from "@/widgets/dashboard/ui/conversion-summary-section";
 import { DashboardEmptyState } from "@/widgets/dashboard/ui/dashboard-empty-state";
-import { DashboardHeader } from "@/widgets/dashboard/ui/dashboard-header";
 import { DashboardShell } from "@/widgets/dashboard/ui/dashboard-shell";
 import { PipelineOverviewCard } from "@/widgets/dashboard/ui/pipeline-overview-card";
 import { RecentApplicationsCard } from "@/widgets/dashboard/ui/recent-applications-card";
@@ -15,14 +14,67 @@ export default async function DashboardPage() {
   const data = await getDashboardDataForUser(user.id);
 
   const isEmpty = data.isEmpty;
+  const now = new Date();
+
+  const todayEnd = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1),
+  );
+
+  const todayItems = data.reminders
+    .filter((r) => new Date(r.dueAt) <= todayEnd)
+    .map((r) => {
+      const dueDate = new Date(r.dueAt);
+      const isOverdue = dueDate < now;
+      const titleLower = r.title.toLowerCase();
+
+      let chipLabel: string;
+      let chipTone: "accent" | "warning" | "primary";
+
+      if (isOverdue) {
+        chipLabel = "Follow-up";
+        chipTone = "warning";
+      } else if (titleLower.includes("interview")) {
+        chipLabel = "Interview";
+        chipTone = "accent";
+      } else {
+        chipLabel = "Due today";
+        chipTone = "primary";
+      }
+
+      let timeLabel: string;
+      if (isOverdue) {
+        const daysOverdue = Math.floor(
+          (now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
+        );
+        timeLabel = daysOverdue > 0 ? `Overdue ${daysOverdue}d` : "Overdue";
+      } else {
+        const isToday =
+          dueDate.getUTCFullYear() === now.getUTCFullYear() &&
+          dueDate.getUTCMonth() === now.getUTCMonth() &&
+          dueDate.getUTCDate() === now.getUTCDate();
+        if (isToday) {
+          timeLabel = new Intl.DateTimeFormat("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+          }).format(dueDate);
+        } else {
+          timeLabel = `by ${new Intl.DateTimeFormat("en-US", {
+            weekday: "short",
+          }).format(dueDate)}`;
+        }
+      }
+
+      return {
+        id: r.id,
+        text: r.company ? `${r.title} · ${r.company}` : r.title,
+        chipLabel,
+        chipTone,
+        timeLabel,
+      };
+    });
 
   return (
-    <DashboardShell>
-      <DashboardHeader
-        title="Dashboard"
-        description="Job search overview — pipeline volume, recent activity, and follow-ups."
-      />
-
+    <DashboardShell userName={user.name ?? undefined} todayItems={todayItems}>
       <StatsGrid items={data.kpis} />
 
       {isEmpty ? <DashboardEmptyState /> : null}

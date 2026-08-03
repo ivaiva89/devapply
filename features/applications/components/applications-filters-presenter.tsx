@@ -33,7 +33,7 @@ export function ApplicationsFiltersPresenter({
   return (
     <form
       action={action}
-      className="rounded-3xl border border-border/70 bg-card p-5 shadow-sm"
+      className="rounded-3xl border border-border/70 bg-surface p-5 shadow-sm"
     >
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_220px_220px_auto] lg:items-end">
         <FieldShell htmlFor={`${idPrefix}-query`} label="Search">

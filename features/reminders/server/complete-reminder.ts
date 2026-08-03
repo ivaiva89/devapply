@@ -11,7 +11,14 @@ const completeReminderSchema = z.object({
   actionType: z.enum(["done", "sent"]),
 });
 
-export async function completeReminder(reminderId: string, formData: FormData) {
+type CompleteReminderResult =
+  | { status: "success" }
+  | { status: "error"; error: string };
+
+async function completeReminderAction(
+  reminderId: string,
+  formData: FormData,
+): Promise<CompleteReminderResult> {
   const user = await requireCurrentUser();
   const result = completeReminderSchema.safeParse({
     reminderId,
@@ -19,7 +26,10 @@ export async function completeReminder(reminderId: string, formData: FormData) {
   });
 
   if (!result.success) {
-    return;
+    return {
+      status: "error",
+      error: "The reminder action was not valid.",
+    };
   }
 
   const input = result.data;
@@ -36,7 +46,10 @@ export async function completeReminder(reminderId: string, formData: FormData) {
   });
 
   if (!reminder) {
-    return;
+    return {
+      status: "error",
+      error: "That reminder could not be found.",
+    };
   }
 
   await prisma.reminder.update({
@@ -50,4 +63,15 @@ export async function completeReminder(reminderId: string, formData: FormData) {
 
   revalidatePath("/reminders");
   revalidatePath("/dashboard");
+
+  return {
+    status: "success",
+  };
+}
+
+export async function completeReminder(
+  reminderId: string,
+  formData: FormData,
+): Promise<void> {
+  await completeReminderAction(reminderId, formData);
 }

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ApplicationsOverTimeChartSection } from "@/widgets/dashboard/ui/applications-over-time-chart-section";
-import { mockApplicationsOverTime } from "@/shared/mocks/ui-fixtures";
+import { mockApplicationsOverTime } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/ApplicationsOverTimeChartSection",

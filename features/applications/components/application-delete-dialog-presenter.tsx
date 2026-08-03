@@ -36,7 +36,7 @@ export function ApplicationDeleteDialogPresenter({
     >
       <DialogContent className="max-w-lg rounded-[2rem] p-6 sm:p-8">
         <DialogHeader>
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-[0.24em] text-text-3">
             Applications
           </p>
           <DialogTitle className="text-2xl tracking-tight">
@@ -44,13 +44,13 @@ export function ApplicationDeleteDialogPresenter({
           </DialogTitle>
           <DialogDescription className="mt-1 text-sm leading-6">
             Delete{" "}
-            <span className="font-medium text-foreground">{company}</span>? This
+            <span className="font-medium text-text">{company}</span>? This
             action cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
         {error ? (
-          <p className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <p className="rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
             {error}
           </p>
         ) : null}

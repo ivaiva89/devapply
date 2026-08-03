@@ -34,21 +34,21 @@ export function ResumeListPresenter({
       {resumes.map((resume) => (
         <Card
           key={resume.id}
-          className="rounded-3xl border-none bg-card shadow-sm"
+          className="rounded-3xl border-none bg-surface shadow-sm"
         >
           <CardContent className="space-y-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-2">
                 <div>
-                  <p className="font-display text-xl font-semibold tracking-tight text-foreground">
+                  <p className="font-display text-xl font-semibold tracking-tight text-text">
                     {resume.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-text-3">
                     {resume.fileName}
                   </p>
                 </div>
 
-                <dl className="flex flex-wrap gap-3 font-label text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <dl className="flex flex-wrap gap-3 font-label text-[11px] uppercase tracking-[0.18em] text-text-3">
                   <div>{formatBytes(resume.fileSizeBytes)}</div>
                   <div>{resume.mimeType}</div>
                   <div>Uploaded {formatDate(resume.uploadedAt)}</div>
@@ -73,7 +73,7 @@ export function ResumeListPresenter({
 
             <div className="space-y-3">
               <CardHeader className="px-0">
-                <CardTitle className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                <CardTitle className="text-xs uppercase tracking-[0.18em] text-text-3">
                   Attached applications
                 </CardTitle>
               </CardHeader>
@@ -83,14 +83,14 @@ export function ResumeListPresenter({
                   {resume.attachedApplications.map((application) => (
                     <span
                       key={application.id}
-                      className="rounded-full bg-muted px-3 py-2 text-sm text-muted-foreground"
+                      className="rounded-full bg-surface-1 px-3 py-2 text-sm text-text-3"
                     >
                       {application.company} - {application.role}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-text-3">
                   This resume is not attached to any application yet.
                 </p>
               )}

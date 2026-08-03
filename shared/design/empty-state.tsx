@@ -25,12 +25,12 @@ export function EmptyState({
       )}
     >
       {eyebrow ? (
-        <p className="mb-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+        <p className="mb-2 text-xs font-medium uppercase tracking-widest text-text-3">
           {eyebrow}
         </p>
       ) : null}
-      <p className="text-sm font-medium text-foreground">{title}</p>
-      <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+      <p className="text-sm font-medium text-text">{title}</p>
+      <p className="mt-1 max-w-sm text-xs leading-5 text-text-3">
         {description}
       </p>
       {action ? <div className="mt-5">{action}</div> : null}

@@ -11,7 +11,6 @@ import { Input } from "@/shared/ui/input";
 
 type UploadResumeFormPresenterProps = {
   action?: ComponentProps<"form">["action"];
-  canUpload: boolean;
   error?: string;
   formRef?: RefObject<HTMLFormElement | null>;
   idPrefix?: string;
@@ -20,7 +19,6 @@ type UploadResumeFormPresenterProps = {
 
 export function UploadResumeFormPresenter({
   action,
-  canUpload,
   error,
   formRef,
   idPrefix = "upload-resume",
@@ -33,16 +31,16 @@ export function UploadResumeFormPresenter({
     <form
       ref={formRef}
       action={action}
-      className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm"
+      className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm"
     >
       <CardHeader className="space-y-2 px-0">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-text-3">
           Upload resume
         </p>
         <CardTitle className="text-xl tracking-tight">
           Add a resume version
         </CardTitle>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-sm leading-6 text-text-3">
           Upload PDF, DOC, or DOCX files to Blob storage and keep a title you
           can recognize later.
         </p>
@@ -53,7 +51,7 @@ export function UploadResumeFormPresenter({
           <Input
             id={titleId}
             name="title"
-            disabled={!canUpload || isPending}
+            disabled={isPending}
             placeholder="Backend resume"
             required
           />
@@ -72,7 +70,7 @@ export function UploadResumeFormPresenter({
               description: "PDF, DOC, or DOCX only. Maximum file size: 5 MB.",
             })}
             accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            disabled={!canUpload || isPending}
+            disabled={isPending}
             required
             className="h-auto rounded-lg px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground file:shadow-sm hover:file:bg-primary/90"
           />
@@ -80,7 +78,7 @@ export function UploadResumeFormPresenter({
 
         {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
 
-        <Button type="submit" disabled={!canUpload || isPending}>
+        <Button type="submit" disabled={isPending}>
           {isPending ? "Uploading..." : "Upload resume"}
         </Button>
       </CardContent>

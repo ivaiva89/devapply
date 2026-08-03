@@ -9,6 +9,7 @@ import {
   getApplicationFormSuccessState,
 } from "@/features/applications/schemas/application-form-schema";
 import { readApplicationFormValues } from "@/features/applications/server/application-form";
+import { REVALIDATE_PATHS } from "@/features/applications/server/revalidate-paths";
 import { updateApplicationForUser } from "@/entities/application/api/application-service";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import type { CreateApplicationActionState } from "@/features/applications/create-application-form";
@@ -42,11 +43,9 @@ export async function updateApplication(
       });
     }
 
-    revalidatePath("/applications");
-    revalidatePath("/dashboard");
-    revalidatePath("/pipeline");
-    revalidatePath("/reminders");
-    revalidatePath("/resumes");
+    REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
+      revalidatePath(path);
+    });
 
     return getApplicationFormSuccessState(values);
   } catch {

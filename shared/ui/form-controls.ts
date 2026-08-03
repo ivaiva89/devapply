@@ -10,7 +10,7 @@ export function getCompactFieldControlClassName(error?: string) {
   return cn(
     compactControlClassName,
     error
-      ? "border-destructive/50 focus-visible:border-destructive focus-visible:ring-destructive/20"
+      ? "border-danger/50 focus-visible:border-danger focus-visible:ring-destructive/20"
       : "border-input focus-visible:border-ring",
   );
 }

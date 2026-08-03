@@ -47,7 +47,7 @@ export function ReminderEditDialogPresenter({
     >
       <DialogContent className="max-w-lg rounded-[2rem] p-6 sm:p-8">
         <DialogHeader>
-          <p className="text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-[0.24em] text-text-3">
             Reminders
           </p>
           <DialogTitle className="text-2xl tracking-tight">

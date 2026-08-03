@@ -1,0 +1,9 @@
+export { DashboardShell } from "./ui/dashboard-shell";
+export { DashboardHeader } from "./ui/dashboard-header";
+export { StatsGrid } from "./ui/stats-grid";
+export { RecentApplicationsCard } from "./ui/recent-applications-card";
+export { UpcomingRemindersCard } from "./ui/upcoming-reminders-card";
+export { PipelineOverviewCard } from "./ui/pipeline-overview-card";
+export { ApplicationsOverTimeChartSection } from "./ui/applications-over-time-chart-section";
+export { ConversionSummarySection } from "./ui/conversion-summary-section";
+export { DashboardEmptyState } from "./ui/dashboard-empty-state";

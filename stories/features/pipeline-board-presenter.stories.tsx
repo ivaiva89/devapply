@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { PipelineBoardPresenter } from "@/widgets/pipeline-board/ui/pipeline-board-presenter";
-import { mockPipelineBoardColumns } from "@/shared/mocks/ui-fixtures";
+import { mockPipelineBoardColumns } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/Applications/PipelineBoardPresenter",

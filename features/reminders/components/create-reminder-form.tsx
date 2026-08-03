@@ -14,7 +14,6 @@ import type {
 
 type CreateReminderFormProps = {
   applicationOptions: ReminderApplicationOption[];
-  canCreate: boolean;
 };
 
 const initialState: CreateReminderActionState = {
@@ -40,7 +39,6 @@ function syncReminderTimezoneOffset(form: HTMLFormElement) {
 
 export function CreateReminderForm({
   applicationOptions,
-  canCreate,
 }: CreateReminderFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -69,7 +67,6 @@ export function CreateReminderForm({
       formRef={formRef}
       action={formAction}
       applicationOptions={applicationOptions}
-      canCreate={canCreate}
       error={state.error}
       isPending={isPending}
       onSubmit={handleSubmit}

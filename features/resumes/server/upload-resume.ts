@@ -7,10 +7,6 @@ import { del, put } from "@vercel/blob";
 
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
-import {
-  getPlanGate,
-  getPlanLimitReachedMessage,
-} from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/shared/lib/prisma";
 
 export type UploadResumeActionState = {
@@ -92,15 +88,6 @@ export async function uploadResume(
     };
   }
 
-  const gate = await getPlanGate(user.id, "resumes");
-
-  if (!gate.allowed) {
-    return {
-      status: "error",
-      error: getPlanLimitReachedMessage("resumes"),
-    };
-  }
-
   const blobToken = getBlobToken();
 
   if (!blobToken) {
@@ -111,7 +98,7 @@ export async function uploadResume(
     };
   }
 
-  const resumeCount = gate.used;
+  const resumeCount = await prisma.resume.count({ where: { userId: user.id } });
   const pathname = getBlobPathname(user.id, file.name);
   let blobUrl: string | null = null;
 

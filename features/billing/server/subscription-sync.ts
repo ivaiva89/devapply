@@ -107,48 +107,15 @@ function getPayloadStatus(payload: BillingPayload) {
   return getStringValue(payload.data.status);
 }
 
-function getBillingUpdateData(payload: BillingPayload, plan: BillingPlan) {
-  const data: Prisma.UserUpdateManyMutationInput = {
-    billingProvider: "POLAR",
-    billingSyncedAt: new Date(),
-    plan,
-  };
-
-  const billingCustomerId = getPayloadCustomerId(payload);
-  const billingSubscriptionId = getPayloadSubscriptionId(payload);
-  const billingProductId = getPayloadProductId(payload);
-  const billingSubscriptionStatus = getPayloadStatus(payload);
-
-  if (billingCustomerId) {
-    data.billingCustomerId = billingCustomerId;
-  }
-
-  if (billingSubscriptionId) {
-    data.billingSubscriptionId = billingSubscriptionId;
-  }
-
-  if (billingProductId) {
-    data.billingProductId = billingProductId;
-  }
-
-  if (billingSubscriptionStatus) {
-    data.billingSubscriptionStatus = billingSubscriptionStatus;
-  }
-
-  const currentPeriodEnd = getPayloadCurrentPeriodEnd(payload);
-
-  if (currentPeriodEnd) {
-    data.billingCurrentPeriodEnd = currentPeriodEnd;
-  }
-
-  return data;
-}
-
-function getBillingLinkUpdateData(payload: BillingPayload) {
+function getBillingUpdateData(payload: BillingPayload, plan?: BillingPlan) {
   const data: Prisma.UserUpdateManyMutationInput = {
     billingProvider: "POLAR",
     billingSyncedAt: new Date(),
   };
+
+  if (plan) {
+    data.plan = plan;
+  }
 
   const billingCustomerId = getPayloadCustomerId(payload);
   const billingSubscriptionId = getPayloadSubscriptionId(payload);
@@ -241,5 +208,5 @@ export async function syncUserPlanFromBillingPayload(
 }
 
 export async function syncBillingLinkageFromPayload(payload: BillingPayload) {
-  await updateBillingStateForUser(payload, getBillingLinkUpdateData(payload));
+  await updateBillingStateForUser(payload, getBillingUpdateData(payload));
 }

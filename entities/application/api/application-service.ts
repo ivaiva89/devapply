@@ -7,8 +7,8 @@ import {
   applicationStatusValues,
   applicationSourceLabels,
 } from "@/entities/application/model/config";
-import type { ParsedApplicationFormValues } from "@/features/applications/schemas/application-form-schema";
 import type {
+  ApplicationFormInput,
   ApplicationListItem,
   ApplicationSortOption,
   ApplicationsQueryState,
@@ -165,7 +165,7 @@ export async function getPipelineColumnsForUser(
 export async function createApplicationWithCountForUser(
   client: ApplicationClient,
   userId: string,
-  input: ParsedApplicationFormValues,
+  input: ApplicationFormInput,
 ) {
   const application = await client.application.create({
     data: {
@@ -199,7 +199,7 @@ export async function createApplicationWithCountForUser(
 export async function updateApplicationForUser(
   userId: string,
   applicationId: string,
-  input: ParsedApplicationFormValues,
+  input: ApplicationFormInput,
 ) {
   return prisma.application.updateMany({
     where: {

@@ -25,7 +25,7 @@ export function ApplicationRowActionsMenu({
             type="button"
             variant="ghost"
             size="icon"
-            className="size-9 rounded-full border border-border/70 text-muted-foreground hover:border-border hover:bg-muted hover:text-foreground"
+            className="size-9 rounded-full border border-border text-text-3 hover:border-border-strong hover:bg-surface-2 hover:text-text"
             aria-label="Open application actions"
           />
         }

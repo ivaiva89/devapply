@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ApplicationsTable } from "@/widgets/applications-table/ui/applications-table";
-import { mockApplicationTableRows } from "@/shared/mocks/ui-fixtures";
+import { mockApplicationTableRows } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/ApplicationsTable",

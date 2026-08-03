@@ -1,5 +1,3 @@
-import type { Plan } from "@prisma/client";
-
 export type ResumeListItem = {
   id: string;
   title: string;
@@ -21,9 +19,7 @@ export type ResumeApplicationOption = {
 };
 
 export type ResumePageData = {
-  plan: Plan;
   resumeCount: number;
-  canUpload: boolean;
   resumes: ResumeListItem[];
   applicationOptions: ResumeApplicationOption[];
 };

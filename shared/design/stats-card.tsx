@@ -28,7 +28,7 @@ export function StatsCard({
           <p
             className={cn(
               "text-sm font-medium",
-              highlight ? "text-primary/90" : "text-muted-foreground",
+              highlight ? "text-primary/90" : "text-text-3",
             )}
           >
             {label}
@@ -37,7 +37,7 @@ export function StatsCard({
             <Icon
               className={cn(
                 "size-3.5 shrink-0",
-                highlight ? "text-primary/40" : "text-muted-foreground/40",
+                highlight ? "text-primary/40" : "text-text-3/40",
               )}
             />
           ) : null}
@@ -45,13 +45,13 @@ export function StatsCard({
         <p
           className={cn(
             "font-display text-4xl font-semibold tabular-nums tracking-tight",
-            valueClassName ?? "text-foreground",
+            valueClassName ?? "text-text",
           )}
         >
           {value}
         </p>
         {helper ? (
-          <p className="font-label text-xs tracking-wide text-muted-foreground">
+          <p className="font-label text-xs tracking-wide text-text-3">
             {helper}
           </p>
         ) : null}

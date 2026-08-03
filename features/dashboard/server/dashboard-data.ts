@@ -7,8 +7,11 @@ import { prisma } from "@/shared/lib/prisma";
 
 type DashboardKpi = {
   label: string;
-  value: number;
+  value: number | string;
+  valueSuffix?: string;
   helper: string;
+  delta?: string;
+  valueColor?: "accent" | "success";
 };
 
 type DashboardRecentApplication = {
@@ -100,9 +103,14 @@ export async function getDashboardDataForUser(
   const monthStart = getMonthStart();
   const monthBuckets = getMonthBuckets(6);
 
+  const weekStart = new Date();
+  weekStart.setUTCDate(weekStart.getUTCDate() - weekStart.getUTCDay());
+  weekStart.setUTCHours(0, 0, 0, 0);
+
   const [
     totalApplications,
     applicationsThisMonth,
+    applicationsThisWeek,
     interviews,
     offers,
     statusCounts,
@@ -118,6 +126,14 @@ export async function getDashboardDataForUser(
         userId,
         createdAt: {
           gte: monthStart,
+        },
+      },
+    }),
+    prisma.application.count({
+      where: {
+        userId,
+        createdAt: {
+          gte: weekStart,
         },
       },
     }),
@@ -213,24 +229,30 @@ export async function getDashboardDataForUser(
   return {
     kpis: [
       {
-        label: "Total applications",
+        label: "Active",
         value: totalApplications,
-        helper: "All tracked applications",
+        delta: applicationsThisWeek > 0 ? `+${applicationsThisWeek} this week` : undefined,
+        helper: `${activePipelineCount} in progress`,
       },
       {
-        label: "Applications this month",
-        value: applicationsThisMonth,
-        helper: "Created since the first of the month",
+        label: "Reply rate",
+        value: totalApplications > 0
+          ? Math.round((respondedCount / totalApplications) * 100)
+          : 0,
+        valueSuffix: "%",
+        helper: `${respondedCount} of ${totalApplications} responded`,
       },
       {
         label: "Interviews",
         value: interviews,
-        helper: `${applicationStatusLabels.INTERVIEW} status`,
+        helper: "interview stage",
+        valueColor: "accent" as const,
       },
       {
         label: "Offers",
         value: offers,
-        helper: `${applicationStatusLabels.OFFER} status`,
+        helper: "offer stage",
+        valueColor: "success" as const,
       },
     ],
     applicationsOverTime: applicationsOverTimeByMonth,

@@ -1,19 +1,12 @@
 import "server-only";
 
-import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/shared/lib/prisma";
 import type { RemindersPageData } from "@/features/reminders/types";
 
 export async function getRemindersPageDataForUser(
   userId: string,
 ): Promise<RemindersPageData> {
-  const [user, reminders, applications] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        plan: true,
-      },
-    }),
+  const [reminders, applications] = await Promise.all([
     prisma.reminder.findMany({
       where: {
         userId,
@@ -45,27 +38,8 @@ export async function getRemindersPageDataForUser(
     }),
   ]);
 
-  if (!user) {
-    return {
-      plan: "FREE",
-      activeReminderCount: 0,
-      canCreate: false,
-      reminders: [],
-      applicationOptions: [],
-    };
-  }
-
-  const activeReminderCount = reminders.length;
-  const canCreate = getPlanGateFromUsage(
-    user.plan,
-    activeReminderCount,
-    "reminders",
-  ).allowed;
-
   return {
-    plan: user.plan,
-    activeReminderCount,
-    canCreate,
+    activeReminderCount: reminders.length,
     reminders: reminders.map((reminder) => ({
       id: reminder.id,
       title: reminder.title,

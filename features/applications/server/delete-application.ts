@@ -7,6 +7,7 @@ import type { DeleteApplicationActionState } from "@/features/applications/appli
 import { deleteApplicationForUser } from "@/entities/application/api/application-service";
 import { trackServerEvent } from "@/features/analytics/server/track-event";
 import { requireCurrentUser } from "@/features/auth/server/session";
+import { REVALIDATE_PATHS } from "@/features/applications/server/revalidate-paths";
 import { getValidationErrorMessage } from "@/shared/lib/server-action-validation";
 
 const deleteApplicationSchema = z.object({
@@ -58,11 +59,9 @@ export async function deleteApplication(
       },
     });
 
-    revalidatePath("/applications");
-    revalidatePath("/dashboard");
-    revalidatePath("/pipeline");
-    revalidatePath("/reminders");
-    revalidatePath("/resumes");
+    REVALIDATE_PATHS.APPLICATIONS.forEach((path) => {
+      revalidatePath(path);
+    });
 
     return {
       status: "success",

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
   ApplicationsTable,
@@ -9,7 +10,11 @@ import {
 import { ApplicationDeleteDialog } from "@/features/applications/components/application-delete-dialog";
 import { ApplicationFormModal } from "@/features/applications/components/application-form-modal";
 import { ApplicationRowActionsMenu } from "@/entities/application/ui/application-row-actions-menu";
-import { applicationSourceLabels } from "@/entities/application/model/config";
+import {
+  applicationSourceLabels,
+  applicationStatusValues,
+} from "@/entities/application/model/config";
+import type { ApplicationStatusValue } from "@/entities/application/model/config";
 import { getApplicationFormValues } from "@/features/applications/create-application-form";
 import { updateApplication } from "@/features/applications/server/update-application";
 import type { ApplicationListItem } from "@/entities/application/model/types";
@@ -54,14 +59,41 @@ function RowActionsMenu({
   );
 }
 
+function parseActiveStatus(
+  raw: string | null,
+): ApplicationStatusValue | null {
+  if (!raw) return null;
+  return applicationStatusValues.includes(raw as ApplicationStatusValue)
+    ? (raw as ApplicationStatusValue)
+    : null;
+}
+
 export function ApplicationsTableClient({
   applications,
 }: ApplicationsTableClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [feedback, setFeedback] = useState<TableFeedback | null>(null);
   const [editingApplication, setEditingApplication] =
     useState<ApplicationListItem | null>(null);
   const [deletingApplication, setDeletingApplication] =
     useState<ApplicationListItem | null>(null);
+
+  const activeStatus = parseActiveStatus(searchParams.get("status"));
+
+  const handleStatusFilter = useCallback(
+    (status: ApplicationStatusValue | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (status === null) {
+        params.delete("status");
+      } else {
+        params.set("status", status);
+      }
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
 
   const rows: ApplicationTableRow[] = applications.map((application) => ({
     id: application.id,
@@ -90,8 +122,8 @@ export function ApplicationsTableClient({
         <div
           className={`rounded-2xl border px-4 py-3 text-sm ${
             feedback.tone === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-200"
-              : "border-red-200 bg-red-50 text-red-700 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-200"
+              ? "border border-success-soft bg-success-soft text-success"
+              : "border border-danger-soft bg-danger-soft text-danger"
           }`}
         >
           <div className="flex items-start justify-between gap-4">
@@ -106,7 +138,11 @@ export function ApplicationsTableClient({
           </div>
         </div>
       ) : null}
-      <ApplicationsTable applications={rows} />
+      <ApplicationsTable
+        applications={rows}
+        activeStatus={activeStatus}
+        onStatusFilter={handleStatusFilter}
+      />
       {editingApplication ? (
         <ApplicationFormModal
           key={editingApplication.id}

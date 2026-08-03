@@ -1,19 +1,12 @@
 import "server-only";
 
-import { getPlanGateFromUsage } from "@/features/billing/server/plan-enforcement";
 import { prisma } from "@/shared/lib/prisma";
 import type { ResumePageData } from "@/features/resumes/types";
 
 export async function getResumePageDataForUser(
   userId: string,
 ): Promise<ResumePageData> {
-  const [user, resumes, applications] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        plan: true,
-      },
-    }),
+  const [resumes, applications] = await Promise.all([
     prisma.resume.findMany({
       where: {
         userId,
@@ -53,27 +46,8 @@ export async function getResumePageDataForUser(
     }),
   ]);
 
-  if (!user) {
-    return {
-      plan: "FREE",
-      resumeCount: 0,
-      canUpload: false,
-      resumes: [],
-      applicationOptions: [],
-    };
-  }
-
-  const resumeCount = resumes.length;
-  const canUpload = getPlanGateFromUsage(
-    user.plan,
-    resumeCount,
-    "resumes",
-  ).allowed;
-
   return {
-    plan: user.plan,
-    resumeCount,
-    canUpload,
+    resumeCount: resumes.length,
     resumes: resumes.map((resume) => ({
       id: resume.id,
       title: resume.label,

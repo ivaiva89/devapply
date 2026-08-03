@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { RecentApplicationsCard } from "@/widgets/dashboard/ui/recent-applications-card";
-import { mockRecentApplications } from "@/shared/mocks/ui-fixtures";
+import { mockRecentApplications } from "@/tests/fixtures/ui-fixtures";
 
 const meta = {
   title: "Features/Dashboard/RecentApplicationsCard",

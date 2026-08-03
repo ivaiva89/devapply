@@ -38,18 +38,18 @@ export function DataTable<T>({
   header,
 }: DataTableProps<T>) {
   return (
-    <Card className="min-w-0 rounded-3xl border-none bg-card shadow-sm">
+    <Card className="min-w-0 rounded-card border border-border">
       {header ? <CardHeader>{header}</CardHeader> : null}
-      <CardContent className={cn("min-w-0", header ? "pt-0" : undefined)}>
+      <CardContent className={cn("min-w-0 px-0", header ? "pt-0" : undefined)}>
         {rows.length > 0 ? (
           <Table>
             <TableHeader>
-              <TableRow className="border-border/15 bg-muted/20 hover:bg-muted/20">
+              <TableRow className="border-b border-border bg-surface-1 hover:bg-surface-1">
                 {columns.map((column) => (
                   <TableHead
                     key={column.key}
                     className={cn(
-                      "px-5 py-4 font-label text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground",
+                      "px-4 py-3 font-mono text-xs font-medium uppercase tracking-wider text-text-3",
                       column.align === "right" ? "text-right" : "text-left",
                       column.className,
                     )}
@@ -63,13 +63,13 @@ export function DataTable<T>({
               {rows.map((row) => (
                 <TableRow
                   key={getRowKey(row)}
-                  className="border-border/15 transition-colors hover:bg-muted/30"
+                  className="border-b border-border transition-colors hover:bg-surface-1"
                 >
                   {columns.map((column) => (
                     <TableCell
                       key={column.key}
                       className={cn(
-                        "px-5 py-4 align-top text-sm text-muted-foreground",
+                        "px-4 py-3 align-top text-sm text-text-2",
                         column.align === "right" ? "text-right" : "text-left",
                         column.className,
                       )}
@@ -82,11 +82,9 @@ export function DataTable<T>({
             </TableBody>
           </Table>
         ) : (
-          <EmptyState
-            compact
-            title={emptyTitle}
-            description={emptyDescription}
-          />
+          <div className="px-4 py-8">
+            <EmptyState compact title={emptyTitle} description={emptyDescription} />
+          </div>
         )}
       </CardContent>
     </Card>

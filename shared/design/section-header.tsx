@@ -19,9 +19,9 @@ export function SectionHeader({
   return (
     <div className={cn("flex items-start justify-between gap-4", className)}>
       <div>
-        <h2 className="text-sm font-medium text-foreground">{title}</h2>
+        <h2 className="text-sm font-medium text-text">{title}</h2>
         {description ? (
-          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+          <p className="mt-0.5 text-xs text-text-3">{description}</p>
         ) : null}
       </div>
       {actions ? <div className="shrink-0">{actions}</div> : null}

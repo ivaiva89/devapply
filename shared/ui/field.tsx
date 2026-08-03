@@ -54,20 +54,20 @@ export function FieldShell({
 }: FieldShellProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label htmlFor={htmlFor} className="text-sm font-medium text-foreground">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-text">
         {label}
       </label>
       {children}
       {description ? (
         <p
           id={getFieldDescriptionId(htmlFor)}
-          className="text-xs leading-5 text-muted-foreground"
+          className="text-xs leading-5 text-text-3"
         >
           {description}
         </p>
       ) : null}
       {error ? (
-        <p id={getFieldErrorId(htmlFor)} className="text-sm text-destructive">
+        <p id={getFieldErrorId(htmlFor)} className="text-sm text-danger">
           {error}
         </p>
       ) : null}
@@ -82,7 +82,7 @@ export function FormErrorMessage({
   return (
     <p
       className={cn(
-        "rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive",
+        "rounded-2xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger",
         className,
       )}
     >

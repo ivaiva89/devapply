@@ -1,5 +1,3 @@
-import type { Plan } from "@prisma/client";
-
 export type ReminderListItem = {
   id: string;
   title: string;
@@ -18,9 +16,7 @@ export type ReminderApplicationOption = {
 };
 
 export type RemindersPageData = {
-  plan: Plan;
   activeReminderCount: number;
-  canCreate: boolean;
   reminders: ReminderListItem[];
   applicationOptions: ReminderApplicationOption[];
 };
