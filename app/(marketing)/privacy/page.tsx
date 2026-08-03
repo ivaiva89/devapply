@@ -59,7 +59,7 @@ const sections = [
 export default function PrivacyPolicyPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <section className="rounded-[2rem] border border-border/70 bg-surface/90 p-8 shadow-sm">
+      <section className="rounded-[2rem] border border-border bg-surface/90 p-8 shadow-sm">
         <div className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-text-3">
             Privacy policy
@@ -82,7 +82,7 @@ export default function PrivacyPolicyPage() {
         {sections.map((section) => (
           <article
             key={section.title}
-            className="rounded-[1.75rem] border border-border/70 bg-surface/90 p-6 shadow-sm"
+            className="rounded-[1.75rem] border border-border bg-surface/90 p-6 shadow-sm"
           >
             <h2 className="text-xl font-semibold tracking-tight text-text">
               {section.title}

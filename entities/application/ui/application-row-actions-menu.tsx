@@ -35,7 +35,7 @@ export function ApplicationRowActionsMenu({
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        className="w-44 rounded-2xl p-1.5"
+        className="w-44 rounded-card p-1.5"
       >
         <DropdownMenuItem
           onClick={() => {

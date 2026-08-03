@@ -31,7 +31,7 @@ export function UploadResumeFormPresenter({
     <form
       ref={formRef}
       action={action}
-      className="rounded-3xl border border-border/70 bg-surface p-6 shadow-sm"
+      className="rounded-card border border-border bg-surface p-6 shadow-sm"
     >
       <CardHeader className="space-y-2 px-0">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-text-3">

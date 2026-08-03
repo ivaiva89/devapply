@@ -77,7 +77,7 @@ export function AppHeaderPresenter({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[20rem] p-0">
-              <SheetHeader className="border-b border-border/70 px-6 py-5">
+              <SheetHeader className="border-b border-border px-6 py-5">
                 <SheetTitle>{title ?? "DevApply"}</SheetTitle>
                 <SheetDescription>
                   {description ??

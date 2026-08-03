@@ -1,4 +1,5 @@
 import type { DragEventHandler } from "react";
+import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
 import { ApplicationKanbanColumn } from "@/widgets/pipeline-board/ui/application-kanban-column";
 import { DesignCard } from "@/shared/design/card";
@@ -105,13 +106,19 @@ export function PipelineBoardPresenter({
                   onDragStart={onCardDragStart ? () => onCardDragStart(item.id) : undefined}
                   onDragEnd={onCardDragEnd}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="grid size-5 shrink-0 place-items-center rounded bg-surface-2 font-mono text-[11px] font-semibold text-text-2">
-                      {initials(item.company)}
-                    </span>
-                    <p className="truncate text-sm font-medium text-text">{item.company}</p>
-                  </div>
-                  <p className="truncate text-sm text-text-2">{item.role}</p>
+                  <Link
+                    href={`/applications/${item.id}`}
+                    draggable={false}
+                    className="block space-y-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="grid size-5 shrink-0 place-items-center rounded bg-surface-2 font-mono text-[11px] font-semibold text-text-2">
+                        {initials(item.company)}
+                      </span>
+                      <p className="truncate text-sm font-medium text-text">{item.company}</p>
+                    </div>
+                    <p className="truncate text-sm text-text-2">{item.role}</p>
+                  </Link>
                   <div className="flex items-center gap-2 font-mono text-[10.5px] text-text-4 tabular-nums">
                     <span className="truncate">
                       {applicationSourceLabels[item.source as ApplicationSourceValue] ??

@@ -5,7 +5,7 @@ type UpgradePromptProps = {
 
 export function UpgradePrompt({ description, title }: UpgradePromptProps) {
   return (
-    <section className="rounded-3xl border border-warning/30 bg-warning-soft p-6 shadow-sm">
+    <section className="rounded-card border border-warning/30 bg-warning-soft p-6 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-warning">
         Upgrade available
       </p>

@@ -18,7 +18,7 @@ export function ApplicationsOverTimeChartSection({
   return (
     <Card>
       <CardHeader className="pb-4 sm:pb-6">
-        <p className="font-display text-lg font-semibold tracking-tight text-text">
+        <p className="text-lg font-semibold tracking-tight text-text">
           Applications Over Time
         </p>
         <p className="text-sm text-text-3">

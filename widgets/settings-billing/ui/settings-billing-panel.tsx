@@ -1,119 +1,95 @@
+import { CustomerPortalButton } from "@/features/billing/components/customer-portal-button";
+import { PLAN_LABELS } from "@/features/billing/config";
+import { Chip, type ChipTone } from "@/shared/design/chip";
 import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/shared/lib/support";
-import { UpgradeButton } from "@/features/billing/components/upgrade-button";
-import { PlanSummary } from "@/widgets/settings-billing/ui/plan-summary";
+
+type Plan = "FREE" | "PRO" | "LIFETIME";
 
 type SettingsBillingPanelProps = {
   billingState?: string;
-  plan: "FREE" | "PRO" | "LIFETIME";
-  applicationsUsed?: number;
-  applicationsLimit?: number;
+  plan: Plan;
+  applicationsUsed: number;
+  remindersUsed: number;
+  resumesUsed: number;
+};
+
+const PLAN_TONE: Record<Plan, ChipTone> = {
+  FREE: "slate",
+  PRO: "primary",
+  LIFETIME: "success",
+};
+
+const PLAN_DESCRIPTION: Record<Plan, string> = {
+  FREE: "You are on the Free plan. Usage limits are not enforced — track as much as you need.",
+  PRO: "You have Pro access. Manage renewals or cancellation through Polar's hosted portal.",
+  LIFETIME: "You have lifetime access. No subscription is required.",
 };
 
 function BillingStatusNotice({ billingState }: { billingState?: string }) {
-  if (billingState === "success") {
-    return (
-      <section className="rounded-3xl border border-success-soft bg-success-soft p-6 shadow-sm">
-        <p className="text-sm text-success">
-          Checkout completed. Plan changes take effect after Polar webhook
-          delivery updates your account.
-        </p>
-      </section>
-    );
+  if (!billingState) {
+    return null;
   }
 
-  if (billingState === "cancelled") {
-    return (
-      <section className="rounded-3xl border border-border bg-surface-1/40 p-6 shadow-sm">
-        <p className="text-sm text-text/80">
-          Checkout was cancelled. You can restart it whenever you are ready.
-        </p>
-      </section>
-    );
+  const notices: Record<
+    string,
+    { tone: "neutral" | "success" | "warning"; message: string }
+  > = {
+    success: {
+      tone: "success",
+      message:
+        "Checkout completed. Plan changes take effect once the Polar webhook updates your account.",
+    },
+    cancelled: {
+      tone: "neutral",
+      message: "Checkout was cancelled. You can restart it whenever you're ready.",
+    },
+    portal_return: {
+      tone: "neutral",
+      message: "Returned from the billing portal.",
+    },
+    portal_unavailable: {
+      tone: "warning",
+      message:
+        "The billing portal isn't available for this account yet. Complete a checkout first or verify the Polar customer linkage.",
+    },
+    checkout_unavailable: {
+      tone: "warning",
+      message:
+        "Checkout couldn't be started for this account. Verify the Polar billing configuration and try again.",
+    },
+  };
+
+  const notice = notices[billingState];
+  if (!notice) {
+    return null;
   }
 
-  if (billingState === "portal_return") {
-    return (
-      <section className="rounded-3xl border border-border bg-surface-1/40 p-6 shadow-sm">
-        <p className="text-sm text-text/80">
-          Returned from the billing portal.
-        </p>
-      </section>
-    );
-  }
+  const toneClass =
+    notice.tone === "success"
+      ? "border-success-soft bg-success-soft text-success"
+      : notice.tone === "warning"
+        ? "border-warning-soft bg-warning-soft text-warning"
+        : "border-border bg-surface-1 text-text-2";
 
-  if (billingState === "portal_unavailable") {
-    return (
-      <section className="rounded-3xl border border-warning-soft bg-warning-soft p-6 shadow-sm">
-        <p className="text-sm text-warning">
-          Billing portal is not available for this account yet. Complete a Pro
-          checkout first or verify the Polar customer linkage for this user.
-        </p>
-      </section>
-    );
-  }
-
-  if (billingState === "checkout_unavailable") {
-    return (
-      <section className="rounded-3xl border border-warning-soft bg-warning-soft p-6 shadow-sm">
-        <p className="text-sm text-warning">
-          Checkout could not be started for this account. Verify the Polar
-          billing configuration and try again.
-        </p>
-      </section>
-    );
-  }
-
-  return null;
-}
-
-function BillingSupportCard() {
   return (
-    <section className="rounded-3xl border-none bg-surface p-6 shadow-sm">
-      <p className="font-label text-xs font-semibold uppercase tracking-[0.24em] text-text-3">
-        Support
-      </p>
-      <div className="mt-3 space-y-2">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-text">
-          Need account or billing help?
-        </h2>
-        <p className="text-sm leading-6 text-text-3">
-          Contact the DevApply team directly for billing questions, access
-          issues, or support requests.
-        </p>
-        <a
-          href={SUPPORT_MAILTO}
-          className="inline-flex text-sm font-medium text-primary underline underline-offset-4"
-        >
-          {SUPPORT_EMAIL}
-        </a>
-      </div>
-    </section>
+    <div
+      role="status"
+      className={`rounded-card border p-4 text-[13px] ${toneClass}`}
+    >
+      {notice.message}
+    </div>
   );
 }
 
-function UpgradeCallout({
-  applicationsUsed,
-  applicationsLimit,
-}: {
-  applicationsUsed: number;
-  applicationsLimit: number;
-}) {
-  const applicationsRemaining = applicationsLimit - applicationsUsed;
-
+function UsageTile({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-card border border-warning/30 bg-warning-soft p-4">
-      <p className="text-sm font-medium text-text">
-        You have {applicationsUsed} of {applicationsLimit} applications tracked
-        {applicationsRemaining <= 0
-          ? " — you've hit the free plan limit"
-          : ""}
+    <div className="rounded-button border border-border bg-surface-1 p-4">
+      <p className="font-mono text-[11px] uppercase tracking-wide text-text-3">
+        {label}
       </p>
-      <p className="mt-1 text-sm text-text-3">
-        Upgrade to track unlimited applications and attachments.
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-text">
+        {value}
       </p>
-      <div className="mt-3">
-        <UpgradeButton />
-      </div>
     </div>
   );
 }
@@ -122,24 +98,50 @@ export function SettingsBillingPanel({
   billingState,
   plan,
   applicationsUsed,
-  applicationsLimit,
+  remindersUsed,
+  resumesUsed,
 }: SettingsBillingPanelProps) {
-  const showUpgradeCallout =
-    plan === "FREE" &&
-    applicationsUsed !== undefined &&
-    applicationsLimit !== undefined;
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <BillingStatusNotice billingState={billingState} />
-      <PlanSummary plan={plan} />
-      {showUpgradeCallout && (
-        <UpgradeCallout
-          applicationsUsed={applicationsUsed}
-          applicationsLimit={applicationsLimit}
-        />
-      )}
-      <BillingSupportCard />
+
+      <section
+        id="plan"
+        className="scroll-mt-6 overflow-hidden rounded-card border border-border bg-surface"
+      >
+        <div className="border-b border-border px-5 py-4">
+          <div className="flex items-center gap-2">
+            <h2 className="text-[15px] font-semibold text-text">
+              Plan &amp; billing
+            </h2>
+            <Chip tone={PLAN_TONE[plan]} label={PLAN_LABELS[plan]} size="sm" />
+          </div>
+          <p className="mt-1 text-[12.5px] text-text-3">
+            {PLAN_DESCRIPTION[plan]}
+          </p>
+        </div>
+
+        <div className="space-y-5 p-5">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <UsageTile label="Applications" value={applicationsUsed} />
+            <UsageTile label="Active reminders" value={remindersUsed} />
+            <UsageTile label="Resumes" value={resumesUsed} />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <CustomerPortalButton label="Manage billing" />
+            <p className="text-[12.5px] text-text-3">
+              Billing or account help?{" "}
+              <a
+                href={SUPPORT_MAILTO}
+                className="font-medium text-primary underline underline-offset-4"
+              >
+                {SUPPORT_EMAIL}
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

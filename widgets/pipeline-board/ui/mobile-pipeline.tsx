@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
 import { Chip } from "@/shared/design/chip";
 import { DesignCard } from "@/shared/design/card";
@@ -136,7 +135,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
                   <p className="text-xs text-text-3">{card.role}</p>
                 </div>
 
-                {/* Stage chips — tap to move */}
+                {/* Stage stepper — tap a stage to move the card there */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {NON_REJECTED_STATUSES.map((status) => {
                     const isCurrentStatus = activeStatus === status;
@@ -146,7 +145,7 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
                         onClick={() => handleStatusChange(card.id, status)}
                         disabled={isCurrentStatus || isPending}
                         className={cn(
-                          "rounded transition-opacity",
+                          "inline-flex min-h-11 items-center rounded transition-opacity",
                           isCurrentStatus
                             ? "cursor-default ring-1 ring-border-strong ring-offset-1"
                             : "hover:opacity-80 active:opacity-60",
@@ -167,29 +166,6 @@ export function MobilePipeline({ initialColumns }: MobilePipelineProps) {
           ))
         )}
       </div>
-
-      {/* Bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-border bg-surface">
-        {(
-          [
-            { href: "/dashboard", label: "Dashboard" },
-            { href: "/pipeline", label: "Pipeline" },
-            { href: "/applications", label: "Applications" },
-            { href: "/reminders", label: "Reminders" },
-          ] as const
-        ).map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex flex-1 flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-medium text-text-3 hover:text-text"
-          >
-            {label}
-          </Link>
-        ))}
-      </nav>
-
-      {/* Spacer so content doesn't sit under the fixed nav */}
-      <div className="h-16" />
     </div>
   );
 }

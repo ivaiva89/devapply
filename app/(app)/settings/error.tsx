@@ -9,7 +9,7 @@ type SettingsErrorProps = {
 
 export default function SettingsError({ error, reset }: SettingsErrorProps) {
   return (
-    <div className="rounded-3xl border border-danger/30 bg-surface p-8 shadow-sm">
+    <div className="rounded-card border border-danger/30 bg-surface p-8 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-danger">
         Settings error
       </p>

@@ -49,6 +49,22 @@ type PipelineApplicationRecord = Prisma.ApplicationGetPayload<{
   select: typeof pipelineApplicationSelect;
 }>;
 
+const applicationDetailInclude = Prisma.validator<Prisma.ApplicationInclude>()({
+  interviews: {
+    orderBy: { scheduledAt: "asc" },
+  },
+  reminders: {
+    orderBy: { dueAt: "asc" },
+  },
+  attachments: {
+    orderBy: { createdAt: "asc" },
+  },
+});
+
+export type ApplicationDetailRecord = Prisma.ApplicationGetPayload<{
+  include: typeof applicationDetailInclude;
+}>;
+
 export type PipelineApplicationCard = {
   id: string;
   company: string;
@@ -138,6 +154,19 @@ export async function getApplicationListDataForUser(
     items: items satisfies ApplicationListItem[],
     totalCount,
   };
+}
+
+export async function getApplicationByIdForUser(
+  userId: string,
+  applicationId: string,
+): Promise<ApplicationDetailRecord | null> {
+  return prisma.application.findFirst({
+    where: {
+      id: applicationId,
+      userId,
+    },
+    include: applicationDetailInclude,
+  });
 }
 
 export async function getPipelineColumnsForUser(

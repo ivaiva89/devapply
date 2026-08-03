@@ -23,7 +23,7 @@ export function RecentApplicationsCard({ items }: RecentApplicationsCardProps) {
   return (
     <Card>
       <CardHeader className="pb-3 sm:pb-4">
-        <p className="font-display text-lg font-semibold tracking-tight text-text">
+        <p className="text-lg font-semibold tracking-tight text-text">
           Recent Applications
         </p>
         <p className="text-sm text-text-3">Latest tracked roles.</p>

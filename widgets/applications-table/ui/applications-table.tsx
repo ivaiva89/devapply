@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 import { DataTable, type DataTableColumn } from "@/shared/design/data-table";
 import { SectionHeader } from "@/shared/design/section-header";
@@ -56,12 +57,15 @@ const columns: DataTableColumn<ApplicationTableRow>[] = [
     key: "company",
     header: "Company",
     cell: (row) => (
-      <div className="flex items-center gap-2.5">
+      <Link
+        href={`/applications/${row.id}`}
+        className="-mx-1 flex items-center gap-2.5 rounded px-1 py-0.5 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
         <span className="grid size-[22px] shrink-0 place-items-center rounded bg-surface-2 font-mono text-[11px] font-semibold text-text-2">
           {companyInitials(row.company)}
         </span>
-        <p className="font-medium text-text">{row.company}</p>
-      </div>
+        <span className="font-medium text-text">{row.company}</span>
+      </Link>
     ),
   },
   {

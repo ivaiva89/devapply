@@ -6,7 +6,10 @@ import { ApplicationFormModal } from "@/features/applications/components/applica
 import { createApplicationDefaultValues } from "@/features/applications/create-application-form";
 import { createApplication } from "@/features/applications/server/create-application";
 import { CommandPalette } from "@/widgets/command-palette/ui/command-palette";
-import { NEW_APPLICATION_EVENT } from "@/shared/lib/app-commands";
+import {
+  NEW_APPLICATION_EVENT,
+  OPEN_COMMAND_PALETTE_EVENT,
+} from "@/shared/lib/app-commands";
 
 /**
  * Global command surface mounted once in the authenticated layout. Owns the
@@ -35,12 +38,17 @@ export function AppCommandLayer() {
     function handleNewApplication() {
       setNewApplicationOpen(true);
     }
+    function handleOpenPalette() {
+      setPaletteOpen(true);
+    }
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener(NEW_APPLICATION_EVENT, handleNewApplication);
+    window.addEventListener(OPEN_COMMAND_PALETTE_EVENT, handleOpenPalette);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener(NEW_APPLICATION_EVENT, handleNewApplication);
+      window.removeEventListener(OPEN_COMMAND_PALETTE_EVENT, handleOpenPalette);
     };
   }, []);
 

@@ -16,7 +16,7 @@ export default async function ResumesPage() {
         description="Upload resume versions and attach them to your applications."
         breadcrumb="resumes"
         actions={
-          <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
+          <div className="rounded-card border border-border bg-surface px-4 py-3 text-sm text-text-3">
             {data.resumeCount} {data.resumeCount === 1 ? "resume" : "resumes"}
           </div>
         }

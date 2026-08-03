@@ -13,6 +13,10 @@ import { PostHogIdentify } from "@/features/analytics/components/posthog-identif
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/shared/lib/prisma";
 import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
+import {
+  MobileBottomNav,
+  MobileTopBar,
+} from "@/widgets/app-shell/ui/mobile-nav";
 import { AppCommandLayer } from "@/widgets/command-palette";
 
 export const metadata: Metadata = {
@@ -63,7 +67,7 @@ export default async function AppLayout({
           enableSystem
         >
           <ClerkProvider>
-            <div className="flex min-h-screen">
+            <div className="flex min-h-screen flex-col lg:flex-row">
               <aside className="hidden w-60 shrink-0 lg:flex">
                 <div className="sticky top-0 flex h-screen w-full flex-col border-r border-border bg-surface-1">
                   <AppSidebarPresenter
@@ -76,10 +80,14 @@ export default async function AppLayout({
                   />
                 </div>
               </aside>
-              <main className="min-w-0 flex-1 px-8 py-6">
-                {children}
-              </main>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <MobileTopBar />
+                <main className="min-w-0 flex-1 px-4 py-5 pb-24 lg:px-8 lg:py-6 lg:pb-6">
+                  {children}
+                </main>
+              </div>
             </div>
+            <MobileBottomNav />
             <AppCommandLayer />
             <PostHogIdentify
               userId={user.id}

@@ -44,7 +44,7 @@ export function StatsCard({
         </div>
         <p
           className={cn(
-            "font-display text-4xl font-semibold tabular-nums tracking-tight",
+            "text-4xl font-semibold tabular-nums tracking-tight",
             valueClassName ?? "text-text",
           )}
         >
