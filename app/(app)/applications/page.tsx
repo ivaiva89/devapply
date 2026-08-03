@@ -1,7 +1,7 @@
 import { ApplicationsEmptyState } from "@/features/applications/components/applications-empty-state";
 import { ApplicationsFilters } from "@/features/applications/components/applications-filters";
 import { ApplicationsTableClient } from "@/widgets/applications-table/ui/applications-table-client";
-import { NewApplicationModal } from "@/features/applications/components/new-application-modal";
+import { NewApplicationButton } from "@/features/applications/components/new-application-button";
 import { getApplicationsForUser } from "@/features/applications/server/application-list";
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { PageHeader } from "@/shared/design/page-header";
@@ -38,10 +38,10 @@ export default async function ApplicationsPage({
         breadcrumb="applications"
         actions={
           <>
-            <div className="min-w-0 rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-text-3">
+            <div className="min-w-0 rounded-card border border-border bg-surface px-4 py-2 text-sm text-text-3">
               {resultsLabel}
             </div>
-            <NewApplicationModal />
+            <NewApplicationButton />
           </>
         }
       />

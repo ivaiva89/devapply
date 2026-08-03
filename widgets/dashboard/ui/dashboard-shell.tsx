@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
+import { NewApplicationButton } from "@/features/applications/components/new-application-button";
 
 type TodayItem = {
   id: string;
@@ -60,12 +61,7 @@ export function DashboardShell({
             {formatTodaySubtitle(todayItems.length)}
           </p>
         </div>
-        <Link
-          href="/applications"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-button bg-text px-3 py-1.5 text-sm font-medium text-canvas transition-colors hover:bg-text-2"
-        >
-          + New application
-        </Link>
+        <NewApplicationButton />
       </div>
 
       {/* Today strip */}

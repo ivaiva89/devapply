@@ -13,6 +13,7 @@ import { PostHogIdentify } from "@/features/analytics/components/posthog-identif
 import { requireCurrentUser } from "@/features/auth/server/session";
 import { prisma } from "@/shared/lib/prisma";
 import { AppSidebarPresenter } from "@/widgets/app-shell/ui/app-sidebar-presenter";
+import { AppCommandLayer } from "@/widgets/command-palette";
 
 export const metadata: Metadata = {
   title: "DevApply",
@@ -24,17 +25,21 @@ export default async function AppLayout({
 }: Readonly<{ children: ReactNode }>) {
   const user = await requireCurrentUser();
 
-  const [headerStore, statusGroups, remindersUsed] = await Promise.all([
-    headers(),
-    prisma.application.groupBy({
-      by: ["status"],
-      where: { userId: user.id },
-      _count: { status: true },
-    }),
-    prisma.reminder.count({
-      where: { userId: user.id, completedAt: null },
-    }),
-  ]);
+  const [headerStore, statusGroups, remindersUsed, resumesUsed] =
+    await Promise.all([
+      headers(),
+      prisma.application.groupBy({
+        by: ["status"],
+        where: { userId: user.id },
+        _count: { status: true },
+      }),
+      prisma.reminder.count({
+        where: { userId: user.id, completedAt: null },
+      }),
+      prisma.resume.count({
+        where: { userId: user.id },
+      }),
+    ]);
 
   const currentPath = headerStore.get("x-current-path") ?? "/dashboard";
 
@@ -63,8 +68,10 @@ export default async function AppLayout({
                 <div className="sticky top-0 flex h-screen w-full flex-col border-r border-border bg-surface-1">
                   <AppSidebarPresenter
                     currentPath={currentPath}
+                    plan={user.plan}
                     applicationsUsed={applicationsUsed}
                     remindersUsed={remindersUsed}
+                    resumesUsed={resumesUsed}
                     statusCounts={statusCounts}
                   />
                 </div>
@@ -73,6 +80,7 @@ export default async function AppLayout({
                 {children}
               </main>
             </div>
+            <AppCommandLayer />
             <PostHogIdentify
               userId={user.id}
               email={user.email}
