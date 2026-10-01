@@ -77,3 +77,9 @@ posthog-setup-report.md
 new-design/
 _archive/
 /DevApply_Marketing_Campaign_Plan.md
+.design-sync/sb-reference/
+.design-sync/learnings/
+.design-sync/.cache/
+.design-sync/node_modules
+.ds-sync/
+ds-bundle/
