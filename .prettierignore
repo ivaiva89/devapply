@@ -1,8 +1,0 @@
-.next
-build
-dist
-node_modules
-out
-package-lock.json
-storybook-static
-tsconfig.tsbuildinfo
