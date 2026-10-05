@@ -26,7 +26,13 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps): ReactNode {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    // Pinned to light: globals.css follows the OS only when no data-theme is
+    // set. The dark-mode story removes the attribute.
+    <html
+      lang="en"
+      data-theme="light"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
