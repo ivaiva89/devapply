@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 // A database nothing listens on: any migration attempt against it fails.
 const DEAD_DATABASE_URL = "postgresql://user:pass@127.0.0.1:1/db";
 
-function runBuild(): Promise<{
+function runBuild(databaseUrl?: string): Promise<{
   code: number | null;
   output: string;
   nextStarted: boolean;
@@ -20,7 +20,8 @@ function runBuild(): Promise<{
         PATH: process.env.PATH,
         HOME: process.env.HOME,
         CI: "1",
-        DATABASE_URL: DEAD_DATABASE_URL,
+        // Left out entirely when the case is a missing DATABASE_URL.
+        ...(databaseUrl === undefined ? {} : { DATABASE_URL: databaseUrl }),
         DATABASE_URL_UNPOOLED: DEAD_DATABASE_URL,
         DIRECT_URL: DEAD_DATABASE_URL,
       },
@@ -43,9 +44,17 @@ function runBuild(): Promise<{
 
 describe("drizzle.config", () => {
   it("story-accounts-database-environments-ac-3: Every Vercel build applies pending Drizzle migrations to its own database before `next build`, and a failing migration fails the build. [bb-sign-in-28]", async () => { // [bb-sign-in-28]
-    const { code, nextStarted, output } = await runBuild();
+    const { code, nextStarted, output } = await runBuild(DEAD_DATABASE_URL);
 
     expect(nextStarted, output).toBe(false);
     expect(code).not.toBe(0);
+  }, 120_000);
+
+  it("story-accounts-database-environments-ac-5: A missing `DATABASE_URL` stops the build with an error naming the variable. [bb-sign-in-29]", async () => { // [bb-sign-in-29]
+    const { code, nextStarted, output } = await runBuild(undefined);
+
+    expect(nextStarted, output).toBe(false);
+    expect(code).not.toBe(0);
+    expect(output).toMatch(/DATABASE_URL/);
   }, 120_000);
 });
