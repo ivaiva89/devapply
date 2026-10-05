@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+/* =============================================================
+   DevApply — Design System v2 · Archive
+   Tokens (CSS Custom Properties)
+   Light + Dark · WCAG-AA contrast
+
+   Value for value from the Tokens block of the vault's
+   design-system.md, the one source of token values. Change a
+   value there first.
+   The Geist fonts that block imports from Google are loaded by
+   next/font in app/layout.tsx.
+   ============================================================= */
+
+:root {
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-sans:
+    "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:
+    "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---------- RADIUS SCALE ---------- */
+  --radius-1: 4px;
+  --radius-2: 6px;
+  --radius-3: 8px;
+  --radius-4: 10px;
+  --radius-5: 12px;
+  --radius-6: 16px;
+
+  /* Component-specific radii (Archive direction = sharper) */
+  --radius-button: var(--radius-2); /* 6px */
+  --radius-input: var(--radius-2); /* 6px */
+  --radius-card: var(--radius-3); /* 8px */
+  --radius-chip: 999px;
+
+  /* ---------- SPACING (4px base) ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---------- MOTION ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-med: 200ms;
+  --duration-slow: 360ms;
+}
+
+/* =============================================================
+   LIGHT MODE (default)
+   ============================================================= */
+:root,
+[data-theme="light"] {
+  /* Surfaces — nest by tone, not by border */
+  --canvas: #ffffff;
+  --surface: #ffffff;
+  --surface-1: #fafbfc; /* sidebar, header fill */
+  --surface-2: #f3f5f8; /* hover, active row */
+  --surface-3: #e8ebf0; /* pressed */
+
+  /* Borders */
+  --border: #e4e7ec;
+  --border-strong: #d0d5dd;
+
+  /* Text — 4 tiers, all AA */
+  --text: #0c111d; /* primary: titles, data           — 16.1:1 on canvas */
+  --text-2: #475467; /* body copy, descriptions          — 8.7:1 */
+  --text-3: #667085; /* metadata, labels                 — 5.4:1 */
+  --text-4: #98a2b3; /* disabled, separator              — 3.0:1  use sparingly */
+
+  /* Brand & semantic accents */
+  --primary: #3b5bdb;
+  --primary-hover: #364fc7;
+  --primary-soft: #eef0fc;
+  --primary-on: #ffffff;
+
+  --accent: #0d9488; /* "action needed" — interview, follow-up */
+  --accent-soft: #e6f4f1;
+
+  --success: #15803d;
+  --success-soft: #ecfdf5;
+
+  --warning: #d97706;
+  --warning-soft: #fff7ed;
+
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+
+  --info: #0369a1;
+  --info-soft: #eff6ff;
+
+  /* Focus ring */
+  --focus: var(--primary);
+
+  /* Shadows — neutral, used sparingly */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sm:
+    0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md:
+    0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.1);
+}
+
+/* =============================================================
+   DARK MODE
+   ============================================================= */
+[data-theme="dark"],
+.dark {
+  --canvas: #0b0d12;
+  --surface: #0d1017;
+  --surface-1: #12151c;
+  --surface-2: #171b24;
+  --surface-3: #1d222d;
+
+  --border: #232834;
+  --border-strong: #30374a;
+
+  --text: #e6eaf2; /* 14.8:1 */
+  --text-2: #a1a8b8; /* 7.5:1 */
+  --text-3: #7d869c; /* 4.7:1 */
+  --text-4: #5a6478; /* 3.0:1 — disabled only */
+
+  --primary: #7c8cf0;
+  --primary-hover: #8d9cf4;
+  --primary-soft: rgba(124, 140, 240, 0.12);
+  --primary-on: #0b0d12;
+
+  --accent: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.12);
+
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.12);
+
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.12);
+
+  --info: #60a5fa;
+  --info-soft: rgba(96, 165, 250, 0.12);
+
+  --focus: var(--primary);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* =============================================================
+   SYSTEM PREFERENCE FALLBACK
+   (only kicks in if no explicit data-theme is set)
+   ============================================================= */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --canvas: #0b0d12;
+    --surface: #0d1017;
+    --surface-1: #12151c;
+    --surface-2: #171b24;
+    --surface-3: #1d222d;
+    --border: #232834;
+    --border-strong: #30374a;
+    --text: #e6eaf2;
+    --text-2: #a1a8b8;
+    --text-3: #7d869c;
+    --text-4: #5a6478;
+    --primary: #7c8cf0;
+    --primary-hover: #8d9cf4;
+    --primary-soft: rgba(124, 140, 240, 0.12);
+    --primary-on: #0b0d12;
+    --accent: #2dd4bf;
+    --accent-soft: rgba(45, 212, 191, 0.12);
+    --success: #4ade80;
+    --success-soft: rgba(74, 222, 128, 0.12);
+    --warning: #fbbf24;
+    --warning-soft: rgba(251, 191, 36, 0.12);
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, 0.12);
+    --info: #60a5fa;
+    --info-soft: rgba(96, 165, 250, 0.12);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* =============================================================
+   TAILWIND MAPPING
+   Exposes the tokens as utilities (`bg-surface`, `text-text-2`,
+   `rounded-card`), after the handoff's tailwind.config.ts.
+   `inline reference` keeps the tokens above the only declarations:
+   utilities read them directly and Tailwind emits no theme copy.
+   ============================================================= */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline reference {
+  /* ---------- COLORS ---------- */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-text-4: var(--text-4);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-on: var(--primary-on);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* ---------- RADIUS ---------- */
+  --radius-xs: var(--radius-1);
+  --radius-sm: var(--radius-2);
+  --radius: var(--radius-3);
+  --radius-md: var(--radius-3);
+  --radius-lg: var(--radius-4);
+  --radius-xl: var(--radius-5);
+  --radius-2xl: var(--radius-6);
+  --radius-button: var(--radius-button);
+  --radius-input: var(--radius-input);
+  --radius-card: var(--radius-card);
+  --radius-chip: var(--radius-chip);
+
+  /* ---------- SPACING ---------- */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+
+  /* ---------- SHADOWS ---------- */
+  --shadow-xs: var(--shadow-xs);
+  --shadow: var(--shadow-sm);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  /* ---------- MOTION ---------- */
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-med: var(--duration-med);
+  --transition-duration-slow: var(--duration-slow);
+}
+
+/* =============================================================
+   BASE STYLES
+   In Tailwind's base layer, so a utility on an element still wins.
+   Preflight already sets the block's `box-sizing: border-box`.
+   ============================================================= */
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Use mono for tabular data */
+  .mono,
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Universal focus ring — accessible, branded */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-2);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
