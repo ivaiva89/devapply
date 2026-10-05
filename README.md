@@ -1,3 +1,3 @@
 # DevApply
 
-The rewrite starts here. The previous app is frozen at the `v0-legacy` tag.
+Run it with `pnpm dev`. Docs live in the owner's vault, not in this repo.
