@@ -24,7 +24,9 @@ function runBuild(databaseUrl?: string): Promise<{
         ...(databaseUrl === undefined ? {} : { DATABASE_URL: databaseUrl }),
         DATABASE_URL_UNPOOLED: DEAD_DATABASE_URL,
         DIRECT_URL: DEAD_DATABASE_URL,
-      },
+        // Next's ProcessEnv type requires NODE_ENV, which a build must pick
+        // for itself, so the object is cast rather than given one.
+      } as unknown as NodeJS.ProcessEnv,
     });
     let output = "";
     let nextStarted = false;
@@ -43,14 +45,16 @@ function runBuild(databaseUrl?: string): Promise<{
 }
 
 describe("drizzle.config", () => {
-  it("story-accounts-database-environments-ac-3: Every Vercel build applies pending Drizzle migrations to its own database before `next build`, and a failing migration fails the build. [bb-sign-in-28]", async () => { // [bb-sign-in-28]
+  it("story-accounts-database-environments-ac-3: Every Vercel build applies pending Drizzle migrations to its own database before `next build`, and a failing migration fails the build. [bb-sign-in-28]", async () => {
+    // [bb-sign-in-28]
     const { code, nextStarted, output } = await runBuild(DEAD_DATABASE_URL);
 
     expect(nextStarted, output).toBe(false);
     expect(code).not.toBe(0);
   }, 120_000);
 
-  it("story-accounts-database-environments-ac-5: A missing `DATABASE_URL` stops the build with an error naming the variable. [bb-sign-in-29]", async () => { // [bb-sign-in-29]
+  it("story-accounts-database-environments-ac-5: A missing `DATABASE_URL` stops the build with an error naming the variable. [bb-sign-in-29]", async () => {
+    // [bb-sign-in-29]
     const { code, nextStarted, output } = await runBuild(undefined);
 
     expect(nextStarted, output).toBe(false);
