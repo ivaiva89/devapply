@@ -11,7 +11,8 @@ afterEach(() => {
 });
 
 describe("env", () => {
-  it("story-accounts-database-environments-ac-5: A missing `DATABASE_URL` stops the build with an error naming the variable. [bb-sign-in-29]", async () => { // [bb-sign-in-29]
+  it("story-accounts-database-environments-ac-5: A missing `DATABASE_URL` stops the build with an error naming the variable. [bb-sign-in-29]", async () => {
+    // [bb-sign-in-29]
     vi.stubEnv("DATABASE_URL", DATABASE_URL);
     const { env } = await import("./env");
     expect(env.DATABASE_URL).toBe(DATABASE_URL);
@@ -22,7 +23,8 @@ describe("env", () => {
     await expect(import("./env")).rejects.toThrow(/DATABASE_URL/);
   });
 
-  it("story-accounts-database-environments-ac-6: `.env.example` lists every variable the app reads, by name only. [bb-sign-in-29]", async () => { // [bb-sign-in-29]
+  it("story-accounts-database-environments-ac-6: `.env.example` lists every variable the app reads, by name only. [bb-sign-in-29]", async () => {
+    // [bb-sign-in-29]
     const lines = readFileSync(resolve(process.cwd(), ".env.example"), "utf8")
       .split("\n")
       .map((line) => line.trim())
