@@ -2,7 +2,6 @@
 import { spawn } from "node:child_process";
 import {
   cpSync,
-  existsSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -11,12 +10,20 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { pathToFileURL } from "node:url";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-// Hosts that never resolve: any migration attempt against them fails, and the
-// host an attempt reaches for tells which variable it was built from.
-const url = (host: string) => `postgresql://user:pass@${host}:5432/db`;
+// Hosts that never resolve, so a migration attempt against them always fails.
+// Which variable a run was built from shows in its outcome: a run that has a
+// URL reaches drizzle-kit's "applying migrations" step, one that has none
+// stops naming the variable. The password is unique so a leak is findable.
+const PASSWORD = "hunter2-sekret";
+const url = (host: string) =>
+  `postgresql://migrator:${PASSWORD}@${host}:5432/db`;
+
+// Nothing a run prints may carry the database credentials.
+function assertNoCredentials(output: string) {
+  expect(output).not.toContain(PASSWORD);
+}
 
 // The repo files a migration run needs, copied into a throwaway directory so
 // a developer's own .env and .env.local can never leak into a case, and a
@@ -42,21 +49,6 @@ function makeSandbox(dotenv: Record<string, string> = {}): string {
   for (const [name, contents] of Object.entries(dotenv)) {
     writeFileSync(join(dir, name), contents);
   }
-  // Records the host of every socket the run opens: the network is the
-  // external boundary, so this watches the connection without replacing it.
-  writeFileSync(
-    join(dir, "spy.mjs"),
-    [
-      'import { appendFileSync } from "node:fs";',
-      'import net from "node:net";',
-      "const connect = net.Socket.prototype.connect;",
-      "net.Socket.prototype.connect = function (...args) {",
-      '  const target = typeof args[0] === "object" && args[0] ? args[0] : {};',
-      '  if (target.host) appendFileSync(new URL("./connections.log", import.meta.url), target.host + "\\n");',
-      "  return connect.apply(this, args);",
-      "};",
-    ].join("\n"),
-  );
   return dir;
 }
 
@@ -70,7 +62,6 @@ type Run = {
   code: number | null;
   output: string;
   nextStarted: boolean;
-  hosts: string[];
 };
 
 function run(
@@ -91,11 +82,6 @@ function run(
         PATH: process.env.PATH,
         HOME: process.env.HOME,
         CI: "1",
-        ...(existsSync(join(cwd, "spy.mjs"))
-          ? {
-              NODE_OPTIONS: `--import=${pathToFileURL(join(cwd, "spy.mjs")).href}`,
-            }
-          : {}),
         ...env,
       } as unknown as NodeJS.ProcessEnv,
     });
@@ -116,11 +102,7 @@ function run(
     }, 90_000);
     child.on("close", (code) => {
       clearTimeout(watchdog);
-      const log = join(cwd, "connections.log");
-      const hosts = existsSync(log)
-        ? readFileSync(log, "utf8").split("\n").filter(Boolean)
-        : [];
-      done({ code, output, nextStarted, hosts });
+      done({ code, output, nextStarted });
     });
   });
 }
@@ -129,6 +111,13 @@ function vercelBuildCommand(dir: string): string {
   const config = JSON.parse(readFileSync(join(dir, "vercel.json"), "utf8"));
   return config.buildCommand;
 }
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.resetModules();
+});
+
+const REACHED_MIGRATION = /applying migrations/;
 
 describe("drizzle.config", () => {
   it("story-accounts-migrate-in-vercel-build-ac-1: `pnpm build` with no database variable set builds the app without running a migration, so `pnpm e2e` passes on a machine with no database. [bb-sign-in-28]", async () => {
@@ -150,38 +139,40 @@ describe("drizzle.config", () => {
   it("story-accounts-migrate-in-vercel-build-ac-2: The build command in `vercel.json` applies pending migrations before `next build`; against an unreachable database it fails with drizzle-kit's own error in the output and `next build` never starts. [bb-sign-in-28]", async () => {
     // [bb-sign-in-28]
     const dir = makeSandbox();
-    const buildCommand = vercelBuildCommand(dir);
 
-    const { code, nextStarted, output, hosts } = await run(buildCommand, dir, {
-      DATABASE_URL_UNPOOLED: url("direct.invalid"),
-    });
+    const { code, nextStarted, output } = await run(
+      vercelBuildCommand(dir),
+      dir,
+      { DATABASE_URL_UNPOOLED: url("direct.invalid") },
+    );
 
-    // drizzle-kit started and reached for the database before anything else.
+    // drizzle-kit started and got as far as applying migrations.
     expect(output).toMatch(/Reading config file/);
-    expect(hosts).toContain("direct.invalid");
+    expect(output).toMatch(REACHED_MIGRATION);
     expect(code).not.toBe(0);
     expect(nextStarted, output).toBe(false);
+    assertNoCredentials(output);
   }, 120_000);
 
   it("story-accounts-migrate-in-vercel-build-ac-3: The migration step connects with `DATABASE_URL_UNPOOLED` and ignores `DATABASE_URL`. [bb-sign-in-28]", async () => {
     // [bb-sign-in-28]
-    const dir = makeSandbox();
+    vi.stubEnv("DATABASE_URL", url("pooled.invalid"));
+    vi.stubEnv("DATABASE_URL_UNPOOLED", url("direct.invalid"));
+    vi.resetModules();
 
-    const { hosts, output } = await run(vercelBuildCommand(dir), dir, {
-      DATABASE_URL: url("pooled.invalid"),
-      DATABASE_URL_UNPOOLED: url("direct.invalid"),
-    });
+    const { default: config } = await import("./drizzle.config");
 
-    expect(hosts, output).toContain("direct.invalid");
-    expect(hosts).not.toContain("pooled.invalid");
-  }, 120_000);
+    const credentials = (config as { dbCredentials: { url: string } })
+      .dbCredentials;
+    expect(credentials.url).toBe(url("direct.invalid"));
+  });
 
   it("story-accounts-migrate-in-vercel-build-ac-4: With `DATABASE_URL_UNPOOLED` unset, the migration step stops with an error naming that variable, and `next build` never starts. [bb-sign-in-29]", async () => {
     // [bb-sign-in-29]
     const dir = makeSandbox();
 
     // DATABASE_URL is set: it must not stand in for the missing variable.
-    const { code, nextStarted, output, hosts } = await run(
+    const { code, nextStarted, output } = await run(
       vercelBuildCommand(dir),
       dir,
       { DATABASE_URL: url("pooled.invalid") },
@@ -189,41 +180,73 @@ describe("drizzle.config", () => {
 
     expect(code).not.toBe(0);
     expect(output).toMatch(/DATABASE_URL_UNPOOLED/);
-    expect(hosts).not.toContain("pooled.invalid");
+    expect(output).not.toMatch(REACHED_MIGRATION);
     expect(nextStarted, output).toBe(false);
+    assertNoCredentials(output);
   }, 120_000);
 
   it("story-accounts-migrate-in-vercel-build-ac-5: `pnpm db:migrate` and `pnpm db:generate` read `DATABASE_URL_UNPOOLED` from `.env.local` when it is not already in the shell. [bb-sign-in-29]", async () => {
     // [bb-sign-in-29]
-    // A legacy .env (Neon Local, Prisma) sits beside .env.local and
-    // drizzle-kit loads it by itself: the .env.local value must win over it.
-    const dir = makeSandbox({
-      ".env.local": `DATABASE_URL_UNPOOLED=${url("local-file.invalid")}\n`,
-      ".env": `DATABASE_URL_UNPOOLED=${url("legacy-env.invalid")}\nDATABASE_URL=${url("legacy-pooled.invalid")}\n`,
-    });
+    // The winner is told by outcome: a run holding a URL reaches "applying
+    // migrations", one holding none stops naming the variable. The losing
+    // source always holds an empty value, so only the winner can supply one.
 
-    const fromFile = await run("pnpm db:migrate", dir, {});
-    expect(fromFile.hosts, fromFile.output).toContain("local-file.invalid");
-    expect(fromFile.hosts).not.toContain("legacy-env.invalid");
-    expect(fromFile.hosts).not.toContain("legacy-pooled.invalid");
+    // .env.local alone.
+    const fileOnly = await run(
+      "pnpm db:migrate",
+      makeSandbox({
+        ".env.local": `DATABASE_URL_UNPOOLED=${url("local-file.invalid")}\n`,
+      }),
+      {},
+    );
+    expect(fileOnly.output).toMatch(REACHED_MIGRATION);
+    expect(fileOnly.output).not.toMatch(/Missing environment variable/);
+    assertNoCredentials(fileOnly.output);
 
-    // A value already in the shell wins over the file.
-    const fromShell = await run("pnpm db:migrate", dir, {
-      DATABASE_URL_UNPOOLED: url("shell.invalid"),
-    });
-    expect(fromShell.hosts, fromShell.output).toContain("shell.invalid");
-    expect(fromShell.hosts).not.toContain("local-file.invalid");
+    // A legacy .env (Neon Local, Prisma) beside .env.local: drizzle-kit loads
+    // it by itself, and the .env.local value must win over it.
+    const overLegacy = await run(
+      "pnpm db:migrate",
+      makeSandbox({
+        ".env.local": `DATABASE_URL_UNPOOLED=${url("local-file.invalid")}\n`,
+        ".env": "DATABASE_URL_UNPOOLED=\n",
+      }),
+      {},
+    );
+    expect(overLegacy.output).toMatch(REACHED_MIGRATION);
+    assertNoCredentials(overLegacy.output);
+
+    // A value already in the shell wins over .env.local.
+    const overFile = await run(
+      "pnpm db:migrate",
+      makeSandbox({ ".env.local": "DATABASE_URL_UNPOOLED=\n" }),
+      { DATABASE_URL_UNPOOLED: url("shell.invalid") },
+    );
+    expect(overFile.output).toMatch(REACHED_MIGRATION);
+    assertNoCredentials(overFile.output);
+
+    // No .env.local and nothing in the shell: it falls back to the shell and
+    // says which variable is missing.
+    const nothing = await run("pnpm db:migrate", makeSandbox(), {});
+    expect(nothing.code).not.toBe(0);
+    expect(nothing.output).toMatch(/DATABASE_URL_UNPOOLED/);
+    expect(nothing.output).not.toMatch(REACHED_MIGRATION);
+    assertNoCredentials(nothing.output);
 
     // db:generate never connects, so it shows the variable was found by
     // loading the config: it runs through instead of stopping on a missing
     // variable.
-    const generateDir = makeSandbox({
-      ".env.local": `DATABASE_URL_UNPOOLED=${url("local-file.invalid")}\n`,
-    });
-    const generated = await run("pnpm db:generate", generateDir, {});
+    const generated = await run(
+      "pnpm db:generate",
+      makeSandbox({
+        ".env.local": `DATABASE_URL_UNPOOLED=${url("local-file.invalid")}\n`,
+      }),
+      {},
+    );
     expect(generated.output).not.toMatch(/Missing environment variable/);
     expect(generated.code, generated.output).toBe(0);
-  }, 180_000);
+    assertNoCredentials(generated.output);
+  }, 240_000);
 
   it("story-accounts-migrate-in-vercel-build-ac-6: `.env.example` lists `DATABASE_URL_UNPOOLED` by name only. [bb-sign-in-29]", () => {
     // [bb-sign-in-29]
