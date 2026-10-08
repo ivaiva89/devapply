@@ -9,10 +9,10 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "DOTENV_CONFIG_PATH=/dev/null drizzle-kit migrate && next build",
+    "build": "next build",
     "start": "next start",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "node --env-file-if-exists=.env.local node_modules/drizzle-kit/bin.cjs generate",
+    "db:migrate": "node --env-file-if-exists=.env.local node_modules/drizzle-kit/bin.cjs migrate",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write . \"!pnpm-lock.yaml\" \"!.claude/**\"",
