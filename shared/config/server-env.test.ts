@@ -68,7 +68,18 @@ describe("server-env", () => {
     stubListed();
     const { env } = await import("./server-env");
     expect(env.DATABASE_URL).toBe(DATABASE_URL);
-    const required = Object.keys(env);
+    // A name is required when the module refuses to load with only that name
+    // unset; an optional name is in `env` when set but is never offending.
+    const required: string[] = [];
+    for (const name of Object.keys(env)) {
+      vi.resetModules();
+      stubListed([name]);
+      const loaded = await import("./server-env").then(
+        () => true,
+        () => false,
+      );
+      if (!loaded) required.push(name);
+    }
     expect(required).toContain("DATABASE_URL");
 
     const offending: Record<string, string | undefined> = {
