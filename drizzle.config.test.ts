@@ -261,4 +261,28 @@ describe("drizzle.config", () => {
       expect(line).toMatch(/^[A-Z][A-Z0-9_]*=(""|)$/);
     }
   });
+
+  it("story-accounts-env-module-split-ac-3: `drizzle-kit generate` and `drizzle-kit migrate` run with only their own database URL set, whatever other variables the server env module requires. [bb-sign-in-28] (regression pin)", async () => {
+    // [bb-sign-in-28]
+    // Only DATABASE_URL_UNPOOLED is set: no other variable the app needs
+    // (today DATABASE_URL, later whatever the server env module adds) may be
+    // required by a run that loads drizzle.config.ts. The sandbox holds a
+    // copy of shared/, so a config that reached the env module would stop
+    // here on the first variable it needs.
+    const own = { DATABASE_URL_UNPOOLED: url("direct.invalid") };
+
+    const generated = await run("pnpm db:generate", makeSandbox(), own);
+    expect(generated.output).not.toMatch(
+      /Missing environment variable|Invalid environment|Client Component/,
+    );
+    expect(generated.code, generated.output).toBe(0);
+    assertNoCredentials(generated.output);
+
+    const migrated = await run("pnpm db:migrate", makeSandbox(), own);
+    expect(migrated.output).toMatch(REACHED_MIGRATION);
+    expect(migrated.output).not.toMatch(
+      /Missing environment variable|Invalid environment|Client Component/,
+    );
+    assertNoCredentials(migrated.output);
+  }, 240_000);
 });
