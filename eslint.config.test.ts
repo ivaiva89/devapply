@@ -12,9 +12,13 @@ const READS = [
 ];
 const CLEAN = "export const url = 1;";
 
-async function messagesFor(filePath: string, code: string): Promise<string[]> {
+async function lint(filePath: string, code: string) {
   const [result] = await eslint.lintText(code, { filePath });
-  return result.messages.map((m) => `${m.ruleId}: ${m.message}`);
+  return result.messages;
+}
+
+async function messagesFor(filePath: string, code: string): Promise<string[]> {
+  return (await lint(filePath, code)).map((m) => `${m.ruleId}: ${m.message}`);
 }
 
 describe("eslint config", () => {
@@ -34,10 +38,12 @@ describe("eslint config", () => {
       // The file itself lints clean, so a failure below is the read.
       expect(await messagesFor(filePath, CLEAN), filePath).toEqual([]);
       for (const code of READS) {
-        expect(
-          (await messagesFor(filePath, code)).length,
-          `${filePath}: ${code}`,
-        ).toBeGreaterThan(0);
+        // `pnpm lint` is `eslint .` with no --max-warnings, so only an error
+        // (severity 2) fails it; a warning would leave the AC unmet.
+        const errors = (await lint(filePath, code)).filter(
+          (m) => m.severity === 2,
+        );
+        expect(errors.length, `${filePath}: ${code}`).toBeGreaterThan(0);
       }
     }
 
