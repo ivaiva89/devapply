@@ -3,7 +3,7 @@ import "server-only";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 
-import { env } from "@/shared/config/env";
+import { env } from "@/shared/config/server-env";
 
 import * as schema from "./schema";
 
