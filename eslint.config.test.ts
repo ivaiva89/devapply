@@ -23,6 +23,7 @@ describe("eslint config", () => {
     // Application code, in every layer the app has.
     const application = [
       "features/accounts/lib/session.ts",
+      "features/accounts/lib/session.config.ts",
       "shared/lib/format.ts",
       "shared/db/client.ts",
       "entities/user/model.ts",

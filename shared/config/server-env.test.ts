@@ -13,10 +13,6 @@ const SAMPLE_VALUES: Record<string, string> = {
   DATABASE_URL_UNPOOLED: "postgresql://user:pass@localhost:5432/direct",
 };
 
-// Root config files that read variables themselves, outside the env module.
-// drizzle-kit reads `DATABASE_URL_UNPOOLED` there.
-const ROOT_CONFIGS = ["../../drizzle.config"];
-
 function listedNames(): string[] {
   return readFileSync(resolve(process.cwd(), ".env.example"), "utf8")
     .split("\n")
@@ -25,47 +21,17 @@ function listedNames(): string[] {
     .map((line) => line.split("=")[0]);
 }
 
-function validEnv(names: string[]): Record<string, string> {
-  return Object.fromEntries(
-    names.map((name) => [name, SAMPLE_VALUES[name] ?? "sample-value"]),
-  );
-}
-
-// Runs `load` with `process.env` swapped for exactly `env` and returns the
-// names `load` looked up. Only the environment is observed, the code under
-// test is untouched.
-async function loadWithEnv(
-  env: Record<string, string>,
-  load: () => Promise<unknown>,
-): Promise<Set<string>> {
-  const reads = new Set<string>();
-  const note = (key: string | symbol) => {
-    if (typeof key === "string") reads.add(key);
-  };
-  const original = process.env;
-  process.env = new Proxy(
-    { ...env },
-    {
-      get(target, key, receiver) {
-        note(key);
-        return Reflect.get(target, key, receiver);
-      },
-      has(target, key) {
-        note(key);
-        return Reflect.has(target, key);
-      },
-      getOwnPropertyDescriptor(target, key) {
-        note(key);
-        return Reflect.getOwnPropertyDescriptor(target, key);
-      },
-    },
-  ) as NodeJS.ProcessEnv;
-  try {
-    await load();
-  } finally {
-    process.env = original;
+// Stubs every listed name with a valid value, except the ones in `except`,
+// which are stubbed unset.
+function stubListed(except: string[] = []): void {
+  for (const name of listedNames()) {
+    vi.stubEnv(
+      name,
+      except.includes(name)
+        ? undefined
+        : (SAMPLE_VALUES[name] ?? "sample-value"),
+    );
   }
-  return reads;
 }
 
 beforeEach(() => {
@@ -96,10 +62,14 @@ describe("server-env", () => {
     // package is a no-op there.
     vi.doMock("server-only", () => ({}));
 
-    // Control: with a valid value the module loads, so the failures below
-    // come from the variable and from nothing else.
-    vi.stubEnv("DATABASE_URL", DATABASE_URL);
-    await expect(import("./server-env")).resolves.toBeDefined();
+    // Control: with every listed name set to a valid value the module loads
+    // and hands the value back, so the failures below come from the variable
+    // and from nothing else.
+    stubListed();
+    const { env } = await import("./server-env");
+    expect(env.DATABASE_URL).toBe(DATABASE_URL);
+    const required = Object.keys(env);
+    expect(required).toContain("DATABASE_URL");
 
     const offending: Record<string, string | undefined> = {
       missing: undefined,
@@ -109,6 +79,7 @@ describe("server-env", () => {
     };
     for (const [kind, value] of Object.entries(offending)) {
       vi.resetModules();
+      stubListed(["DATABASE_URL"]);
       vi.stubEnv("DATABASE_URL", value);
 
       await expect(
@@ -118,9 +89,7 @@ describe("server-env", () => {
     }
 
     // Everything unset at once: the one error names every variable the
-    // module requires. Each name `.env.example` lists that nothing outside
-    // the module reads must appear in it; today that is DATABASE_URL alone,
-    // the check grows with the schema.
+    // module requires, so the check grows with the schema.
     vi.resetModules();
     for (const name of listedNames()) vi.stubEnv(name, undefined);
 
@@ -128,7 +97,10 @@ describe("server-env", () => {
       () => undefined,
       (error: unknown) => (error instanceof Error ? error.message : ""),
     );
-    expect(failure).toContain("DATABASE_URL");
+    expect(failure, "the import rejected").toBeDefined();
+    for (const name of required) {
+      expect(failure, `error names ${name}`).toContain(name);
+    }
   });
 
   it("story-accounts-env-module-split-ac-5: `pnpm test` fails when `.env.example` lists a variable nothing reads, or when the server env module reads a variable `.env.example` omits. [bb-sign-in-29]", async () => {
@@ -136,28 +108,30 @@ describe("server-env", () => {
     vi.doMock("server-only", () => ({}));
     const listed = listedNames();
 
-    // The module's own reads, with every listed name set to a valid value.
-    // If it needed a name `.env.example` omits, that name is unset here and
-    // the import throws: a name the module reads is missing from the file.
-    const serverReads = await loadWithEnv(
-      validEnv(listed),
-      () => import("./server-env"),
-    );
-    expect(serverReads.has("DATABASE_URL")).toBe(true);
-
-    // The names the root config files read, outside the module:
-    // `DATABASE_URL_UNPOOLED` is listed and read by drizzle.config.ts only.
-    const rootReads = new Set<string>();
-    for (const config of ROOT_CONFIGS) {
-      vi.resetModules();
-      const reads = await loadWithEnv(validEnv(listed), () => import(config));
-      for (const name of reads) rootReads.add(name);
+    // Forward: with every listed name set the module loads, so a name it
+    // requires that `.env.example` omits is unset here and the import
+    // rejects. Everything it exposes is a listed name.
+    stubListed();
+    const { env } = await import("./server-env");
+    for (const key of Object.keys(env)) {
+      expect(listed, `${key} is read by the module`).toContain(key);
     }
 
-    // A listed name that neither the module nor a root config reads.
-    const unread = listed.filter(
-      (name) => !serverReads.has(name) && !rootReads.has(name),
-    );
+    // Reverse: each listed name is read by the module, or by a root config
+    // file. `DATABASE_URL_UNPOOLED` is read by drizzle.config.ts alone: with
+    // only it unset, loading that config rejects with an error naming it.
+    const unread: string[] = [];
+    for (const name of listed) {
+      if (name in env) continue;
+
+      vi.resetModules();
+      stubListed([name]);
+      const failure = await import("../../drizzle.config").then(
+        () => undefined,
+        (error: unknown) => (error instanceof Error ? error.message : ""),
+      );
+      if (!failure?.includes(name)) unread.push(name);
+    }
     expect(unread, "listed in .env.example but read by nothing").toEqual([]);
   });
 });
