@@ -34,11 +34,12 @@ export function SignUpForm(): ReactNode {
     form.setFieldError("password", passwordError);
     if (emailError || passwordError) return;
 
-    // Better Auth requires a name; the design asks for none at sign-up.
+    // Better Auth requires a name; the design asks for none at sign-up, so
+    // the email's local part stands in.
     const { error } = await authClient.signUp.email({
       email,
       password: values.password,
-      name: "",
+      name: email.split("@")[0] ?? email,
     });
     if (error) {
       setFormError(error.message ?? "Sign-up failed. Try again.");
