@@ -7,8 +7,10 @@ export const PASSWORD_MIN_LENGTH = 8;
 const fieldClassNames: TextFieldClassNames = {
   wrapper: "flex flex-col gap-1.5",
   label: "text-text text-[13px] font-medium",
+  // Heights in exact pixels: h-9 has no token and would resolve against the
+  // 14px root. 44px is the touch target below sm, 36px the design's desktop.
   input:
-    "border-border-strong bg-surface-1 text-text placeholder:text-text-4 aria-invalid:border-danger h-9 rounded-input border px-3 text-[14px]",
+    "border-border-strong bg-surface-1 text-text placeholder:text-text-4 aria-invalid:border-danger h-[44px] rounded-input border px-3 text-[14px] sm:h-[36px]",
   hint: "text-text-3 text-[12px]",
   error: "text-danger text-[12px]",
 };
@@ -32,13 +34,22 @@ export function EmailField({ onValueChange }: AuthFieldProps): ReactNode {
   );
 }
 
-export function PasswordField({ onValueChange }: AuthFieldProps): ReactNode {
+interface PasswordFieldProps extends AuthFieldProps {
+  // The length rule under the field: shown where a password is chosen (sign
+  // up), left out where one is only entered (sign in).
+  hasHint?: boolean;
+}
+
+export function PasswordField({
+  onValueChange,
+  hasHint = true,
+}: PasswordFieldProps): ReactNode {
   return (
     <TextField
       name="password"
       label="Password"
       type="password"
-      hint={`At least ${PASSWORD_MIN_LENGTH} characters`}
+      hint={hasHint ? `At least ${PASSWORD_MIN_LENGTH} characters` : undefined}
       classNames={fieldClassNames}
       onValueChange={onValueChange}
     />

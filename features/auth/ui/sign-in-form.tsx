@@ -95,7 +95,7 @@ export function SignInForm({ returnTo, footer }: SignInFormProps): ReactNode {
         <NativeFormProvider form={form} formId="sign-in">
           <EmailField />
           <div className="relative">
-            <PasswordField />
+            <PasswordField hasHint={false} />
             <Link
               href="/forgot-password"
               className="text-primary hover:text-primary-hover absolute top-0 right-0 text-[13px]"
