@@ -8,6 +8,13 @@
       "when": 1791573764444,
       "tag": "0000_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791654269018,
+      "tag": "0001_sign_in_lockout",
+      "breakpoints": true
     }
   ]
 }

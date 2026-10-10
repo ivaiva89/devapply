@@ -1,5 +1,14 @@
-import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
 
-export default function RootPage(): never {
-  redirect("/sign-in");
+import { requireCurrentUser } from "@/shared/lib/auth/session";
+
+// The signed-in start page, until tracking-core ships Applications.
+export default async function RootPage(): Promise<ReactNode> {
+  const user = await requireCurrentUser();
+
+  return (
+    <main className="p-6">
+      <p className="text-text text-[14px]">Signed in as {user.email}</p>
+    </main>
+  );
 }
