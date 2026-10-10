@@ -43,6 +43,6 @@ test("story-app-not-found-page-ac-2: the page says not found and its link leads 
   await expect(link).toHaveAttribute("href", "/");
 
   await link.click();
-  // The start page redirects to /sign-in.
-  await expect(page).toHaveURL(/\/sign-in$/);
+  // A signed-out visitor on the start page is sent to /sign-in, carrying it.
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2F$/);
 });

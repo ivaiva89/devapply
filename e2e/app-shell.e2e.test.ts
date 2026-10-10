@@ -114,12 +114,11 @@ test("story-accounts-app-scaffold-ac-1: the production build serves the app and 
 }) => {
   const response = await page.goto("/");
   expect(new URL(page.url()).pathname).toBe("/sign-in");
-  // /sign-in has no screen yet: Next's own 404 answers.
-  expect(response?.status()).toBe(404);
+  expect(response?.status()).toBe(200);
 
   const root = await request.get("/", { maxRedirects: 0 });
   expect(root.status()).toBe(307);
-  expect(root.headers()["location"]).toContain("/sign-in");
+  expect(root.headers()["location"]).toContain("/sign-in?returnTo=%2F");
 });
 
 test("story-accounts-app-scaffold-ac-2: the light tokens carry the design-system values", async ({
