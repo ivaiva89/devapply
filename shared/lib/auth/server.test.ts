@@ -1,9 +1,19 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import {
+  ageStoredTimestamps,
+  cookieOf,
+  createConfirmedUser,
+  emptyDatabase,
+  PASSWORD,
+  signInFrom,
+} from "@/shared/testing/auth-harness";
 
 // The external boundaries are the database and the mail provider. The Better
 // Auth instance itself runs for real: its own memory adapter stands in for the
-// Drizzle adapter, and Resend's client is a spy.
+// Drizzle adapter, Resend's client is a spy, and the sign-in lockout's table
+// lives in an in-memory Postgres that has run the repo's migrations.
 const store = vi.hoisted(() => ({
   user: [] as Record<string, unknown>[],
   session: [] as Record<string, unknown>[],
@@ -11,9 +21,14 @@ const store = vi.hoisted(() => ({
   verification: [] as Record<string, unknown>[],
 }));
 const sendEmail = vi.hoisted(() => vi.fn());
+const database = await vi.hoisted(async () => {
+  const { startDatabase: start } =
+    await import("@/shared/testing/auth-harness");
+  return start();
+});
 
 vi.mock("server-only", () => ({}));
-vi.mock("@/shared/db/client", () => ({ db: {} }));
+vi.mock("@/shared/db/client", () => ({ db: database.db }));
 vi.mock("better-auth/adapters/drizzle", async () => {
   const { memoryAdapter } = await import("better-auth/adapters/memory");
   return { drizzleAdapter: () => memoryAdapter(store) };
@@ -25,7 +40,8 @@ vi.mock("resend", () => ({
 }));
 
 const ORIGIN = "http://localhost:3000";
-const PASSWORD = "correct-horse-battery";
+const MINUTE = 60_000;
+const DAY = 24 * 60 * MINUTE;
 
 interface SentEmail {
   to: string | string[];
@@ -94,8 +110,11 @@ function confirmationLink(email: SentEmail): URL | undefined {
     .find((url) => url.pathname === "/confirm-email");
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.resetModules();
+  // Only the clock is faked: a session or a lock is a matter of dates.
+  vi.useFakeTimers({ toFake: ["Date"] });
+  await emptyDatabase(database.pg);
   sendEmail.mockReset();
   sendEmail.mockResolvedValue({ data: { id: "email-1" }, error: null });
   store.user.length = 0;
@@ -113,6 +132,45 @@ beforeEach(() => {
   vi.stubEnv("RESEND_API_KEY", "re_test_123");
   vi.stubEnv("EMAIL_FROM", "DevApply <no-reply@devapply.test>");
 });
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+// Time passes for the code under test. Stored timestamps move with it, so the
+// result does not depend on whether the lock reads the clock in JavaScript or
+// in SQL.
+function advanceClock(minutes: number): void {
+  vi.setSystemTime(new Date(Date.now() + minutes * MINUTE));
+}
+
+async function passMinutes(minutes: number): Promise<void> {
+  advanceClock(minutes);
+  await ageStoredTimestamps(database.pg, minutes);
+}
+
+// Each attempt comes from its own address: Better Auth's limiter, which keys
+// on the address, is not what is under test.
+let nextAddress = 0;
+function attempt(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  email: string,
+  password: string,
+) {
+  nextAddress += 1;
+  return signInFrom(auth, email, password, `198.51.100.${nextAddress}`);
+}
+
+async function failTimes(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  email: string,
+  times: number,
+) {
+  for (let n = 1; n <= times; n += 1) {
+    const response = await attempt(auth, email, `wrong-password-${n}`);
+    expect(response.status, `failed attempt ${n}`).toBe(401);
+  }
+}
 
 describe("server", () => {
   it("story-accounts-email-sign-up-ac-2: Signing up with an email that already has an account shows an error and creates nothing. [F-accounts-1]", async () => {
@@ -213,5 +271,103 @@ describe("server", () => {
     const elsewhere = await signUp(auth, "dev6@example.com", "192.0.2.99");
     expect(elsewhere.status).toBe(200);
     expect(store.user).toHaveLength(6);
+  });
+
+  it("story-accounts-sign-in-sessions-ac-3: After five failed password sign-ins in a row, password sign-in on that account is refused for 15 minutes with the locked message. [F-accounts-6] [bb-sign-in-3]", async () => {
+    // [F-accounts-6] [bb-sign-in-3]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    await createConfirmedUser(auth, sendEmail, "other@example.com");
+
+    await failTimes(auth, "dev@example.com", 5);
+
+    // Even the right password is refused now, and no session is created.
+    const locked = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(locked.ok).toBe(false);
+    expect(store.session).toHaveLength(0);
+    // The refusal is not the wrong-password answer: the visitor is told why.
+    const refusal = (await locked.json()) as { message?: string };
+    expect(refusal.message).not.toMatch(/invalid email or password/i);
+
+    // The lock holds for 14 minutes.
+    advanceClock(14);
+    const stillLocked = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(stillLocked.ok).toBe(false);
+    expect(store.session).toHaveLength(0);
+
+    // It is one account's lock: another account signs in meanwhile.
+    const other = await attempt(auth, "other@example.com", PASSWORD);
+    expect(other.status).toBe(200);
+
+    // Fifteen minutes after it began, the account signs in again.
+    await passMinutes(16);
+    const reopened = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(reopened.status).toBe(200);
+    expect(store.session).toHaveLength(2);
+  });
+
+  it("story-accounts-sign-in-sessions-ac-3 (sixth attempt): A sixth attempt during the lockout does not extend it. [F-accounts-6] [bb-sign-in-3]", async () => {
+    // [F-accounts-6] [bb-sign-in-3]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    await failTimes(auth, "dev@example.com", 5);
+
+    // Pressing on during the lock, with the right password and a wrong one.
+    advanceClock(7);
+    expect((await attempt(auth, "dev@example.com", PASSWORD)).ok).toBe(false);
+    advanceClock(7);
+    expect((await attempt(auth, "dev@example.com", "wrong-again")).ok).toBe(
+      false,
+    );
+
+    // Sixteen minutes after the fifth failure the lock is over, whatever was
+    // tried inside it.
+    await passMinutes(2);
+    const reopened = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(reopened.status).toBe(200);
+    expect(store.session).toHaveLength(1);
+  });
+
+  it("story-accounts-sign-in-sessions-ac-3 (success clears the count): A successful sign-in clears the failed-attempt count, so five failures in a row means five with no success between. [F-accounts-6] [bb-sign-in-3]", async () => {
+    // [F-accounts-6] [bb-sign-in-3]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+
+    // Four failures, a success, four more: four in a row each time, never
+    // eight, so the account is never locked.
+    await failTimes(auth, "dev@example.com", 4);
+    expect((await attempt(auth, "dev@example.com", PASSWORD)).status).toBe(200);
+    await failTimes(auth, "dev@example.com", 4);
+    expect((await attempt(auth, "dev@example.com", PASSWORD)).status).toBe(200);
+    expect(store.session).toHaveLength(2);
+
+    // The count starts again from zero: five more failures lock it.
+    await failTimes(auth, "dev@example.com", 5);
+    const locked = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(locked.ok).toBe(false);
+    expect(store.session).toHaveLength(2);
+  });
+
+  it("story-accounts-sign-in-sessions-ac-4: A session stays valid for 30 days without signing in again. [F-accounts-10] [bb-sign-in-15]", async () => {
+    // [F-accounts-10] [bb-sign-in-15]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+
+    const response = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(response.status).toBe(200);
+
+    // The browser is told to keep the cookie for 30 days.
+    const sessionCookie = response.headers
+      .getSetCookie()
+      .find((cookie) => /session_token/.test(cookie));
+    expect(sessionCookie).toMatch(new RegExp(`Max-Age=${(30 * DAY) / 1000}`));
+
+    // Twenty-nine days later the same cookie still opens the session.
+    const cookie = cookieOf(response);
+    vi.setSystemTime(new Date(Date.now() + 29 * DAY));
+    const session = await auth.api.getSession({
+      headers: new Headers({ cookie }),
+    });
+    expect(session?.user.email).toBe("dev@example.com");
   });
 });

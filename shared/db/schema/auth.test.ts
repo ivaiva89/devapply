@@ -51,11 +51,12 @@ describe("auth", () => {
       );
     }
 
-    // The migration Drizzle Kit wrote creates each of them, so applying it to
-    // Neon gives the database those tables.
+    // The migrations Drizzle Kit wrote create each of them, so applying them
+    // to Neon gives the database those tables. Later stories add migrations of
+    // their own; the count is not part of this one's promise.
     const migrations = readMigrationFiles({ migrationsFolder: "./drizzle" });
-    expect(migrations).toHaveLength(1);
-    const ddl = migrations[0].sql.join("\n");
+    expect(migrations.length).toBeGreaterThanOrEqual(1);
+    const ddl = migrations.flatMap((migration) => migration.sql).join("\n");
     for (const name of Object.keys(REQUIRED_COLUMNS)) {
       expect(ddl).toMatch(
         new RegExp(`create table\\s+("public"\\.)?"${name}"`, "i"),
