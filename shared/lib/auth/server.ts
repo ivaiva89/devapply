@@ -9,6 +9,7 @@ import { db } from "@/shared/db/client";
 import { account, session, user, verification } from "@/shared/db/schema";
 import { sendEmail } from "@/shared/lib/email/client";
 import { confirmEmailTemplate } from "@/shared/lib/email/templates/confirm-email";
+import { resetPasswordTemplate } from "@/shared/lib/email/templates/reset-password";
 
 import {
   clearFailedSignIns,
@@ -18,6 +19,11 @@ import {
 
 const SIGN_UP_PATH = "/sign-up/email";
 const SIGN_IN_PATH = "/sign-in/email";
+const REQUEST_RESET_PATH = "/request-password-reset";
+
+// Better Auth keeps a reset token as a verification row: this prefix and the
+// token as its identifier, the account's user id as its value.
+const RESET_IDENTIFIER_PREFIX = "reset-password:";
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -29,6 +35,31 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    // One hour is also Better Auth's default; it is stated because the reset
+    // pages tell the visitor so.
+    resetPasswordTokenExpiresIn: 60 * 60,
+    // The emailed link opens our /reset-password page, never Better Auth's
+    // GET /reset-password/:token. Only the page's button sends the token to
+    // POST /reset-password, which is what uses it up.
+    sendResetPassword: async ({ user: recipient, token }) => {
+      const link = new URL("/reset-password", env.BETTER_AUTH_URL);
+      link.searchParams.set("token", token);
+      try {
+        await sendEmail({
+          to: recipient.email,
+          ...resetPasswordTemplate(link.href),
+        });
+      } catch (error) {
+        // An address with no account gets a success and no email. A send that
+        // fails must answer the same way, or the error would tell the two
+        // apart.
+        console.error("Reset email was not sent", error);
+      }
+    },
+    // A reset proves the mailbox is the owner's, so it lifts a sign-in lock.
+    onPasswordReset: async ({ user: owner }) => {
+      await clearFailedSignIns(owner.email);
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
@@ -78,6 +109,28 @@ export const auth = betterAuth({
         return;
       }
 
+      // Asking for a link again replaces the one before it: the account's
+      // earlier reset tokens are removed, so only the newest link works.
+      if (ctx.path === REQUEST_RESET_PATH) {
+        const found = await ctx.context.internalAdapter.findUserByEmail(
+          email.toLowerCase(),
+        );
+        if (found) {
+          await ctx.context.adapter.deleteMany({
+            model: "verification",
+            where: [
+              { field: "value", value: found.user.id },
+              {
+                field: "identifier",
+                operator: "starts_with",
+                value: RESET_IDENTIFIER_PREFIX,
+              },
+            ],
+          });
+        }
+        return;
+      }
+
       // With email verification required, Better Auth answers a repeat sign-up
       // with a generic success. The visitor must see that the address is taken.
       if (ctx.path !== SIGN_UP_PATH) return;
@@ -109,3 +162,14 @@ export const auth = betterAuth({
     }),
   },
 });
+
+// Whether a reset link can still save a password: its token is stored and is
+// not past its hour. Asking uses nothing up, so the reset page can be opened
+// any number of times before its button is pressed.
+export async function isResetTokenUsable(token: string): Promise<boolean> {
+  const { internalAdapter } = await auth.$context;
+  const stored = await internalAdapter.findVerificationValue(
+    `${RESET_IDENTIFIER_PREFIX}${token}`,
+  );
+  return stored != null && stored.expiresAt >= new Date();
+}
