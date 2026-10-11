@@ -38,16 +38,19 @@ interface PasswordFieldProps extends AuthFieldProps {
   // The length rule under the field: shown where a password is chosen (sign
   // up), left out where one is only entered (sign in).
   hasHint?: boolean;
+  // The reset page asks for a "New password"; everywhere else it is "Password".
+  label?: string;
 }
 
 export function PasswordField({
   onValueChange,
   hasHint = true,
+  label = "Password",
 }: PasswordFieldProps): ReactNode {
   return (
     <TextField
       name="password"
-      label="Password"
+      label={label}
       type="password"
       hint={hasHint ? `At least ${PASSWORD_MIN_LENGTH} characters` : undefined}
       classNames={fieldClassNames}
