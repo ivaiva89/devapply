@@ -110,6 +110,61 @@ function confirmationLink(email: SentEmail): URL | undefined {
     .find((url) => url.pathname === "/confirm-email");
 }
 
+// The link in a reset email: the one that opens /reset-password. Same
+// unescaping as the confirmation link above.
+function resetLink(email: SentEmail): URL | undefined {
+  const body = [email.html, email.text]
+    .filter(Boolean)
+    .join("\n")
+    .replaceAll("&amp;", "&");
+  return (body.match(/https?:\/\/[^\s"'<>)]+/g) ?? [])
+    .map((href) => new URL(href))
+    .find((url) => url.pathname === "/reset-password");
+}
+
+function resetToken(email: SentEmail | undefined): string {
+  const token = email ? resetLink(email)?.searchParams.get("token") : null;
+  if (!token) throw new Error("no reset link was sent");
+  return token;
+}
+
+const NEW_PASSWORD = "a-brand-new-password-1";
+
+// Each request comes from its own address, for the same reason as `attempt`.
+let nextResetAddress = 0;
+function requestReset(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  email: string,
+) {
+  nextResetAddress += 1;
+  return post(
+    auth,
+    "/request-password-reset",
+    { email },
+    `203.0.113.${nextResetAddress}`,
+  );
+}
+
+function saveNewPassword(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  token: string,
+  newPassword = NEW_PASSWORD,
+) {
+  return post(auth, "/reset-password", { newPassword, token });
+}
+
+// A confirmed account, and the token of the reset link it asked for.
+async function accountWithResetLink(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  email = "dev@example.com",
+): Promise<string> {
+  await createConfirmedUser(auth, sendEmail, email);
+  sendEmail.mockClear();
+  const response = await requestReset(auth, email);
+  expect(response.status).toBe(200);
+  return resetToken(sentEmails().at(-1));
+}
+
 beforeEach(async () => {
   vi.resetModules();
   // Only the clock is faked: a session or a lock is a matter of dates.
@@ -369,5 +424,151 @@ describe("server", () => {
       headers: new Headers({ cookie }),
     });
     expect(session?.user.email).toBe("dev@example.com");
+  });
+
+  it("story-accounts-password-reset-ac-1 (server): `/forgot-password` sends a reset link to a registered email. [F-accounts-7] [bb-sign-in-11]", async () => {
+    // [F-accounts-7] [bb-sign-in-11]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    sendEmail.mockClear();
+
+    const response = await requestReset(auth, "dev@example.com");
+
+    expect(response.status).toBe(200);
+    expect(sentEmails()).toHaveLength(1);
+    const [email] = sentEmails();
+    expect(recipients(email)).toEqual(["dev@example.com"]);
+    // The link opens the app's own /reset-password page, never an endpoint
+    // that would use the token up when a mail scanner opens it.
+    const link = resetLink(email);
+    expect(link?.origin).toBe(ORIGIN);
+    expect(link?.pathname).toBe("/reset-password");
+    expect(link?.searchParams.get("token")).toBeTruthy();
+  });
+
+  it("story-accounts-password-reset-ac-2 (server): For an email with no account, the same confirmation is returned and nothing is sent. [F-accounts-7]", async () => {
+    // [F-accounts-7]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    sendEmail.mockClear();
+
+    const unknown = await requestReset(auth, "nobody@example.com");
+
+    expect(unknown.status).toBe(200);
+    expect(sentEmails()).toHaveLength(0);
+    expect(
+      store.verification.filter((value) =>
+        String(value.identifier).startsWith("reset-password:"),
+      ),
+    ).toHaveLength(0);
+
+    // The answer is the one an address with an account gets, so the response
+    // never reveals whether an email has an account.
+    const known = await requestReset(auth, "dev@example.com");
+    expect(sentEmails()).toHaveLength(1);
+    expect(known.status).toBe(unknown.status);
+    expect(await known.json()).toEqual(await unknown.json());
+  });
+
+  it("story-accounts-password-reset-ac-4 (server): A reset link used once is refused the second time and changes nothing. [F-accounts-8]", async () => {
+    // [F-accounts-8]
+    const auth = await loadAuth();
+    const token = await accountWithResetLink(auth);
+
+    const first = await saveNewPassword(auth, token);
+    expect(first.status).toBe(200);
+    const second = await saveNewPassword(auth, token, "someone-elses-password");
+
+    expect(second.status).toBe(400);
+    expect(((await second.json()) as { code?: string }).code).toBe(
+      "INVALID_TOKEN",
+    );
+    // The refused attempt set no password.
+    expect((await attempt(auth, "dev@example.com", NEW_PASSWORD)).status).toBe(
+      200,
+    );
+    expect(
+      (await attempt(auth, "dev@example.com", "someone-elses-password")).ok,
+    ).toBe(false);
+  });
+
+  it("story-accounts-password-reset-ac-4 (newest link only): Two reset requests in a row: only the newest link works. [F-accounts-8]", async () => {
+    // [F-accounts-8]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    sendEmail.mockClear();
+    expect((await requestReset(auth, "dev@example.com")).status).toBe(200);
+    expect((await requestReset(auth, "dev@example.com")).status).toBe(200);
+    expect(sentEmails()).toHaveLength(2);
+    const [older, newest] = sentEmails().map((email) => resetToken(email));
+
+    const withOlder = await saveNewPassword(auth, older, "older-link-password");
+    expect(withOlder.status).toBe(400);
+    expect(
+      (await attempt(auth, "dev@example.com", "older-link-password")).ok,
+    ).toBe(false);
+
+    const withNewest = await saveNewPassword(auth, newest);
+    expect(withNewest.status).toBe(200);
+  });
+
+  it("story-accounts-password-reset-ac-5 (server): A reset link older than one hour is refused and changes nothing. [F-accounts-9]", async () => {
+    // [F-accounts-9]
+    const auth = await loadAuth();
+    const token = await accountWithResetLink(auth);
+
+    await passMinutes(61);
+    const response = await saveNewPassword(auth, token);
+
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { code?: string }).code).toBe(
+      "INVALID_TOKEN",
+    );
+    // The old password is still the account's.
+    expect((await attempt(auth, "dev@example.com", PASSWORD)).status).toBe(200);
+  });
+
+  it("story-accounts-password-reset-ac-5 (inside the hour): A reset link still works 59 minutes after it was sent. [F-accounts-9]", async () => {
+    // [F-accounts-9]
+    const auth = await loadAuth();
+    const token = await accountWithResetLink(auth);
+
+    await passMinutes(59);
+    const response = await saveNewPassword(auth, token);
+
+    expect(response.status).toBe(200);
+  });
+
+  it("story-accounts-password-reset-ac-6: After a reset, the new password signs in and the old one does not. [F-accounts-7]", async () => {
+    // [F-accounts-7]
+    const auth = await loadAuth();
+    const token = await accountWithResetLink(auth);
+
+    const saved = await saveNewPassword(auth, token);
+    expect(saved.status).toBe(200);
+
+    const withOld = await attempt(auth, "dev@example.com", PASSWORD);
+    expect(withOld.ok).toBe(false);
+    expect(store.session).toHaveLength(0);
+    const withNew = await attempt(auth, "dev@example.com", NEW_PASSWORD);
+    expect(withNew.status).toBe(200);
+    expect(store.session).toHaveLength(1);
+  });
+
+  it("story-accounts-password-reset-ac-6 (locked account): A reset completed while the account is locked lifts the lockout. [F-accounts-7]", async () => {
+    // [F-accounts-7]
+    const auth = await loadAuth();
+    const token = await accountWithResetLink(auth);
+    await failTimes(auth, "dev@example.com", 5);
+    // The lock holds: even the right password is refused.
+    expect((await attempt(auth, "dev@example.com", PASSWORD)).ok).toBe(false);
+
+    const saved = await saveNewPassword(auth, token);
+    expect(saved.status).toBe(200);
+
+    // No waiting out the 15 minutes: the new password signs in at once.
+    const withNew = await attempt(auth, "dev@example.com", NEW_PASSWORD);
+    expect(withNew.status).toBe(200);
+    expect(store.session).toHaveLength(1);
   });
 });
