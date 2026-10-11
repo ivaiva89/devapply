@@ -3,10 +3,17 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ORIGIN, post, type AuthLike } from "@/shared/testing/auth-harness";
+import {
+  emptyDatabase,
+  ORIGIN,
+  post,
+  type AuthLike,
+} from "@/shared/testing/auth-harness";
 
 // The external boundaries are the framework's router, the network, and what
-// the server side needs to load: its database and the mail provider. The page,
+// the server side needs to run: its database (an in-memory Postgres that has
+// run the repo's migrations, so the sign-in lockout has its table) and the
+// mail provider. The page,
 // its forms, Better Auth's browser client and Better Auth itself run for real;
 // the browser's requests are handed to the real Better Auth instance, so what
 // the page shows is what the server's token state says.
@@ -17,6 +24,11 @@ const nav = vi.hoisted(() => ({
 }));
 const fetchMock = vi.hoisted(() => vi.fn());
 const sendEmail = vi.hoisted(() => vi.fn());
+const database = await vi.hoisted(async () => {
+  const { startDatabase: start } =
+    await import("@/shared/testing/auth-harness");
+  return start();
+});
 const store = vi.hoisted(() => ({
   user: [] as Record<string, unknown>[],
   session: [] as Record<string, unknown>[],
@@ -36,7 +48,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/reset-password",
 }));
 vi.mock("server-only", () => ({}));
-vi.mock("@/shared/db/client", () => ({ db: {} }));
+vi.mock("@/shared/db/client", () => ({ db: database.db }));
 vi.mock("better-auth/adapters/drizzle", async () => {
   const { memoryAdapter } = await import("better-auth/adapters/memory");
   return { drizzleAdapter: () => memoryAdapter(store) };
@@ -128,6 +140,7 @@ async function loadAuth(): Promise<AuthLike> {
 // A confirmed account that asked for a reset link: the token in its email.
 // The account is a row in the database stand-in: signing up runs code that
 // does not run in the browser-like environment this page is rendered in.
+let nextResetAddress = 0;
 async function requestedLink(auth: AuthLike): Promise<string> {
   const now = new Date();
   store.user.push({
@@ -139,9 +152,15 @@ async function requestedLink(auth: AuthLike): Promise<string> {
     createdAt: now,
     updatedAt: now,
   });
-  const response = await post(auth, "/request-password-reset", {
-    email: EMAIL,
-  });
+  // Each reset request comes from its own address: Better Auth's limiter
+  // keys on it and outlives a test's module reset.
+  nextResetAddress += 1;
+  const response = await post(
+    auth,
+    "/request-password-reset",
+    { email: EMAIL },
+    `203.0.113.${nextResetAddress}`,
+  );
   expect(response.status).toBe(200);
   return emailedToken();
 }
@@ -179,8 +198,9 @@ async function expectExpiredScreen() {
   expect(resend.closest("a, button")).not.toBeNull();
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.resetModules();
+  await emptyDatabase(database.pg);
   // Only the clock is faked: a link's age is a matter of dates.
   vi.useFakeTimers({ toFake: ["Date"] });
   nav.push.mockReset();

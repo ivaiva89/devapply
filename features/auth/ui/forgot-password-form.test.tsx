@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentType } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -77,6 +77,20 @@ function settled(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 100));
 }
 
+// Once the form has settled, the confirmation is still on the page, differs
+// from the untouched form, and is announced from a status region.
+async function expectConfirmationStays(
+  container: HTMLElement,
+  before: string,
+  email: string,
+) {
+  await settled();
+  expect(visibleText(container, email)).not.toBe(before);
+  const status = within(container).getByRole("status");
+  expect(status.textContent?.trim()).toBeTruthy();
+  expect(container.textContent).toContain(status.textContent?.trim());
+}
+
 async function requestLinkFor(
   user: ReturnType<typeof userEvent.setup>,
   email: string,
@@ -120,6 +134,10 @@ describe("forgot-password-form", () => {
       expect(visibleText(container, REGISTERED)).not.toBe(before),
     );
     expect(container.querySelector('[role="alert"]')).toBeNull();
+
+    // Once the form has settled, the confirmation is still there, and it sits
+    // in a status region.
+    await expectConfirmationStays(container, before, REGISTERED);
   });
 
   it("story-accounts-password-reset-ac-2: For an email with no account, the page shows the same confirmation and sends nothing. [F-accounts-7]", async () => {
@@ -141,7 +159,7 @@ describe("forgot-password-form", () => {
     await waitFor(() =>
       expect(visibleText(registered.container, REGISTERED)).not.toBe(before),
     );
-    await settled();
+    await expectConfirmationStays(registered.container, before, REGISTERED);
     const confirmation = visibleText(registered.container, REGISTERED);
     registered.unmount();
 
@@ -156,7 +174,7 @@ describe("forgot-password-form", () => {
     await waitFor(() =>
       expect(visibleText(unknown.container, UNKNOWN)).toBe(confirmation),
     );
-    await settled();
+    await expectConfirmationStays(unknown.container, before, UNKNOWN);
     expect(visibleText(unknown.container, UNKNOWN)).toBe(confirmation);
     expect(unknown.container.querySelector('[role="alert"]')).toBeNull();
     expect(unknown.container.textContent).not.toMatch(
