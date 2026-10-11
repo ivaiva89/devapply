@@ -18,6 +18,8 @@ type RequestState =
 
 const INITIAL_VALUES: ForgotPasswordValues = { email: "" };
 
+const SEND_FAILED = "We couldn't send the link. Try again.";
+
 export function ForgotPasswordForm(): ReactNode {
   const form = useNativeForm<ForgotPasswordValues>(INITIAL_VALUES);
   const [state, setState] = useState<RequestState>({ status: "idle" });
@@ -31,15 +33,22 @@ export function ForgotPasswordForm(): ReactNode {
 
     // The server answers an address with an account and one without in the
     // same way, and builds the emailed link itself.
-    const { error } = await authClient.requestPasswordReset({ email });
-    if (error) {
-      setState({
-        status: "failed",
-        message: error.message ?? "We couldn't send the link. Try again.",
-      });
+    let refused: { message?: string } | null;
+    try {
+      ({ error: refused } = await authClient.requestPasswordReset({ email }));
+    } catch {
+      // No answer came back at all: offline, or the connection dropped.
+      refused = {};
+    }
+    if (!refused) {
+      setState({ status: "sent", email });
       return;
     }
-    setState({ status: "sent", email });
+    setState({
+      status: "failed",
+      // A rate limit answers with a message; an empty one counts as none.
+      message: refused.message || SEND_FAILED,
+    });
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {

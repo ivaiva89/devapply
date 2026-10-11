@@ -19,6 +19,8 @@ interface ResetPasswordFormProps {
 
 const INITIAL_VALUES: ResetPasswordValues = { password: "" };
 
+const SAVE_FAILED = "We couldn't save the new password. Try again.";
+
 // Uses the link's token up, and only when Save is pressed: mail scanners open
 // links before people do, so rendering the page must save nothing.
 export function ResetPasswordForm({
@@ -34,25 +36,31 @@ export function ResetPasswordForm({
     form.setFieldError("password", passwordError);
     if (passwordError) return;
 
-    const { error } = await authClient.resetPassword({
-      newPassword: values.password,
-      token,
-    });
-    if (!error) {
+    let refused: { code?: string; message?: string } | null;
+    try {
+      ({ error: refused } = await authClient.resetPassword({
+        newPassword: values.password,
+        token,
+      }));
+    } catch {
+      // No answer came back at all: offline, or the connection dropped.
+      refused = {};
+    }
+    if (!refused) {
       // A reset signs nobody in. Replaces the page, so Back does not return
       // to a link that no longer works.
       router.replace("/sign-in");
       return;
     }
-    // The link was used or ran out after the page was opened: the page is
-    // asked again, and now answers with the expired screen.
-    if (error.code === "INVALID_TOKEN") {
+    // The link was used, replaced by a newer one or ran out after the page
+    // was opened: the page is asked again, and now answers with the expired
+    // screen. No error line is shown first.
+    if (refused.code === "INVALID_TOKEN") {
       router.refresh();
       return;
     }
-    setFormError(
-      error.message ?? "We couldn't save the new password. Try again.",
-    );
+    // An empty message from the server counts as none.
+    setFormError(refused.message || SAVE_FAILED);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
