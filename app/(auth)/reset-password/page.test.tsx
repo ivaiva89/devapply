@@ -167,15 +167,29 @@ async function requestedLink(auth: AuthLike): Promise<string> {
 
 // The page the way Next serves it for the emailed link; each test renders it,
 // which is opening the link.
-async function pageFor(token: string): Promise<ReactNode> {
-  nav.search = `?token=${token}`;
+async function pageFor(token: string | undefined): Promise<ReactNode> {
+  nav.search = token === undefined ? "" : `?token=${token}`;
   const { default: ResetPasswordPage } = await load<{
     default: (props: unknown) => Promise<ReactNode>;
   }>("./page");
   return ResetPasswordPage({
     params: Promise.resolve({}),
-    searchParams: Promise.resolve({ token }),
+    searchParams: Promise.resolve(token === undefined ? {} : { token }),
   });
+}
+
+// A second link for the account that already asked for one: the token in the
+// newest email.
+async function anotherLink(auth: AuthLike): Promise<string> {
+  nextResetAddress += 1;
+  const response = await post(
+    auth,
+    "/request-password-reset",
+    { email: EMAIL },
+    `203.0.113.${nextResetAddress}`,
+  );
+  expect(response.status).toBe(200);
+  return emailedToken();
 }
 
 async function saveNewPassword(
@@ -312,6 +326,46 @@ describe("page", () => {
     vi.setSystemTime(new Date(Date.now() + 2 * MINUTE));
     render(await pageFor(token));
 
+    await expectExpiredScreen();
+  });
+
+  it("story-bug-build-fails-without-server-env-ac-2: `/reset-password` still shows the expired screen for a missing, used or expired token and the form for a usable one. [F-accounts-8] [F-accounts-9] (regression pin)", async () => {
+    // [F-accounts-8] [F-accounts-9]
+    const auth = await loadAuth();
+    const usable = await requestedLink(auth);
+
+    // A usable token: the new-password form.
+    const form = render(await pageFor(usable));
+    expect(
+      await screen.findByRole("heading", { name: "Set a new password" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Save new password" }),
+    ).toBeEnabled();
+    form.unmount();
+
+    // No token, and an empty one: the expired screen.
+    for (const token of [undefined, ""]) {
+      const missing = render(await pageFor(token));
+      await expectExpiredScreen();
+      missing.unmount();
+    }
+
+    // A token more than an hour old: the expired screen.
+    vi.setSystemTime(new Date(Date.now() + 61 * MINUTE));
+    const aged = render(await pageFor(usable));
+    await expectExpiredScreen();
+    aged.unmount();
+
+    // A token the server has already taken a password with: the expired
+    // screen. Asking again gives the account a new link.
+    const toBeUsedUp = await anotherLink(auth);
+    const saved = await post(auth, "/reset-password", {
+      newPassword: NEW_PASSWORD,
+      token: toBeUsedUp,
+    });
+    expect(saved.status).toBe(200);
+    render(await pageFor(toBeUsedUp));
     await expectExpiredScreen();
   });
 });
