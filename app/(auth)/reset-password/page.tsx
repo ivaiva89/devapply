@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 
 import { ResetExpired } from "@/features/auth/ui/reset-expired";
 import { ResetPasswordForm } from "@/features/auth/ui/reset-password-form";
-import { isResetTokenUsable } from "@/shared/lib/auth/server";
 
 export const metadata: Metadata = {
   title: "Set a new password · DevApply",
@@ -14,15 +13,15 @@ export default async function ResetPasswordPage({
 }: PageProps<"/reset-password">): Promise<ReactNode> {
   const { token } = await searchParams;
 
+  if (typeof token !== "string" || token === "") return <ResetExpired />;
+
+  // Loaded here, not at the top: `next build` evaluates this module, and has
+  // no secrets for the auth server to load with.
+  const { isResetTokenUsable } = await import("@/shared/lib/auth/server");
+
   // Opening the link only asks whether its token can still be used. The
   // form's button is what uses it up.
-  if (
-    typeof token !== "string" ||
-    token === "" ||
-    !(await isResetTokenUsable(token))
-  ) {
-    return <ResetExpired />;
-  }
+  if (!(await isResetTokenUsable(token))) return <ResetExpired />;
 
   return (
     <>
