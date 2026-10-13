@@ -928,4 +928,85 @@ describe("server", () => {
       ).toEqual(["credential"]);
     }
   });
+
+  it("story-accounts-timezone-settings-ac-1 (server): An email sign-up that carries a valid zone saves that zone with the new account. [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]", async () => {
+    // [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]
+    const auth = await loadAuth();
+
+    const response = await post(
+      auth,
+      "/sign-up/email",
+      {
+        email: "dev@example.com",
+        password: PASSWORD,
+        name: "dev",
+        timezone: "Europe/Berlin",
+      },
+      "198.51.100.51",
+    );
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    expect(usersWith("dev@example.com")[0]?.timezone).toBe("Europe/Berlin");
+  });
+
+  it("story-accounts-timezone-settings-ac-2 (server): A sign-up that carries `UTC` saves it as the account's confirmed timezone. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    const auth = await loadAuth();
+
+    const response = await post(
+      auth,
+      "/sign-up/email",
+      {
+        email: "dev@example.com",
+        password: PASSWORD,
+        name: "dev",
+        timezone: "UTC",
+      },
+      "198.51.100.52",
+    );
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")[0]?.timezone).toBe("UTC");
+  });
+
+  it("story-accounts-timezone-settings-ac-6 (no zone sent): A sign-up that carries no zone creates the account with no timezone. [new]", async () => {
+    // [new]
+    // Not set stays not set: nothing fills in UTC for the account.
+    const auth = await loadAuth();
+
+    const response = await signUp(auth, "dev@example.com", "198.51.100.53");
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    expect(usersWith("dev@example.com")[0]?.timezone ?? null).toBeNull();
+  });
+
+  it("story-accounts-timezone-settings-ac-9 (server): A sign-up whose zone name is not a valid zone is refused and creates no account. [F-accounts-13] [F-accounts-14]", async () => {
+    // [F-accounts-13] [F-accounts-14]
+    const auth = await loadAuth();
+    const invalid: unknown[] = ["Not/AZone", "Mars/Olympus_Mons", "Berlin", 5];
+
+    for (const [n, timezone] of invalid.entries()) {
+      const response = await post(
+        auth,
+        "/sign-up/email",
+        {
+          email: `dev${n}@example.com`,
+          password: PASSWORD,
+          name: "dev",
+          timezone,
+        },
+        `198.51.100.${60 + n}`,
+      );
+
+      expect(response.status, String(timezone)).toBeGreaterThanOrEqual(400);
+      expect(response.status, String(timezone)).toBeLessThan(500);
+    }
+
+    // No account, no credential, no confirmation email.
+    expect(store.user).toHaveLength(0);
+    expect(store.account).toHaveLength(0);
+    expect(sentEmails()).toHaveLength(0);
+  });
 });

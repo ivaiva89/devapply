@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // The external boundaries are the framework's router and the network. The
 // form, Better Auth's browser client and the pages run for real.
@@ -80,6 +80,26 @@ function announcements(container: HTMLElement): string[] {
     .filter((text) => text.length > 0);
 }
 
+// What the browser's Intl answers when asked for its time zone.
+function browserReports(zone: string | undefined): void {
+  vi.restoreAllMocks();
+  const actual = Intl.DateTimeFormat.prototype.resolvedOptions;
+  vi.spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions").mockImplementation(
+    function (this: Intl.DateTimeFormat) {
+      return { ...actual.call(this), timeZone: zone as string };
+    },
+  );
+}
+
+// The body of the one sign-up request the form sent.
+function signUpBody(): Record<string, unknown> {
+  const [signUp] = requestsTo(/sign-up/);
+  return JSON.parse((signUp?.[1] as RequestInit).body as string) as Record<
+    string,
+    unknown
+  >;
+}
+
 async function fillIn(
   user: ReturnType<typeof userEvent.setup>,
   email: string,
@@ -90,11 +110,18 @@ async function fillIn(
 }
 
 beforeEach(() => {
+  // A browser in a real zone, so a sign-up goes straight through; the tests
+  // about the timezone step set the zone they need.
+  browserReports("Europe/Berlin");
   nav.push.mockReset();
   nav.replace.mockReset();
   nav.search = "";
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe("sign-up-form", () => {
@@ -192,5 +219,116 @@ describe("sign-up-form", () => {
     await waitFor(() => expect(requestsTo(/sign-up/)).toHaveLength(1));
     expect(email).not.toHaveAttribute("aria-invalid", "true");
     expect(password).not.toHaveAttribute("aria-invalid", "true");
+  });
+
+  it("story-accounts-timezone-settings-ac-1 (form): A sign-up from a browser that reports a valid zone other than UTC sends that zone with the form and goes on without a question. [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]", async () => {
+    // [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]
+    browserReports("Europe/Berlin");
+    fetchMock.mockImplementation(async () => signedUp(EMAIL));
+    const { SignUpForm } = await import("./sign-up-form");
+    const user = userEvent.setup();
+    render(<SignUpForm />);
+
+    await fillIn(user, EMAIL, PASSWORD);
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    await waitFor(() => expect(landedOn()).toBeDefined());
+    expect(landedOn()?.pathname).toBe("/check-email");
+    expect(requestsTo(/sign-up/)).toHaveLength(1);
+    expect(signUpBody()).toMatchObject({
+      email: EMAIL,
+      timezone: "Europe/Berlin",
+    });
+    expect(
+      screen.queryByRole("heading", { name: "Confirm your timezone" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("story-accounts-timezone-settings-ac-2 (Keep UTC): A browser that reports UTC gets the timezone step, and Keep UTC saves `UTC` with the account. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    browserReports("UTC");
+    fetchMock.mockImplementation(async () => signedUp(EMAIL));
+    const { SignUpForm } = await import("./sign-up-form");
+    const user = userEvent.setup();
+    render(<SignUpForm />);
+
+    await fillIn(user, EMAIL, PASSWORD);
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    // The step comes before the account: nothing has been sent yet.
+    expect(
+      await screen.findByRole("heading", { name: "Confirm your timezone" }),
+    ).toBeInTheDocument();
+    expect(requestsTo(/sign-up/)).toHaveLength(0);
+    expect(landedOn()).toBeUndefined();
+
+    await user.click(screen.getByRole("button", { name: "Keep UTC" }));
+
+    await waitFor(() => expect(landedOn()).toBeDefined());
+    expect(landedOn()?.pathname).toBe("/check-email");
+    expect(requestsTo(/sign-up/)).toHaveLength(1);
+    expect(signUpBody()).toMatchObject({ email: EMAIL, timezone: "UTC" });
+  });
+
+  it("story-accounts-timezone-settings-ac-2 (picked zone): A browser that reports no usable zone gets the step too, and the zone picked there is saved with the account; nothing is sent for the detection. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    const { SignUpForm } = await import("./sign-up-form");
+
+    for (const reported of [undefined, "Not/AZone"]) {
+      browserReports(reported);
+      fetchMock.mockReset();
+      nav.push.mockReset();
+      nav.replace.mockReset();
+      fetchMock.mockImplementation(async () => signedUp(EMAIL));
+      const user = userEvent.setup();
+      const { unmount } = render(<SignUpForm />);
+
+      await fillIn(user, EMAIL, PASSWORD);
+      await user.click(screen.getByRole("button", { name: "Create account" }));
+
+      await screen.findByRole("heading", { name: "Confirm your timezone" });
+      expect(requestsTo(/sign-up/), String(reported)).toHaveLength(0);
+
+      await user.selectOptions(
+        screen.getByLabelText(/^timezone/i),
+        "Asia/Tokyo",
+      );
+      await user.click(screen.getByRole("button", { name: "Continue" }));
+
+      await waitFor(() => expect(landedOn(), String(reported)).toBeDefined());
+      expect(landedOn()?.pathname).toBe("/check-email");
+      expect(requestsTo(/sign-up/), String(reported)).toHaveLength(1);
+      expect(signUpBody(), String(reported)).toMatchObject({
+        timezone: "Asia/Tokyo",
+      });
+      unmount();
+    }
+  });
+
+  it("story-accounts-timezone-settings-ac-9 (sign-up form error): When the server refuses the zone, sign-up shows a form error and does not go on. [F-accounts-13] [F-accounts-14]", async () => {
+    // [F-accounts-13] [F-accounts-14]
+    browserReports("Europe/Berlin");
+    fetchMock.mockImplementation(async () =>
+      json(
+        { code: "INVALID_TIMEZONE", message: "Choose a valid timezone." },
+        400,
+      ),
+    );
+    const { SignUpForm } = await import("./sign-up-form");
+    const user = userEvent.setup();
+    const { container } = render(<SignUpForm />);
+
+    await fillIn(user, EMAIL, PASSWORD);
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    await waitFor(() =>
+      expect(announcements(container)).toContain("Choose a valid timezone."),
+    );
+    // The zone went to the server with the form, which is what refused it.
+    expect(signUpBody()).toMatchObject({ timezone: "Europe/Berlin" });
+    expect(landedOn()).toBeUndefined();
+    expect(
+      screen.getByRole("button", { name: "Create account" }),
+    ).toBeEnabled();
   });
 });

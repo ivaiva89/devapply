@@ -4,6 +4,8 @@ import { PgTable } from "drizzle-orm/pg-core";
 import { readMigrationFiles } from "drizzle-orm/migrator";
 import { describe, expect, it } from "vitest";
 
+import { startDatabase } from "@/shared/testing/auth-harness";
+
 // What Better Auth's Drizzle adapter reads and writes, by field.
 const REQUIRED_COLUMNS = {
   user: ["id", "name", "email", "emailVerified", "createdAt", "updatedAt"],
@@ -62,5 +64,38 @@ describe("auth", () => {
         new RegExp(`create table\\s+("public"\\.)?"${name}"`, "i"),
       );
     }
+  });
+
+  it("story-accounts-timezone-settings-ac-1 (column): The user table has a nullable timezone column with no default, so an existing account starts with no timezone. [F-accounts-13] [bb-sign-in-33]", async () => {
+    // [F-accounts-13] [bb-sign-in-33]
+    // Every migration in ./drizzle is applied to a real Postgres, the way
+    // `pnpm db:migrate` applies them to Neon.
+    const { user } = await import("./index");
+    expect(Object.keys(getTableColumns(user))).toContain("timezone");
+
+    const { pg } = await startDatabase();
+    const { rows } = await pg.query<{
+      data_type: string;
+      is_nullable: string;
+      column_default: string | null;
+    }>(
+      `select data_type, is_nullable, column_default
+       from information_schema.columns
+       where table_schema = 'public' and table_name = 'user'
+         and column_name = 'timezone'`,
+    );
+    expect(rows).toEqual([
+      { data_type: "text", is_nullable: "YES", column_default: null },
+    ]);
+
+    // An account written the way the tables were before the column existed
+    // reads back with no timezone: no default, no backfill.
+    await pg.query(
+      `insert into "user" (id, name, email) values ('user-1', 'dev', 'dev@example.com')`,
+    );
+    const stored = await pg.query<{ timezone: string | null }>(
+      `select timezone from "user" where id = 'user-1'`,
+    );
+    expect(stored.rows[0]?.timezone).toBeNull();
   });
 });
