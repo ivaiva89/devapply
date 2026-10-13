@@ -25,6 +25,10 @@ interface SignUpValues extends Record<string, unknown> {
 interface SignUpFormProps {
   // The social sign-in providers this environment offers.
   providers?: SocialProvider[];
+  // Shown above the form and below it. Neither is shown while the timezone
+  // step is: that step stands alone, with its own heading.
+  header?: ReactNode;
+  footer?: ReactNode;
 }
 
 const INITIAL_VALUES: SignUpValues = { email: "", password: "" };
@@ -33,6 +37,8 @@ const NO_PROVIDERS: SocialProvider[] = [];
 
 export function SignUpForm({
   providers = NO_PROVIDERS,
+  header,
+  footer,
 }: SignUpFormProps): ReactNode {
   const router = useRouter();
   const form = useNativeForm<SignUpValues>(INITIAL_VALUES);
@@ -100,6 +106,7 @@ export function SignUpForm({
 
   return (
     <>
+      {header}
       <OAuthButtons providers={providers} />
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
         <NativeFormProvider form={form} formId="sign-up">
@@ -123,6 +130,7 @@ export function SignUpForm({
           Create account
         </button>
       </form>
+      {footer}
     </>
   );
 }

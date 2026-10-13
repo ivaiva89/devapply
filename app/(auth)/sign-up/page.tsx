@@ -18,25 +18,33 @@ export default async function SignUpPage(): Promise<ReactNode> {
   const { offeredProviders } =
     await import("@/shared/lib/auth/offered-providers");
 
+  // The form shows the heading, the intro and the sign-in line around itself,
+  // and none of them while its timezone step is on screen.
   return (
-    <>
-      <h1 className="text-text text-[22px] font-semibold tracking-[-0.015em]">
-        Create your account
-      </h1>
-      <p className="text-text-2 mt-1 mb-6 text-[14px]">
-        Track every application and interview round. Your first 14 days include
-        Pro.
-      </p>
-      <SignUpForm providers={offeredProviders()} />
-      <p className="text-text-2 mt-6 text-center text-[14px]">
-        Already have an account?{" "}
-        <Link
-          href="/sign-in"
-          className="text-primary hover:text-primary-hover underline"
-        >
-          Sign in
-        </Link>
-      </p>
-    </>
+    <SignUpForm
+      providers={offeredProviders()}
+      header={
+        <>
+          <h1 className="text-text text-[22px] font-semibold tracking-[-0.015em]">
+            Create your account
+          </h1>
+          <p className="text-text-2 mt-1 mb-6 text-[14px]">
+            Track every application and interview round. Your first 14 days
+            include Pro.
+          </p>
+        </>
+      }
+      footer={
+        <p className="text-text-2 mt-6 text-center text-[14px]">
+          Already have an account?{" "}
+          <Link
+            href="/sign-in"
+            className="text-primary hover:text-primary-hover underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      }
+    />
   );
 }
