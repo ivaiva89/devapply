@@ -7,6 +7,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 
 import { authClient } from "@/shared/lib/auth/client";
 import type { SocialProvider } from "@/shared/lib/auth/offered-providers";
+import { returnPath } from "@/shared/lib/auth/return-path";
 
 import { EmailField, PasswordField } from "./auth-form-fields";
 import { LockedNotice } from "./locked-notice";
@@ -37,19 +38,6 @@ interface SignInFormProps {
 const NO_PROVIDERS: SocialProvider[] = [];
 
 const INITIAL_VALUES: SignInValues = { email: "", password: "" };
-
-// The app's default route, until tracking-core ships Applications.
-const DEFAULT_ROUTE = "/";
-
-// Where to go after signing in: the route asked for when it is a place on
-// this site. Anything that resolves to another origin is ignored.
-function returnPath(requested: string | undefined): string {
-  const { origin } = window.location;
-  if (!requested || !URL.canParse(requested, origin)) return DEFAULT_ROUTE;
-  const url = new URL(requested, origin);
-  if (url.origin !== origin) return DEFAULT_ROUTE;
-  return `${url.pathname}${url.search}${url.hash}`;
-}
 
 export function SignInForm({
   returnTo,

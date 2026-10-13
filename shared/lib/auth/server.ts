@@ -10,6 +10,7 @@ import { account, session, user, verification } from "@/shared/db/schema";
 import { sendEmail } from "@/shared/lib/email/client";
 import { confirmEmailTemplate } from "@/shared/lib/email/templates/confirm-email";
 import { resetPasswordTemplate } from "@/shared/lib/email/templates/reset-password";
+import { isValidTimezone } from "@/shared/lib/timezone/validate";
 
 import {
   clearFailedSignIns,
@@ -33,6 +34,13 @@ export const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
+  user: {
+    additionalFields: {
+      // Sent with the email sign-up form. An account created without one, as
+      // a social sign-up is, has none until its first signed-in page.
+      timezone: { type: "string", required: false },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -105,6 +113,17 @@ export const auth = betterAuth({
   },
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
+      // A zone name comes from the browser. One that is not a valid zone is
+      // refused on every request that carries it, before anything is stored:
+      // a sign-up with one creates no account.
+      const timezone: unknown = ctx.body?.timezone;
+      if (timezone != null && !isValidTimezone(timezone)) {
+        throw new APIError("BAD_REQUEST", {
+          code: "INVALID_TIMEZONE",
+          message: "Choose a valid timezone.",
+        });
+      }
+
       const email: unknown = ctx.body?.email;
       if (typeof email !== "string") return;
 

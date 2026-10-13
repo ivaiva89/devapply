@@ -18,6 +18,9 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  // An IANA zone name. Null means not set yet; a saved `UTC` is one the user
+  // confirmed.
+  timezone: text("timezone"),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });
