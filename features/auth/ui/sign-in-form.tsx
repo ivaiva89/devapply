@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { authClient } from "@/shared/lib/auth/client";
+import type { SocialProvider } from "@/shared/lib/auth/offered-providers";
 
 import { EmailField, PasswordField } from "./auth-form-fields";
 import { LockedNotice } from "./locked-notice";
+import { OAuthButtons } from "./oauth-buttons";
+import { OAuthError, type OAuthFailure } from "./oauth-error";
 
 interface SignInValues extends Record<string, unknown> {
   email: string;
@@ -25,7 +28,13 @@ interface SignInFormProps {
   returnTo?: string;
   // Shown under the form, and dropped with it once sign-in is locked.
   footer?: ReactNode;
+  // The social sign-in providers this environment offers.
+  providers?: SocialProvider[];
+  // What a social sign-in that did not finish came back with, if one did.
+  oauthFailure?: OAuthFailure;
 }
+
+const NO_PROVIDERS: SocialProvider[] = [];
 
 const INITIAL_VALUES: SignInValues = { email: "", password: "" };
 
@@ -42,7 +51,12 @@ function returnPath(requested: string | undefined): string {
   return `${url.pathname}${url.search}${url.hash}`;
 }
 
-export function SignInForm({ returnTo, footer }: SignInFormProps): ReactNode {
+export function SignInForm({
+  returnTo,
+  footer,
+  providers = NO_PROVIDERS,
+  oauthFailure,
+}: SignInFormProps): ReactNode {
   const router = useRouter();
   const form = useNativeForm<SignInValues>(INITIAL_VALUES);
   const [state, setState] = useState<SignInState>({ status: "idle" });
@@ -79,10 +93,29 @@ export function SignInForm({ returnTo, footer }: SignInFormProps): ReactNode {
     void form.handleSubmit(submit);
   }
 
-  if (state.status === "locked") return <LockedNotice />;
+  // The lock covers the password only, so the buttons stay through it.
+  const social = (
+    <>
+      {oauthFailure ? <OAuthError {...oauthFailure} /> : null}
+      <OAuthButtons
+        providers={providers}
+        callbackURL={() => returnPath(returnTo)}
+      />
+    </>
+  );
+
+  if (state.status === "locked") {
+    return (
+      <>
+        {social}
+        <LockedNotice />
+      </>
+    );
+  }
 
   return (
     <>
+      {social}
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
         {state.status === "failed" ? (
           <p

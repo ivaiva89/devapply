@@ -16,6 +16,7 @@ import {
   isSignInLocked,
   recordFailedSignIn,
 } from "./lockout";
+import { providerCredentials } from "./offered-providers";
 
 const SIGN_UP_PATH = "/sign-up/email";
 const SIGN_IN_PATH = "/sign-in/email";
@@ -74,6 +75,17 @@ export const auth = betterAuth({
         ...confirmEmailTemplate(link.href),
       });
     },
+  },
+  // Google and GitHub, each only where both of its values are set.
+  socialProviders: providerCredentials(),
+  account: {
+    // A social sign-in on an email that already has an account links to it
+    // only when the provider reports the email verified and the account's own
+    // email is confirmed. Anything else is sent back to the sign-in request's
+    // errorCallbackURL with `error=account_not_linked`. That is Better Auth's
+    // own check: no provider is trusted here and none of the options that
+    // loosen it is set.
+    accountLinking: { enabled: true },
   },
   session: {
     // Better Auth's default is 7 days.

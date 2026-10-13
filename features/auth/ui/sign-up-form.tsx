@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { authClient } from "@/shared/lib/auth/client";
+import type { SocialProvider } from "@/shared/lib/auth/offered-providers";
 
 import {
   EmailField,
@@ -12,15 +13,25 @@ import {
   validateEmail,
   validatePassword,
 } from "./auth-form-fields";
+import { OAuthButtons } from "./oauth-buttons";
 
 interface SignUpValues extends Record<string, unknown> {
   email: string;
   password: string;
 }
 
+interface SignUpFormProps {
+  // The social sign-in providers this environment offers.
+  providers?: SocialProvider[];
+}
+
 const INITIAL_VALUES: SignUpValues = { email: "", password: "" };
 
-export function SignUpForm(): ReactNode {
+const NO_PROVIDERS: SocialProvider[] = [];
+
+export function SignUpForm({
+  providers = NO_PROVIDERS,
+}: SignUpFormProps): ReactNode {
   const router = useRouter();
   const form = useNativeForm<SignUpValues>(INITIAL_VALUES);
   const [formError, setFormError] = useState<string | null>(null);
@@ -56,27 +67,30 @@ export function SignUpForm(): ReactNode {
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <NativeFormProvider form={form} formId="sign-up">
-        <EmailField
-          onValueChange={() => form.setFieldError("email", undefined)}
-        />
-        <PasswordField
-          onValueChange={() => form.setFieldError("password", undefined)}
-        />
-      </NativeFormProvider>
-      {formError ? (
-        <p role="alert" className="text-danger text-[13px]">
-          {formError}
-        </p>
-      ) : null}
-      <button
-        type="submit"
-        disabled={form.isSubmitting}
-        className="bg-text text-canvas h-9 rounded-button text-[14px] font-medium hover:opacity-90 disabled:opacity-60"
-      >
-        Create account
-      </button>
-    </form>
+    <>
+      <OAuthButtons providers={providers} />
+      <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <NativeFormProvider form={form} formId="sign-up">
+          <EmailField
+            onValueChange={() => form.setFieldError("email", undefined)}
+          />
+          <PasswordField
+            onValueChange={() => form.setFieldError("password", undefined)}
+          />
+        </NativeFormProvider>
+        {formError ? (
+          <p role="alert" className="text-danger text-[13px]">
+            {formError}
+          </p>
+        ) : null}
+        <button
+          type="submit"
+          disabled={form.isSubmitting}
+          className="bg-text text-canvas h-9 rounded-button text-[14px] font-medium hover:opacity-90 disabled:opacity-60"
+        >
+          Create account
+        </button>
+      </form>
+    </>
   );
 }
