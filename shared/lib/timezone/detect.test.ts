@@ -12,6 +12,7 @@ async function load(): Promise<DetectModule> {
 // What the browser's Intl answers when asked for its time zone: the one
 // browser API the detection reads.
 function browserReports(zone: string | undefined): void {
+  vi.restoreAllMocks();
   const actual = Intl.DateTimeFormat.prototype.resolvedOptions;
   vi.spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions").mockImplementation(
     function (this: Intl.DateTimeFormat) {

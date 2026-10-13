@@ -161,25 +161,6 @@ beforeEach(async () => {
   vi.stubEnv("EMAIL_FROM", "DevApply <no-reply@devapply.test>");
 });
 
-beforeEach(async () => {
-  vi.resetModules();
-  sendEmail.mockReset();
-  sendEmail.mockResolvedValue({ data: { id: "email-1" }, error: null });
-  incoming.cookie = "";
-  await emptyDatabase(database.pg);
-  await database.pg.exec(`truncate table "user" cascade`);
-
-  vi.stubEnv("DATABASE_URL", "postgresql://user:pass@localhost:5432/db");
-  vi.stubEnv(
-    "DATABASE_URL_UNPOOLED",
-    "postgresql://user:pass@localhost:5432/db",
-  );
-  vi.stubEnv("BETTER_AUTH_SECRET", "test-secret-test-secret-test-secret-0000");
-  vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3000");
-  vi.stubEnv("RESEND_API_KEY", "re_test_123");
-  vi.stubEnv("EMAIL_FROM", "DevApply <no-reply@devapply.test>");
-});
-
 describe("page", () => {
   it("story-accounts-timezone-settings-ac-8 (page): Settings shows the account's timezone, `UTC` included. [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]", async () => {
     // [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]
@@ -200,6 +181,7 @@ describe("page", () => {
 
     const main = page.querySelector("main");
     const nav = page.querySelector("nav");
+    expect(page.querySelectorAll("main"), "one main area").toHaveLength(1);
     expect(main, "a main area").not.toBeNull();
     expect(nav, "a sidebar").not.toBeNull();
     expect(main?.contains(nav ?? null)).toBe(false);

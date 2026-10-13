@@ -59,6 +59,20 @@ describe("timezone-form", () => {
     expect(screen.getByLabelText(/^timezone/i)).toHaveValue("UTC");
   });
 
+  it("story-accounts-timezone-settings-ac-8 (a saved zone the runtime does not list): A saved zone that is valid but absent from the runtime's own zone list still shows as the picker's value. [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]", async () => {
+    // [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]
+    // Asia/Kolkata and Asia/Calcutta name one zone; a runtime lists one of
+    // them. Both are rendered, so whichever name this runtime leaves out is
+    // the case under test.
+    const { TimezoneForm } = await load();
+
+    for (const saved of ["Asia/Kolkata", "Asia/Calcutta"]) {
+      const { unmount } = render(<TimezoneForm timezone={saved} />);
+      expect(screen.getByLabelText(/^timezone/i), saved).toHaveValue(saved);
+      unmount();
+    }
+  });
+
   it("story-accounts-timezone-settings-ac-8 (saves a change): Picking another zone and pressing Save sends that zone. [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]", async () => {
     // [F-accounts-14] [bb-sign-in-5] [bb-sign-in-13]
     const { TimezoneForm } = await load();

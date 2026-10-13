@@ -153,6 +153,7 @@ describe("page", () => {
 
     const main = page.querySelector("main");
     const nav = page.querySelector("nav");
+    expect(page.querySelectorAll("main"), "one main area").toHaveLength(1);
     expect(main, "a main area").not.toBeNull();
     expect(nav, "a sidebar").not.toBeNull();
     expect(main?.contains(nav ?? null)).toBe(false);
