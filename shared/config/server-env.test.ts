@@ -145,4 +145,20 @@ describe("server-env", () => {
     }
     expect(unread, "listed in .env.example but read by nothing").toEqual([]);
   });
+
+  it("story-bug-build-fails-without-server-env-ac-3: Importing the server env module with a required variable missing still throws at import and names every offending variable. (regression pin)", async () => {
+    vi.doMock("server-only", () => ({}));
+
+    // Two required variables unset at once, the rest valid: the one error
+    // names both, not only the first.
+    stubListed(["DATABASE_URL", "BETTER_AUTH_SECRET"]);
+    const failure = await import("./server-env").then(
+      () => undefined,
+      (error: unknown) => (error instanceof Error ? error.message : ""),
+    );
+
+    expect(failure, "the import rejected").toBeDefined();
+    expect(failure).toContain("DATABASE_URL");
+    expect(failure).toContain("BETTER_AUTH_SECRET");
+  });
 });

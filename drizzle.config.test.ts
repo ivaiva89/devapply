@@ -2,7 +2,9 @@
 import { spawn } from "node:child_process";
 import {
   cpSync,
+  mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   rmSync,
   symlinkSync,
@@ -37,6 +39,25 @@ const SANDBOX_FILES = [
   "shared",
 ];
 
+// What `next build` needs: the app itself, and the root files its type check
+// reads (`vitest.setup.ts` for the test matchers, `drizzle.config.ts` because
+// a test imports it).
+const BUILD_FILES = [
+  "package.json",
+  "tsconfig.json",
+  "drizzle.config.ts",
+  "next.config.ts",
+  "postcss.config.mjs",
+  "proxy.ts",
+  "components.json",
+  "vitest.setup.ts",
+  "app",
+  "features",
+  "entities",
+  "widgets",
+  "shared",
+];
+
 const sandboxes: string[] = [];
 
 function makeSandbox(dotenv: Record<string, string> = {}): string {
@@ -50,6 +71,44 @@ function makeSandbox(dotenv: Record<string, string> = {}): string {
     writeFileSync(join(dir, name), contents);
   }
   return dir;
+}
+
+// A copy of the app to build where no .env or .env.local exists, so a build
+// sees only the variables a case passes. It sits under the repo's ignored
+// `.worktrees/` folder, not the system temp folder: Turbopack refuses a
+// `node_modules` symlink that points outside the folder it treats as the
+// project root, and inside the repo that root is the repo.
+function makeBuildSandbox(): string {
+  const parent = join(process.cwd(), ".worktrees");
+  mkdirSync(parent, { recursive: true });
+  const dir = mkdtempSync(join(parent, "devapply-build-"));
+  sandboxes.push(dir);
+  for (const file of BUILD_FILES) {
+    cpSync(join(process.cwd(), file), join(dir, file), { recursive: true });
+  }
+  symlinkSync(join(process.cwd(), "node_modules"), join(dir, "node_modules"));
+  return dir;
+}
+
+// The route each page and route handler under `app/` serves: a folder in
+// parentheses groups routes and is not part of the path.
+function appRoutes(appDir: string): string[] {
+  const routes: string[] = [];
+  const walk = (dir: string, segments: string[]) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        const grouped = /^\(.*\)$/.test(entry.name);
+        walk(
+          join(dir, entry.name),
+          grouped ? segments : [...segments, entry.name],
+        );
+      } else if (/^(page|route)\.tsx?$/.test(entry.name)) {
+        routes.push(`/${segments.join("/")}`);
+      }
+    }
+  };
+  walk(appDir, []);
+  return routes;
 }
 
 afterEach(() => {
@@ -122,10 +181,11 @@ const REACHED_MIGRATION = /applying migrations/;
 describe("drizzle.config", () => {
   it("story-accounts-migrate-in-vercel-build-ac-1: `pnpm build` with no database variable set builds the app without running a migration, so `pnpm e2e` passes on a machine with no database. [bb-sign-in-28]", async () => {
     // [bb-sign-in-28]
-    // The real repo, not a sandbox: this is the build `pnpm e2e` runs.
+    // A copy of the app with no .env.local: in the real repo Next would read
+    // the developer's own, and this case could not fail on their machine.
     const { code, output } = await run(
       "pnpm build",
-      process.cwd(),
+      makeBuildSandbox(),
       {},
       {
         stopAtNext: false,
@@ -134,6 +194,32 @@ describe("drizzle.config", () => {
 
     expect(output).not.toMatch(/drizzle-kit|applying migrations/);
     expect(code, output).toBe(0);
+  }, 180_000);
+
+  it("story-bug-build-fails-without-server-env-ac-1: `pnpm build` with no `.env.local` and none of the server variables set builds every route and exits 0.", async () => {
+    const dir = makeBuildSandbox();
+
+    const { code, output } = await run(
+      "pnpm build",
+      dir,
+      {},
+      {
+        stopAtNext: false,
+      },
+    );
+
+    expect(output).not.toMatch(/Invalid environment variables/);
+    expect(code, output).toBe(0);
+    // The build lists each route it built, one per line.
+    const built = output.split("\n").map((line) => line.trimEnd());
+    const routes = appRoutes(join(dir, "app"));
+    expect(routes).toContain("/reset-password");
+    for (const route of routes) {
+      expect(
+        built.some((line) => line.endsWith(` ${route}`)),
+        `${route} is built`,
+      ).toBe(true);
+    }
   }, 180_000);
 
   it("story-accounts-migrate-in-vercel-build-ac-2: The build command in `vercel.json` applies pending migrations before `next build`; against an unreachable database it fails with drizzle-kit's own error in the output and `next build` never starts. [bb-sign-in-28]", async () => {
