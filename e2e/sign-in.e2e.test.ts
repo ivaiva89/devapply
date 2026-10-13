@@ -142,3 +142,43 @@ test("at 390px the sign-in page is a white page with 44px touch targets", async 
   expect(overflow).toBeLessThanOrEqual(0);
   await context.close();
 });
+
+test.describe("a social sign-in that did not finish", () => {
+  const cases: Array<{ query: string; message: string | null }> = [
+    {
+      query: "provider=github&error=email_not_found",
+      message:
+        "We couldn't get an email address from GitHub. Sign in with email and password instead.",
+    },
+    {
+      query: "provider=google&error=email_not_found",
+      message:
+        "We couldn't get an email address from Google. Sign in with email and password instead.",
+    },
+    {
+      query: "provider=github&error=account_not_linked",
+      message:
+        "An account with this email already exists. Sign in the way you did before.",
+    },
+    {
+      query: "provider=google&error=server_error",
+      message: "Sign-in with Google didn't finish. Try again.",
+    },
+    { query: "provider=github&error=access_denied", message: null },
+    { query: "provider=nope&error=server_error", message: null },
+  ];
+
+  for (const { query, message } of cases) {
+    test(`/sign-in?${query} shows ${message ?? "no message"}`, async ({
+      page,
+    }) => {
+      await page.goto(`/sign-in?${query}`);
+
+      if (message) {
+        await expect(page.locator("p[role=alert]")).toHaveText(message);
+      } else {
+        await expect(page.locator("p[role=alert]")).toHaveCount(0);
+      }
+    });
+  }
+});
