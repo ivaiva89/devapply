@@ -236,6 +236,51 @@ test.describe("sign-up timezone", () => {
       expect(bodies[0]?.["timezone"]).toBe("Europe/Berlin");
     });
 
+    test("Continue with the picker left as it opened sends UTC", async ({
+      page,
+    }) => {
+      const bodies: Record<string, unknown>[] = [];
+      await stubSignUp(page, bodies);
+      await fillAndSubmit(page);
+
+      await expect(page.getByRole("combobox")).toHaveValue("UTC");
+      await page.getByRole("button", { name: "Continue" }).click();
+      await expect(page).toHaveURL(/\/check-email\?email=/);
+      expect(bodies).toHaveLength(1);
+      expect(bodies[0]?.["timezone"]).toBe("UTC");
+    });
+
+    test("the step has one h1 and a refused sign-up brings the page back", async ({
+      page,
+    }) => {
+      await page.route("**/api/auth/sign-up/email", async (route) => {
+        await route.fulfill({
+          status: 400,
+          contentType: "application/json",
+          body: JSON.stringify({
+            code: "INVALID_TIMEZONE",
+            message: "Choose a valid timezone.",
+          }),
+        });
+      });
+      await fillAndSubmit(page);
+
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Confirm your timezone" }),
+      ).toBeVisible();
+      await expect(page.getByText("Already have an account?")).toHaveCount(0);
+      await expect(page.getByText("Your browser reports UTC.")).toBeVisible();
+
+      await page.getByRole("button", { name: "Keep UTC" }).click();
+
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Create your account" }),
+      ).toBeVisible();
+      await expect(page.getByText("Already have an account?")).toBeVisible();
+    });
+
     test("a refused sign-up returns to the form with its error", async ({
       page,
     }) => {
