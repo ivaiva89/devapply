@@ -142,6 +142,95 @@ function hasButton(provider: "Google" | "GitHub"): boolean {
   );
 }
 
+// What Better Auth answers a correct email and password with.
+function signedIn(email: string): Response {
+  return json({
+    redirect: false,
+    token: "session-token",
+    user: {
+      id: "user-1",
+      email,
+      name: email.split("@")[0],
+      image: null,
+      emailVerified: true,
+      createdAt: "2026-10-09T12:00:00.000Z",
+      updatedAt: "2026-10-09T12:00:00.000Z",
+    },
+  });
+}
+
+// What the server answers a password sign-in on a locked account with.
+function locked(): Response {
+  return json(
+    { code: "SIGN_IN_LOCKED", message: "Sign-in is locked for this account" },
+    423,
+  );
+}
+
+// What the start request answers when Better Auth cannot reach the provider.
+function startFailed(): Response {
+  return json({ code: "INTERNAL_SERVER_ERROR", message: "Failed" }, 500);
+}
+
+interface NetworkAnswers {
+  social?: (provider: string) => Response | Promise<Response>;
+  email?: () => Response | Promise<Response>;
+}
+
+// The network as the browser sees it: one answer for the social start
+// request, one for the email sign-in. Anything else is a test mistake.
+function answerRequests({ social, email }: NetworkAnswers): void {
+  fetchMock.mockImplementation(async (input: unknown, init?: RequestInit) => {
+    const url = requestUrl(input);
+    if (/\/sign-in\/social/.test(url) && social) {
+      const { provider } = JSON.parse(init?.body as string);
+      return social(provider);
+    }
+    if (/\/sign-in\/email/.test(url) && email) return email();
+    throw new Error(`unexpected request to ${url}`);
+  });
+}
+
+// Where the browser lands when a social sign-in does not finish: the error
+// callback the start request carried, with Better Auth's `error` added to it.
+function comingBackFrom(
+  request: SocialSignInRequest,
+  code = "server_error",
+): URL {
+  const back = new URL(request.errorCallbackURL, ORIGIN);
+  back.searchParams.set("error", code);
+  return back;
+}
+
+function isBefore(first: HTMLElement, second: HTMLElement): boolean {
+  return Boolean(
+    first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING,
+  );
+}
+
+function lockedNotice(): HTMLElement {
+  return screen.getByText(/Password sign-in is paused for this account/);
+}
+
+function resetLink(): HTMLElement {
+  return screen.getByRole("link", { name: "Reset password" });
+}
+
+// A visitor whose password sign-in has been refused as locked.
+async function lockPasswordSignIn(
+  user: ReturnType<typeof userEvent.setup>,
+): Promise<void> {
+  await user.type(screen.getByLabelText(/^email/i), "dev@example.com");
+  await user.type(screen.getByLabelText(/^password/i), "correct-horse-battery");
+  await user.click(screen.getByRole("button", { name: "Sign in" }));
+  await screen.findByText(/Password sign-in is paused for this account/);
+}
+
+function landedOn(): URL | undefined {
+  const target = [...nav.push.mock.calls, ...nav.replace.mock.calls][0]?.[0];
+  return typeof target === "string" ? new URL(target, ORIGIN) : undefined;
+}
+
 function sha256(path: string): string {
   return createHash("sha256")
     .update(readFileSync(resolve(process.cwd(), path)))
@@ -360,5 +449,220 @@ describe("oauth-buttons", () => {
     const [fromSignUp] = socialSignIns();
     expect(fromSignUp.provider).toBe("github");
     expect(new URL(fromSignUp.callbackURL, ORIGIN).pathname).toBe("/");
+  });
+  it("story-accounts-social-sign-in-ac-9: A social sign-in that does not finish returns to sign in with the route the visitor asked for kept, so a retry with GitHub, Google or email and password returns to that route; a route off this site is dropped, and the retry lands on `/`. [F-accounts-12] [bb-sign-in-10]", async () => {
+    // [F-accounts-12] [bb-sign-in-10]
+    stubEnvironment({ ...GOOGLE_PAIR, ...GITHUB_PAIR });
+    answerRequests({
+      social: (provider) => socialSignInAnswer(provider),
+      email: () => signedIn("dev@example.com"),
+    });
+    const user = userEvent.setup();
+    const asked = new URL("/sign-in", ORIGIN);
+    asked.searchParams.set("returnTo", "/applications/42?tab=notes");
+
+    // The visitor presses GitHub, and the sign-in does not finish.
+    await renderPage("sign-in", asked);
+    await user.click(button("GitHub"));
+    await waitFor(() => expect(socialSignIns()).toHaveLength(1));
+    const [started] = socialSignIns();
+    const sentBack = new URL(started.errorCallbackURL, ORIGIN);
+    expect(sentBack.origin).toBe(ORIGIN);
+    expect(sentBack.pathname).toBe("/sign-in");
+    expect(sentBack.searchParams.get("provider")).toBe("github");
+    expect(sentBack.searchParams.get("returnTo")).toBe(
+      "/applications/42?tab=notes",
+    );
+
+    // Back on sign in, the route is still there for a retry with each way in.
+    const retries = ["GitHub", "Google"] as const;
+    for (const provider of retries) {
+      cleanup();
+      fetchMock.mockClear();
+      await renderPage("sign-in", comingBackFrom(started));
+
+      await user.click(button(provider));
+
+      await waitFor(() => expect(socialSignIns()).toHaveLength(1));
+      const [retry] = socialSignIns();
+      expect(retry.provider).toBe(provider.toLowerCase());
+      const target = new URL(retry.callbackURL, ORIGIN);
+      expect(target.pathname, provider).toBe("/applications/42");
+      expect(target.search, provider).toBe("?tab=notes");
+      // The route survives a second failure too.
+      expect(
+        new URL(retry.errorCallbackURL, ORIGIN).searchParams.get("returnTo"),
+        provider,
+      ).toBe("/applications/42?tab=notes");
+    }
+
+    cleanup();
+    nav.replace.mockReset();
+    await renderPage("sign-in", comingBackFrom(started));
+    await user.type(screen.getByLabelText(/^email/i), "dev@example.com");
+    await user.type(
+      screen.getByLabelText(/^password/i),
+      "correct-horse-battery",
+    );
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(landedOn()).toBeDefined());
+    expect(landedOn()?.pathname).toBe("/applications/42");
+    expect(landedOn()?.search).toBe("?tab=notes");
+
+    // A route off this site never reaches the way back, and the retry lands
+    // on `/`.
+    cleanup();
+    fetchMock.mockClear();
+    nav.replace.mockReset();
+    const offSite = new URL("/sign-in", ORIGIN);
+    offSite.searchParams.set("returnTo", "https://evil.example/phish");
+    await renderPage("sign-in", offSite);
+    await user.click(button("GitHub"));
+    await waitFor(() => expect(socialSignIns()).toHaveLength(1));
+    const [fromOffSite] = socialSignIns();
+    const offSiteBack = comingBackFrom(fromOffSite);
+    expect(offSiteBack.href).not.toContain("evil.example");
+    expect(["/", null]).toContain(offSiteBack.searchParams.get("returnTo"));
+
+    cleanup();
+    fetchMock.mockClear();
+    await renderPage("sign-in", offSiteBack);
+    await user.click(button("Google"));
+    await waitFor(() => expect(socialSignIns()).toHaveLength(1));
+    expect(new URL(socialSignIns()[0].callbackURL, ORIGIN).pathname).toBe("/");
+
+    cleanup();
+    await renderPage("sign-in", offSiteBack);
+    await user.type(screen.getByLabelText(/^email/i), "dev@example.com");
+    await user.type(
+      screen.getByLabelText(/^password/i),
+      "correct-horse-battery",
+    );
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(landedOn()).toBeDefined());
+    expect(landedOn()?.pathname).toBe("/");
+  });
+
+  it('story-accounts-social-sign-in-ac-10: When the request that starts a social sign-in fails, the visitor stays on the page with "Sign-in with GitHub didn\'t finish. Try again." (or Google), and the buttons can be pressed again. [F-accounts-3] [F-accounts-21] [bb-sign-in-21]', async () => {
+    // [F-accounts-3] [F-accounts-21] [bb-sign-in-21]
+    stubEnvironment({ ...GOOGLE_PAIR, ...GITHUB_PAIR });
+    const user = userEvent.setup();
+    const failures: [string, () => void][] = [
+      ["an error answer", () => answerRequests({ social: startFailed })],
+      [
+        "a request that throws",
+        () => fetchMock.mockRejectedValue(new TypeError("Failed to fetch")),
+      ],
+    ];
+
+    for (const path of ["sign-in", "sign-up"] as const) {
+      for (const [failure, arrange] of failures) {
+        for (const provider of ["GitHub", "Google"] as const) {
+          const label = `${path}, ${failure}, ${provider}`;
+          cleanup();
+          fetchMock.mockReset();
+          arrange();
+          await renderPage(path);
+
+          await user.click(button(provider));
+
+          // The visitor stays where they are, told which sign-in it was.
+          expect(
+            await screen.findByText(
+              `Sign-in with ${provider} didn't finish. Try again.`,
+            ),
+            label,
+          ).toBeInTheDocument();
+          const other = provider === "GitHub" ? "Google" : "GitHub";
+          expect(
+            screen.queryByText(
+              `Sign-in with ${other} didn't finish. Try again.`,
+            ),
+            label,
+          ).not.toBeInTheDocument();
+          expect(nav.push, label).not.toHaveBeenCalled();
+          expect(nav.replace, label).not.toHaveBeenCalled();
+          expect(screen.getByLabelText(/^email/i), label).toBeInTheDocument();
+
+          // Both buttons are live again, and a second press sends a request.
+          await waitFor(() => expect(button("GitHub")).toBeEnabled());
+          expect(button("Google"), label).toBeEnabled();
+          const before = socialSignIns().length;
+          await user.click(button(provider));
+          await waitFor(() =>
+            expect(socialSignIns().length, label).toBeGreaterThan(before),
+          );
+        }
+      }
+    }
+  });
+
+  it('story-accounts-social-sign-in-ac-11: Once password sign-in is locked and no social sign-in failure is shown, the page shows the locked notice first, then Continue with GitHub, then Continue with Google, then Reset password, with no "or" divider. A social sign-in failure, one that came back from the provider or a start request that failed, still shows once locked, as its own message apart from the locked notice, and the notice still comes before the buttons. [F-accounts-6] [bb-sign-in-21]', async () => {
+    // [F-accounts-6] [bb-sign-in-21]
+    stubEnvironment({ ...GOOGLE_PAIR, ...GITHUB_PAIR });
+    answerRequests({ email: locked, social: startFailed });
+    const user = userEvent.setup();
+
+    // No social failure: notice, GitHub, Google, Reset password, no divider.
+    await renderPage("sign-in");
+    await lockPasswordSignIn(user);
+    expect(isBefore(lockedNotice(), button("GitHub"))).toBe(true);
+    expect(isBefore(button("GitHub"), button("Google"))).toBe(true);
+    expect(isBefore(button("Google"), resetLink())).toBe(true);
+    expect(screen.queryByText("or")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^password/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/didn't finish/)).not.toBeInTheDocument();
+
+    // A start request that fails once locked: its own message, notice first.
+    await user.click(button("GitHub"));
+    const startFailure = await screen.findByText(
+      "Sign-in with GitHub didn't finish. Try again.",
+    );
+    expect(startFailure).not.toBe(lockedNotice());
+    expect(lockedNotice().contains(startFailure)).toBe(false);
+    expect(startFailure.contains(lockedNotice())).toBe(false);
+    expect(isBefore(lockedNotice(), button("GitHub"))).toBe(true);
+    expect(isBefore(button("GitHub"), button("Google"))).toBe(true);
+    expect(isBefore(button("Google"), resetLink())).toBe(true);
+    expect(screen.queryByText("or")).not.toBeInTheDocument();
+
+    // One that came back from the provider, shown once locked too.
+    cleanup();
+    const cameBack = new URL("/sign-in", ORIGIN);
+    cameBack.searchParams.set("provider", "google");
+    cameBack.searchParams.set("error", "server_error");
+    await renderPage("sign-in", cameBack);
+    await lockPasswordSignIn(user);
+    const returned = screen.getByText(
+      "Sign-in with Google didn't finish. Try again.",
+    );
+    expect(returned).not.toBe(lockedNotice());
+    expect(lockedNotice().contains(returned)).toBe(false);
+    expect(returned.contains(lockedNotice())).toBe(false);
+    expect(isBefore(lockedNotice(), button("GitHub"))).toBe(true);
+    expect(isBefore(button("GitHub"), button("Google"))).toBe(true);
+    expect(isBefore(button("Google"), resetLink())).toBe(true);
+    expect(screen.queryByText("or")).not.toBeInTheDocument();
+
+    // One provider configured: the notice, that button, Reset password. None:
+    // the notice and Reset password.
+    cleanup();
+    vi.resetModules();
+    stubEnvironment({ ...GITHUB_PAIR });
+    await renderPage("sign-in");
+    await lockPasswordSignIn(user);
+    expect(hasButton("Google")).toBe(false);
+    expect(isBefore(lockedNotice(), button("GitHub"))).toBe(true);
+    expect(isBefore(button("GitHub"), resetLink())).toBe(true);
+
+    cleanup();
+    vi.resetModules();
+    stubEnvironment();
+    await renderPage("sign-in");
+    await lockPasswordSignIn(user);
+    expect(hasButton("GitHub")).toBe(false);
+    expect(hasButton("Google")).toBe(false);
+    expect(isBefore(lockedNotice(), resetLink())).toBe(true);
+    expect(screen.queryByText("or")).not.toBeInTheDocument();
   });
 });
