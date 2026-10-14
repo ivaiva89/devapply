@@ -182,3 +182,36 @@ test.describe("a social sign-in that did not finish", () => {
     });
   }
 });
+
+test.describe("edge cases", () => {
+  test("a retry after a failed social sign-in returns to the kept route", async ({
+    page,
+  }) => {
+    await stubSignIn(page, 200, { token: "t", user: { id: "u1" } });
+
+    await page.goto(
+      "/sign-in?provider=github&error=server_error&returnTo=%2Fsettings%2Fprofile",
+    );
+    await expect(page.locator("p[role=alert]")).toHaveText(
+      "Sign-in with GitHub didn't finish. Try again.",
+    );
+    await submit(page, "ada@example.com");
+
+    // No session cookie from the stub, so the route gate bounces back to sign
+    // in carrying the route the retry went to.
+    await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fsettings%2Fprofile$/);
+  });
+
+  test("an off-site route kept with a failed social sign-in is dropped on retry", async ({
+    page,
+  }) => {
+    await stubSignIn(page, 200, { token: "t", user: { id: "u1" } });
+
+    await page.goto(
+      "/sign-in?provider=google&error=server_error&returnTo=https%3A%2F%2Fevil.example%2Fx",
+    );
+    await submit(page, "ada@example.com");
+
+    await expect(page).toHaveURL(/\/sign-in\?returnTo=%2F$/);
+  });
+});
