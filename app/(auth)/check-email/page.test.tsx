@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // The external boundaries are the framework's router and the network. The
 // sign-up form, Better Auth's browser client and the page run for real.
@@ -45,12 +45,31 @@ function requestsTo(pattern: RegExp) {
   );
 }
 
+// What the browser's Intl answers when asked for its time zone. Restores
+// first, so a second call stubs the original and not the stub.
+function browserReports(zone: string): void {
+  vi.restoreAllMocks();
+  const actual = Intl.DateTimeFormat.prototype.resolvedOptions;
+  vi.spyOn(Intl.DateTimeFormat.prototype, "resolvedOptions").mockImplementation(
+    function (this: Intl.DateTimeFormat) {
+      return { ...actual.call(this), timeZone: zone };
+    },
+  );
+}
+
 beforeEach(() => {
+  // A browser in a real zone, so the sign-up goes straight through on a
+  // machine in UTC too; UTC would show the timezone step first.
+  browserReports("Europe/Berlin");
   nav.push.mockReset();
   nav.replace.mockReset();
   nav.search = "";
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe("page", () => {

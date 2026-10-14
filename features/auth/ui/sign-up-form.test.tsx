@@ -100,6 +100,25 @@ function signUpBody(): Record<string, unknown> {
   >;
 }
 
+const REST_OF_STEP =
+  "Every date in DevApply is shown in the timezone you pick here, and you can change it later in Settings.";
+
+// The text with the typographic apostrophe written plain, so a message is
+// held to its words and not to which apostrophe the page uses.
+function plain(text: string | null | undefined): string {
+  return (text ?? "")
+    .replace(/\u2019/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// The words under the step's heading.
+function introduction(): string {
+  return plain(
+    screen.getByRole("heading", { level: 1 }).nextElementSibling?.textContent,
+  );
+}
+
 async function fillIn(
   user: ReturnType<typeof userEvent.setup>,
   email: string,
@@ -330,5 +349,69 @@ describe("sign-up-form", () => {
     expect(
       screen.getByRole("button", { name: "Create account" }),
     ).toBeEnabled();
+  });
+  it('story-accounts-timezone-settings-ac-17 (sign-up, UTC): After a sign-up from a browser that reports UTC, the step\'s first line is "Your browser reports UTC." and the rest is the same. [F-accounts-28] [bb-sign-in-7]', async () => {
+    // [F-accounts-28] [bb-sign-in-7]
+    browserReports("UTC");
+    const { SignUpForm } = await import("./sign-up-form");
+    const user = userEvent.setup();
+    render(<SignUpForm />);
+
+    await fillIn(user, EMAIL, PASSWORD);
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    await screen.findByRole("heading", { name: "Confirm your timezone" });
+    expect(introduction()).toBe(`Your browser reports UTC. ${REST_OF_STEP}`);
+  });
+
+  it("story-accounts-timezone-settings-ac-17 (sign-up, no usable zone): After a sign-up from a browser that reported no zone, or a name that is not a valid zone, the step's first line is \"We couldn't detect your timezone.\" and the rest is the same. [F-accounts-28] [bb-sign-in-7]", async () => {
+    // [F-accounts-28] [bb-sign-in-7]
+    const { SignUpForm } = await import("./sign-up-form");
+
+    for (const reported of [undefined, "Not/AZone"]) {
+      browserReports(reported);
+      const user = userEvent.setup();
+      const { unmount } = render(<SignUpForm />);
+
+      await fillIn(user, EMAIL, PASSWORD);
+      await user.click(screen.getByRole("button", { name: "Create account" }));
+
+      await screen.findByRole("heading", { name: "Confirm your timezone" });
+      expect(introduction(), String(reported)).toBe(
+        `We couldn't detect your timezone. ${REST_OF_STEP}`,
+      );
+      expect(requestsTo(/sign-up/), String(reported)).toHaveLength(0);
+      unmount();
+    }
+  });
+
+  it("story-accounts-timezone-settings-ac-18 (sign-up): Continue on the sign-up's timezone step, with the picker left as it opened, creates the account with `UTC`. (regression pin) [F-accounts-28] [F-accounts-30]", async () => {
+    // [F-accounts-28] [F-accounts-30]
+    const { SignUpForm } = await import("./sign-up-form");
+
+    for (const reported of ["UTC", undefined]) {
+      browserReports(reported);
+      fetchMock.mockReset();
+      nav.push.mockReset();
+      fetchMock.mockImplementation(async () => signedUp(EMAIL));
+      const user = userEvent.setup();
+      const { unmount } = render(<SignUpForm />);
+
+      await fillIn(user, EMAIL, PASSWORD);
+      await user.click(screen.getByRole("button", { name: "Create account" }));
+      await screen.findByRole("heading", { name: "Confirm your timezone" });
+      expect(screen.getByLabelText(/^timezone/i), String(reported)).toHaveValue(
+        "UTC",
+      );
+      await user.click(screen.getByRole("button", { name: "Continue" }));
+
+      await waitFor(() => expect(landedOn(), String(reported)).toBeDefined());
+      expect(requestsTo(/sign-up/), String(reported)).toHaveLength(1);
+      expect(signUpBody(), String(reported)).toMatchObject({
+        email: EMAIL,
+        timezone: "UTC",
+      });
+      unmount();
+    }
   });
 });

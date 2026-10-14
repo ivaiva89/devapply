@@ -235,4 +235,19 @@ describe("update-timezone", () => {
     expect(await storedTimezone("theirs@example.com")).toBe("America/New_York");
     expect(await storedTimezone("mine@example.com")).toBe("Asia/Tokyo");
   });
+  it("story-accounts-timezone-settings-ac-21 (settings): A name that is not a valid zone, sent straight to the Settings action, returns the refusal the form shows as a field error and the stored timezone is unchanged. (regression pin) [F-accounts-13] [F-accounts-14]", async () => {
+    // [F-accounts-13] [F-accounts-14]
+    incoming.cookie = await signedInAccount("dev@example.com", "Europe/Berlin");
+    const { updateTimezone } = await load();
+
+    for (const bad of ["Not/AZone", "", "Berlin", "Europe/Atlantis"]) {
+      expect(await updateTimezone(bad), bad).toEqual({
+        ok: false,
+        error: "Choose a timezone from the list.",
+      });
+      expect(await storedTimezone("dev@example.com"), bad).toBe(
+        "Europe/Berlin",
+      );
+    }
+  });
 });

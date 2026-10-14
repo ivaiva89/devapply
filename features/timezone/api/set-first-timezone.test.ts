@@ -16,13 +16,27 @@ import {
 // action writes to.
 const sendEmail = vi.hoisted(() => vi.fn());
 const incoming = vi.hoisted(() => ({ cookie: "" }));
+// While set, the database refuses every write, as a lost connection does.
+const outage = vi.hoisted(() => ({ writes: false }));
 const database = await vi.hoisted(async () => {
   const { startDatabase } = await import("@/shared/testing/auth-harness");
   return startDatabase();
 });
 
 vi.mock("server-only", () => ({}));
-vi.mock("@/shared/db/client", () => ({ db: database.db }));
+vi.mock("@/shared/db/client", () => ({
+  db: new Proxy(database.db, {
+    get(target, property) {
+      if (property === "update" && outage.writes) {
+        return () => {
+          throw new Error("connection lost");
+        };
+      }
+      const value: unknown = Reflect.get(target, property, target);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  }),
+}));
 vi.mock("resend", () => ({
   Resend: class {
     emails = { send: sendEmail };
@@ -113,6 +127,7 @@ beforeEach(async () => {
   sendEmail.mockReset();
   sendEmail.mockResolvedValue({ data: { id: "email-1" }, error: null });
   incoming.cookie = "";
+  outage.writes = false;
   await emptyDatabase(database.pg);
   await database.pg.exec(`truncate table "user" cascade`);
 
@@ -209,5 +224,35 @@ describe("set-first-timezone", () => {
 
     expect(await storedTimezone("mine@example.com")).toBe("Asia/Tokyo");
     expect(await storedTimezone("theirs@example.com")).toBeNull();
+  });
+  it("story-accounts-timezone-settings-ac-16 (rejects): A save that fails in the database rejects, so the caller can tell it from a refused zone; the account keeps no timezone. [F-accounts-29]", async () => {
+    // [F-accounts-29]
+    // Green before the repair: the action already rejects. It is held here
+    // because the pages' failure message depends on it: a failure answered as
+    // a refusal would send the visitor to the confirm step instead.
+    incoming.cookie = await signedInAccount("dev@example.com", null);
+    const { setFirstTimezone } = await load();
+
+    outage.writes = true;
+    await expect(setFirstTimezone("Europe/Berlin")).rejects.toThrow(
+      "connection lost",
+    );
+    outage.writes = false;
+
+    expect(await storedTimezone("dev@example.com")).toBeNull();
+  });
+
+  it("story-accounts-timezone-settings-ac-21 (first save): A name that is not a valid zone, sent straight to the first-save action, returns the refusal the forms show as a field error and the stored timezone is unchanged. (regression pin) [F-accounts-13] [F-accounts-14]", async () => {
+    // [F-accounts-13] [F-accounts-14]
+    incoming.cookie = await signedInAccount("dev@example.com", null);
+    const { setFirstTimezone } = await load();
+
+    for (const bad of ["Not/AZone", "", "Berlin", "Europe/Atlantis"]) {
+      expect(await setFirstTimezone(bad), bad).toEqual({
+        ok: false,
+        error: "Choose a timezone from the list.",
+      });
+      expect(await storedTimezone("dev@example.com"), bad).toBeNull();
+    }
   });
 });

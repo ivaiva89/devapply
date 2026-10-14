@@ -33,4 +33,18 @@ describe("return-path", () => {
       "/settings?tab=timezone",
     );
   });
+
+  it("story-accounts-timezone-settings-ac-20: The shared return-path check sends `/.//evil.example` to `/`. (regression pin) [F-accounts-12] [F-accounts-31]", async () => {
+    // [F-accounts-12] [F-accounts-31]
+    // The browser resolves "/.//evil.example" to the path "//evil.example",
+    // which it reads as another site.
+    const { returnPath } = await load();
+
+    for (const away of [
+      "/.//evil.example",
+      "/.//evil.example/steal?token=1#top",
+    ]) {
+      expect(returnPath(away), away).toBe("/");
+    }
+  });
 });

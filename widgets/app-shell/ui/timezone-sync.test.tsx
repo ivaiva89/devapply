@@ -1,4 +1,5 @@
-import { render, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -53,6 +54,42 @@ function landedOn(): URL | undefined {
   return typeof target === "string"
     ? new URL(target, "http://localhost:3000")
     : undefined;
+}
+
+const SAVE_FAILED = "We couldn't save your timezone. Try again.";
+
+// The text with the typographic apostrophe written plain, so the message is
+// held to its words and not to which apostrophe the page uses.
+function plain(text: string | null | undefined): string {
+  return (text ?? "")
+    .replace(/\u2019/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Everything on screen that a screen reader announces, with its text.
+function announcements(container: HTMLElement): string[] {
+  return Array.from(
+    container.querySelectorAll(
+      '[role="alert"], [aria-live="polite"], [aria-live="assertive"]',
+    ),
+  )
+    .map((node) => plain(node.textContent))
+    .filter((text) => text.length > 0);
+}
+
+// A call the test settles by hand, to hold a save in flight.
+function pendingSave() {
+  let settle: (result: unknown) => void = () => {};
+  const promise = new Promise((resolve) => {
+    settle = resolve;
+  });
+  return { promise, settle };
+}
+
+// Time for any effect, and any promise it started, to run.
+async function settleEffects(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 30));
 }
 
 beforeEach(() => {
@@ -139,5 +176,124 @@ describe("timezone-sync", () => {
       unmount();
       vi.restoreAllMocks();
     }
+  });
+  it("story-accounts-timezone-settings-ac-4 (refused zone): A browser zone the server refuses is not a failed save: it still goes to the confirm step, with no message and no Retry. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    browserReports("Europe/Berlin");
+    setFirstTimezone.mockResolvedValue({
+      ok: false,
+      error: "Choose a timezone from the list.",
+    });
+    const { TimezoneSync } = await load();
+
+    const { container } = render(<TimezoneSync timezone={null} />);
+
+    await waitFor(() => expect(landedOn()).toBeDefined());
+    expect(landedOn()?.pathname).toBe("/sign-up/timezone");
+    expect(landedOn()?.searchParams.get("returnTo")).toBe("/settings");
+    expect(screen.queryByRole("button", { name: "Retry" })).toBeNull();
+    expect(plain(container.textContent)).not.toContain(SAVE_FAILED);
+  });
+
+  it("story-accounts-timezone-settings-ac-16 (failed save): When saving the browser's zone fails, the page shows the message with a Retry button, saves no UTC, shows no success and tries nothing more on its own. [F-accounts-29] [bb-sign-in-18]", async () => {
+    // [F-accounts-29] [bb-sign-in-18]
+    browserReports("Europe/Berlin");
+    setFirstTimezone.mockRejectedValue(new Error("connection lost"));
+    const { TimezoneSync } = await load();
+
+    const { container } = render(<TimezoneSync timezone={null} />);
+
+    await waitFor(() =>
+      expect(announcements(container).join("\n")).toContain(SAVE_FAILED),
+    );
+    expect(screen.getByRole("button", { name: "Retry" })).toBeEnabled();
+    // One attempt on this page, and none of its own after it failed.
+    await settleEffects();
+    expect(setFirstTimezone).toHaveBeenCalledTimes(1);
+    expect(setFirstTimezone).toHaveBeenCalledWith("Europe/Berlin");
+    expect(setFirstTimezone).not.toHaveBeenCalledWith("UTC");
+    // Not sent to the confirm step: the zone was fine, the save was not.
+    expect(landedOn()).toBeUndefined();
+    // Nothing says it was saved.
+    expect(plain(container.textContent)).not.toMatch(/saved|success/i);
+  });
+
+  it("story-accounts-timezone-settings-ac-16 (Retry): Retry tries the save once per press; a Retry that fails again leaves the message and nothing more is tried until Retry is pressed again, and one that works clears the message. [F-accounts-29] [bb-sign-in-18]", async () => {
+    // [F-accounts-29] [bb-sign-in-18]
+    browserReports("Asia/Tokyo");
+    setFirstTimezone.mockRejectedValue(new Error("connection lost"));
+    const { TimezoneSync } = await load();
+    const user = userEvent.setup();
+    const { container } = render(<TimezoneSync timezone={null} />);
+    await waitFor(() =>
+      expect(announcements(container).join("\n")).toContain(SAVE_FAILED),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+
+    await waitFor(() => expect(setFirstTimezone).toHaveBeenCalledTimes(2));
+    expect(setFirstTimezone).toHaveBeenLastCalledWith("Asia/Tokyo");
+    // It failed again: the message stays, and the page does not try on its own.
+    await waitFor(() =>
+      expect(announcements(container).join("\n")).toContain(SAVE_FAILED),
+    );
+    await settleEffects();
+    expect(setFirstTimezone).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole("button", { name: "Retry" })).toBeEnabled();
+    expect(setFirstTimezone).not.toHaveBeenCalledWith("UTC");
+    expect(landedOn()).toBeUndefined();
+
+    setFirstTimezone.mockResolvedValue({ ok: true });
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+
+    await waitFor(() => expect(setFirstTimezone).toHaveBeenCalledTimes(3));
+    await waitFor(() => expect(announcements(container)).toEqual([]));
+    expect(screen.queryByRole("button", { name: "Retry" })).toBeNull();
+    expect(plain(container.textContent)).not.toContain(SAVE_FAILED);
+  });
+
+  it("story-accounts-timezone-settings-ac-16 (in flight): A Retry that is still in flight does not start a second call when pressed again. [F-accounts-29]", async () => {
+    // [F-accounts-29]
+    browserReports("Asia/Tokyo");
+    const retrying = pendingSave();
+    setFirstTimezone
+      .mockRejectedValueOnce(new Error("connection lost"))
+      .mockReturnValueOnce(retrying.promise);
+    const { TimezoneSync } = await load();
+    const user = userEvent.setup();
+    const { container } = render(<TimezoneSync timezone={null} />);
+    await waitFor(() =>
+      expect(announcements(container).join("\n")).toContain(SAVE_FAILED),
+    );
+    const retry = screen.getByRole("button", { name: "Retry" });
+
+    await user.click(retry);
+    await user.click(retry);
+    await settleEffects();
+
+    expect(setFirstTimezone).toHaveBeenCalledTimes(2);
+    retrying.settle({ ok: true });
+    await waitFor(() => expect(announcements(container)).toEqual([]));
+    expect(setFirstTimezone).toHaveBeenCalledTimes(2);
+  });
+
+  it("story-accounts-timezone-settings-ac-16 (next page): Moving to another page while the account still has no timezone makes one attempt on that page, and that one is not repeated on its own when it fails. [F-accounts-29]", async () => {
+    // [F-accounts-29]
+    browserReports("Asia/Tokyo");
+    setFirstTimezone.mockRejectedValue(new Error("connection lost"));
+    const { TimezoneSync } = await load();
+    const { container, rerender } = render(<TimezoneSync timezone={null} />);
+    await waitFor(() =>
+      expect(announcements(container).join("\n")).toContain(SAVE_FAILED),
+    );
+    expect(setFirstTimezone).toHaveBeenCalledTimes(1);
+
+    nav.pathname = "/";
+    rerender(<TimezoneSync timezone={null} />);
+
+    await waitFor(() => expect(setFirstTimezone).toHaveBeenCalledTimes(2));
+    await settleEffects();
+    expect(setFirstTimezone).toHaveBeenCalledTimes(2);
+    expect(announcements(container).join("\n")).toContain(SAVE_FAILED);
   });
 });
