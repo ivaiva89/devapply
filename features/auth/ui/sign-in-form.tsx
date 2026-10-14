@@ -81,29 +81,33 @@ export function SignInForm({
     void form.handleSubmit(submit);
   }
 
-  // The lock covers the password only, so the buttons stay through it.
-  const social = (
-    <>
-      {oauthFailure ? <OAuthError {...oauthFailure} /> : null}
-      <OAuthButtons
-        providers={providers}
-        callbackURL={() => returnPath(returnTo)}
-      />
-    </>
-  );
+  const returnedFailure = oauthFailure ? (
+    <OAuthError {...oauthFailure} />
+  ) : null;
 
+  // The lock covers the password only, so the buttons stay through it, inside
+  // the notice. A social sign-in that did not finish still shows, as its own
+  // message under the notice's.
   if (state.status === "locked") {
     return (
-      <>
-        {social}
-        <LockedNotice />
-      </>
+      <LockedNotice>
+        {returnedFailure}
+        <OAuthButtons
+          providers={providers}
+          callbackURL={() => returnPath(returnTo)}
+          hasDivider={false}
+        />
+      </LockedNotice>
     );
   }
 
   return (
     <>
-      {social}
+      {returnedFailure}
+      <OAuthButtons
+        providers={providers}
+        callbackURL={() => returnPath(returnTo)}
+      />
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
         {state.status === "failed" ? (
           <p
