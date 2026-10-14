@@ -15,7 +15,7 @@ import {
   validatePassword,
 } from "./auth-form-fields";
 import { OAuthButtons } from "./oauth-buttons";
-import { TimezoneStep } from "./timezone-step";
+import { TimezoneStep, type TimezoneConfirmResult } from "./timezone-step";
 
 interface SignUpValues extends Record<string, unknown> {
   email: string;
@@ -44,8 +44,11 @@ export function SignUpForm({
   const form = useNativeForm<SignUpValues>(INITIAL_VALUES);
   const [formError, setFormError] = useState<string | null>(null);
   // The checked email and password of a sign-up that waits on the timezone
-  // step, while that step is shown.
-  const [waiting, setWaiting] = useState<SignUpValues | null>(null);
+  // step, while that step is shown, and whether the browser reported no
+  // usable zone rather than `UTC`.
+  const [waiting, setWaiting] = useState<
+    (SignUpValues & { isUndetected: boolean }) | null
+  >(null);
 
   // Whether the account was created.
   async function signUp(
@@ -82,17 +85,24 @@ export function SignUpForm({
     // is sent until the step is answered.
     const timezone = detectTimezone();
     if (timezone === null || timezone === "UTC") {
-      setWaiting({ email, password: values.password });
+      setWaiting({
+        email,
+        password: values.password,
+        isUndetected: timezone === null,
+      });
       return;
     }
     await signUp(email, values.password, timezone);
   }
 
-  async function confirmTimezone(timezone: string): Promise<undefined> {
-    if (!waiting) return;
+  async function confirmTimezone(
+    timezone: string,
+  ): Promise<TimezoneConfirmResult> {
+    if (!waiting) return { status: "done" };
     const isCreated = await signUp(waiting.email, waiting.password, timezone);
     // A refused sign-up goes back to the form, which shows the error.
     if (!isCreated) setWaiting(null);
+    return { status: "done" };
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
@@ -102,7 +112,14 @@ export function SignUpForm({
     void form.handleSubmit(submit);
   }
 
-  if (waiting) return <TimezoneStep onConfirm={confirmTimezone} />;
+  if (waiting) {
+    return (
+      <TimezoneStep
+        onConfirm={confirmTimezone}
+        isUndetected={waiting.isUndetected}
+      />
+    );
+  }
 
   return (
     <>

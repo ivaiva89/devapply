@@ -20,12 +20,15 @@ export async function AppShell({
   return (
     <div className="bg-canvas flex min-h-screen">
       <Sidebar />
-      <main className="min-w-0 flex-1 px-8 pt-6 pb-12">{children}</main>
-      {/* The sync reads the address's query, which suspends on a page that is
-          rendered ahead of its request. */}
-      <Suspense fallback={null}>
-        <TimezoneSync timezone={timezone} />
-      </Suspense>
+      <main className="min-w-0 flex-1 px-8 pt-6 pb-12">
+        {/* The sync shows a failed save at the top of the page. It reads the
+            address's query, which suspends on a page that is rendered ahead
+            of its request. */}
+        <Suspense fallback={null}>
+          <TimezoneSync timezone={timezone} />
+        </Suspense>
+        {children}
+      </main>
     </div>
   );
 }
