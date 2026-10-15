@@ -3,6 +3,10 @@ import { expect, test } from "@playwright/test";
 // The auth backend needs Neon and Resend, so these flows stub /api/auth at the
 // network edge and drive the real production build of the pages.
 
+// A UTC browser gets the timezone step before sign-up is sent, so the file pins
+// a non-UTC zone; the "browser in" blocks below set their own.
+test.use({ timezoneId: "Europe/Berlin" });
+
 test("sign-up with an email and a password lands on /check-email naming the address", async ({
   page,
 }) => {
