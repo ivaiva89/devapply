@@ -2,9 +2,16 @@
 import { getTableColumns, getTableName, is } from "drizzle-orm";
 import { PgTable } from "drizzle-orm/pg-core";
 import { readMigrationFiles } from "drizzle-orm/migrator";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
-import { startDatabase } from "@/shared/testing/auth-harness";
+import {
+  startDatabase,
+  type TestDatabase,
+} from "@/shared/testing/auth-harness";
+
+// Starting PGlite and applying every migration has its own bound, so a slow
+// start fails as a hook timeout and never as the column assertions.
+const DATABASE_SETUP_TIMEOUT_MS = 15_000;
 
 // What Better Auth's Drizzle adapter reads and writes, by field.
 const REQUIRED_COLUMNS = {
@@ -66,36 +73,44 @@ describe("auth", () => {
     }
   });
 
-  it("story-accounts-timezone-settings-ac-1 (column): The user table has a nullable timezone column with no default, so an existing account starts with no timezone. [F-accounts-13] [bb-sign-in-33]", async () => {
-    // [F-accounts-13] [bb-sign-in-33]
-    // Every migration in ./drizzle is applied to a real Postgres, the way
-    // `pnpm db:migrate` applies them to Neon.
-    const { user } = await import("./index");
-    expect(Object.keys(getTableColumns(user))).toContain("timezone");
+  describe("on a migrated database", () => {
+    let database: TestDatabase;
 
-    const { pg } = await startDatabase();
-    const { rows } = await pg.query<{
-      data_type: string;
-      is_nullable: string;
-      column_default: string | null;
-    }>(
-      `select data_type, is_nullable, column_default
+    beforeAll(async () => {
+      database = await startDatabase();
+    }, DATABASE_SETUP_TIMEOUT_MS);
+
+    it("story-accounts-timezone-settings-ac-1 (column): The user table has a nullable timezone column with no default, so an existing account starts with no timezone. [F-accounts-13] [bb-sign-in-33]", async () => {
+      // [F-accounts-13] [bb-sign-in-33]
+      // Every migration in ./drizzle is applied to a real Postgres, the way
+      // `pnpm db:migrate` applies them to Neon.
+      const { user } = await import("./index");
+      expect(Object.keys(getTableColumns(user))).toContain("timezone");
+
+      const { pg } = database;
+      const { rows } = await pg.query<{
+        data_type: string;
+        is_nullable: string;
+        column_default: string | null;
+      }>(
+        `select data_type, is_nullable, column_default
        from information_schema.columns
        where table_schema = 'public' and table_name = 'user'
          and column_name = 'timezone'`,
-    );
-    expect(rows).toEqual([
-      { data_type: "text", is_nullable: "YES", column_default: null },
-    ]);
+      );
+      expect(rows).toEqual([
+        { data_type: "text", is_nullable: "YES", column_default: null },
+      ]);
 
-    // An account written the way the tables were before the column existed
-    // reads back with no timezone: no default, no backfill.
-    await pg.query(
-      `insert into "user" (id, name, email) values ('user-1', 'dev', 'dev@example.com')`,
-    );
-    const stored = await pg.query<{ timezone: string | null }>(
-      `select timezone from "user" where id = 'user-1'`,
-    );
-    expect(stored.rows[0]?.timezone).toBeNull();
+      // An account written the way the tables were before the column existed
+      // reads back with no timezone: no default, no backfill.
+      await pg.query(
+        `insert into "user" (id, name, email) values ('user-1', 'dev', 'dev@example.com')`,
+      );
+      const stored = await pg.query<{ timezone: string | null }>(
+        `select timezone from "user" where id = 'user-1'`,
+      );
+      expect(stored.rows[0]?.timezone).toBeNull();
+    });
   });
 });
