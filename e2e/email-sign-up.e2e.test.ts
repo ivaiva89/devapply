@@ -3,6 +3,10 @@ import { expect, test } from "@playwright/test";
 // The auth backend needs Neon and Resend, so these flows stub /api/auth at the
 // network edge and drive the real production build of the pages.
 
+// A UTC browser gets the timezone step before sign-up is sent, so the file pins
+// a non-UTC zone; the "browser in" blocks below set their own.
+test.use({ timezoneId: "Europe/Berlin" });
+
 test("sign-up with an email and a password lands on /check-email naming the address", async ({
   page,
 }) => {
@@ -159,4 +163,148 @@ test("an expired confirmation link offers a new one", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "Send a new link" }),
   ).toHaveAttribute("href", "/check-email?email=ada%40example.com");
+});
+
+test.describe("sign-up timezone", () => {
+  async function stubSignUp(
+    page: import("@playwright/test").Page,
+    bodies: Record<string, unknown>[],
+  ): Promise<void> {
+    await page.route("**/api/auth/sign-up/email", async (route) => {
+      bodies.push(route.request().postDataJSON() as Record<string, unknown>);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ token: null, user: { id: "u1" } }),
+      });
+    });
+  }
+
+  async function fillAndSubmit(
+    page: import("@playwright/test").Page,
+  ): Promise<void> {
+    await page.goto("/sign-up");
+    await page.getByLabel("Email").fill("ada@example.com");
+    await page.getByLabel("Password").fill("correct horse battery");
+    await page.getByRole("button", { name: "Create account" }).click();
+  }
+
+  test.describe("browser in Europe/Berlin", () => {
+    test.use({ timezoneId: "Europe/Berlin" });
+
+    test("sends the browser's zone with the sign-up and shows no step", async ({
+      page,
+    }) => {
+      const bodies: Record<string, unknown>[] = [];
+      await stubSignUp(page, bodies);
+      await fillAndSubmit(page);
+
+      await expect(page).toHaveURL(/\/check-email\?email=/);
+      expect(bodies).toHaveLength(1);
+      expect(bodies[0]?.["timezone"]).toBe("Europe/Berlin");
+    });
+  });
+
+  test.describe("browser in UTC", () => {
+    test.use({ timezoneId: "UTC" });
+
+    test("asks first and sends nothing until Keep UTC is pressed", async ({
+      page,
+    }) => {
+      const bodies: Record<string, unknown>[] = [];
+      await stubSignUp(page, bodies);
+      await fillAndSubmit(page);
+
+      await expect(
+        page.getByRole("heading", { name: "Confirm your timezone" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Create your account" }),
+      ).toHaveCount(0);
+      expect(bodies).toHaveLength(0);
+
+      await page.getByRole("button", { name: "Keep UTC" }).click();
+      await expect(page).toHaveURL(/\/check-email\?email=/);
+      expect(bodies).toHaveLength(1);
+      expect(bodies[0]?.["timezone"]).toBe("UTC");
+    });
+
+    test("Continue sends the picked zone", async ({ page }) => {
+      const bodies: Record<string, unknown>[] = [];
+      await stubSignUp(page, bodies);
+      await fillAndSubmit(page);
+
+      await page.getByRole("combobox").selectOption("Europe/Berlin");
+      await page.getByRole("button", { name: "Continue" }).click();
+      await expect(page).toHaveURL(/\/check-email\?email=/);
+      expect(bodies[0]?.["timezone"]).toBe("Europe/Berlin");
+    });
+
+    test("Continue with the picker left as it opened sends UTC", async ({
+      page,
+    }) => {
+      const bodies: Record<string, unknown>[] = [];
+      await stubSignUp(page, bodies);
+      await fillAndSubmit(page);
+
+      await expect(page.getByRole("combobox")).toHaveValue("UTC");
+      await page.getByRole("button", { name: "Continue" }).click();
+      await expect(page).toHaveURL(/\/check-email\?email=/);
+      expect(bodies).toHaveLength(1);
+      expect(bodies[0]?.["timezone"]).toBe("UTC");
+    });
+
+    test("the step has one h1 and a refused sign-up brings the page back", async ({
+      page,
+    }) => {
+      await page.route("**/api/auth/sign-up/email", async (route) => {
+        await route.fulfill({
+          status: 400,
+          contentType: "application/json",
+          body: JSON.stringify({
+            code: "INVALID_TIMEZONE",
+            message: "Choose a valid timezone.",
+          }),
+        });
+      });
+      await fillAndSubmit(page);
+
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Confirm your timezone" }),
+      ).toBeVisible();
+      await expect(page.getByText("Already have an account?")).toHaveCount(0);
+      await expect(page.getByText("Your browser reports UTC.")).toBeVisible();
+
+      await page.getByRole("button", { name: "Keep UTC" }).click();
+
+      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Create your account" }),
+      ).toBeVisible();
+      await expect(page.getByText("Already have an account?")).toBeVisible();
+    });
+
+    test("a refused sign-up returns to the form with its error", async ({
+      page,
+    }) => {
+      await page.route("**/api/auth/sign-up/email", async (route) => {
+        await route.fulfill({
+          status: 400,
+          contentType: "application/json",
+          body: JSON.stringify({
+            code: "INVALID_TIMEZONE",
+            message: "Choose a valid timezone.",
+          }),
+        });
+      });
+      await fillAndSubmit(page);
+      await page.getByRole("button", { name: "Keep UTC" }).click();
+
+      await expect(page.locator("p[role=alert]")).toContainText(
+        "Choose a valid timezone.",
+      );
+      expect(new URL(page.url()).pathname).toBe("/sign-up");
+    });
+  });
 });

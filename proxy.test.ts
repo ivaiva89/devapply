@@ -141,4 +141,32 @@ describe("proxy", () => {
       expect(await redirectedTo(open), open).toBeNull();
     }
   });
+
+  it("story-accounts-timezone-settings-ac-5 (session): `/sign-up/timezone` needs a session. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    // Signed out: sent to sign-in, carrying the confirm step as the way back.
+    const signedOut = await redirectedTo("/sign-up/timezone");
+    expect(signedOut?.pathname).toBe("/sign-in");
+    expect([...(signedOut?.searchParams.values() ?? [])]).toContain(
+      "/sign-up/timezone",
+    );
+
+    // Signed in: let through to the step.
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    const signedIn = await signInFrom(
+      auth,
+      "dev@example.com",
+      PASSWORD,
+      "198.51.100.31",
+    );
+    expect(signedIn.status).toBe(200);
+    expect(
+      await redirectedTo("/sign-up/timezone", cookieOf(signedIn)),
+    ).toBeNull();
+
+    // The step's neighbour stays open: a visitor with no session still has to
+    // be able to sign up.
+    expect(await redirectedTo("/sign-up")).toBeNull();
+  });
 });

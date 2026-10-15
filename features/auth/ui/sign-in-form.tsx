@@ -6,9 +6,13 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { authClient } from "@/shared/lib/auth/client";
+import type { SocialProvider } from "@/shared/lib/auth/offered-providers";
+import { returnPath } from "@/shared/lib/auth/return-path";
 
 import { EmailField, PasswordField } from "./auth-form-fields";
 import { LockedNotice } from "./locked-notice";
+import { OAuthButtons } from "./oauth-buttons";
+import { OAuthError, type OAuthFailure } from "./oauth-error";
 
 interface SignInValues extends Record<string, unknown> {
   email: string;
@@ -25,24 +29,22 @@ interface SignInFormProps {
   returnTo?: string;
   // Shown under the form, and dropped with it once sign-in is locked.
   footer?: ReactNode;
+  // The social sign-in providers this environment offers.
+  providers?: SocialProvider[];
+  // What a social sign-in that did not finish came back with, if one did.
+  oauthFailure?: OAuthFailure;
 }
+
+const NO_PROVIDERS: SocialProvider[] = [];
 
 const INITIAL_VALUES: SignInValues = { email: "", password: "" };
 
-// The app's default route, until tracking-core ships Applications.
-const DEFAULT_ROUTE = "/";
-
-// Where to go after signing in: the route asked for when it is a place on
-// this site. Anything that resolves to another origin is ignored.
-function returnPath(requested: string | undefined): string {
-  const { origin } = window.location;
-  if (!requested || !URL.canParse(requested, origin)) return DEFAULT_ROUTE;
-  const url = new URL(requested, origin);
-  if (url.origin !== origin) return DEFAULT_ROUTE;
-  return `${url.pathname}${url.search}${url.hash}`;
-}
-
-export function SignInForm({ returnTo, footer }: SignInFormProps): ReactNode {
+export function SignInForm({
+  returnTo,
+  footer,
+  providers = NO_PROVIDERS,
+  oauthFailure,
+}: SignInFormProps): ReactNode {
   const router = useRouter();
   const form = useNativeForm<SignInValues>(INITIAL_VALUES);
   const [state, setState] = useState<SignInState>({ status: "idle" });
@@ -79,10 +81,33 @@ export function SignInForm({ returnTo, footer }: SignInFormProps): ReactNode {
     void form.handleSubmit(submit);
   }
 
-  if (state.status === "locked") return <LockedNotice />;
+  const returnedFailure = oauthFailure ? (
+    <OAuthError {...oauthFailure} />
+  ) : null;
+
+  // The lock covers the password only, so the buttons stay through it, inside
+  // the notice. A social sign-in that did not finish still shows, as its own
+  // message under the notice's.
+  if (state.status === "locked") {
+    return (
+      <LockedNotice>
+        {returnedFailure}
+        <OAuthButtons
+          providers={providers}
+          callbackURL={() => returnPath(returnTo)}
+          hasDivider={false}
+        />
+      </LockedNotice>
+    );
+  }
 
   return (
     <>
+      {returnedFailure}
+      <OAuthButtons
+        providers={providers}
+        callbackURL={() => returnPath(returnTo)}
+      />
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
         {state.status === "failed" ? (
           <p

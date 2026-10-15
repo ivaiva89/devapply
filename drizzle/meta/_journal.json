@@ -15,6 +15,13 @@
       "when": 1791654269018,
       "tag": "0001_sign_in_lockout",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791927058672,
+      "tag": "0002_user_timezone",
+      "breakpoints": true
     }
   ]
 }

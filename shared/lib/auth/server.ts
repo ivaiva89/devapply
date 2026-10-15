@@ -10,12 +10,14 @@ import { account, session, user, verification } from "@/shared/db/schema";
 import { sendEmail } from "@/shared/lib/email/client";
 import { confirmEmailTemplate } from "@/shared/lib/email/templates/confirm-email";
 import { resetPasswordTemplate } from "@/shared/lib/email/templates/reset-password";
+import { isValidTimezone } from "@/shared/lib/timezone/validate";
 
 import {
   clearFailedSignIns,
   isSignInLocked,
   recordFailedSignIn,
 } from "./lockout";
+import { providerCredentials } from "./offered-providers";
 
 const SIGN_UP_PATH = "/sign-up/email";
 const SIGN_IN_PATH = "/sign-in/email";
@@ -32,6 +34,13 @@ export const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
+  user: {
+    additionalFields: {
+      // Sent with the email sign-up form. An account created without one, as
+      // a social sign-up is, has none until its first signed-in page.
+      timezone: { type: "string", required: false },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -75,6 +84,17 @@ export const auth = betterAuth({
       });
     },
   },
+  // Google and GitHub, each only where both of its values are set.
+  socialProviders: providerCredentials(),
+  account: {
+    // A social sign-in on an email that already has an account links to it
+    // only when the provider reports the email verified and the account's own
+    // email is confirmed. Anything else is sent back to the sign-in request's
+    // errorCallbackURL with `error=account_not_linked`. That is Better Auth's
+    // own check: no provider is trusted here and none of the options that
+    // loosen it is set.
+    accountLinking: { enabled: true },
+  },
   session: {
     // Better Auth's default is 7 days.
     expiresIn: 60 * 60 * 24 * 30,
@@ -93,6 +113,17 @@ export const auth = betterAuth({
   },
   hooks: {
     before: createAuthMiddleware(async (ctx) => {
+      // A zone name comes from the browser. One that is not a valid zone is
+      // refused on every request that carries it, before anything is stored:
+      // a sign-up with one creates no account.
+      const timezone: unknown = ctx.body?.timezone;
+      if (timezone != null && !isValidTimezone(timezone)) {
+        throw new APIError("BAD_REQUEST", {
+          code: "INVALID_TIMEZONE",
+          message: "Choose a valid timezone.",
+        });
+      }
+
       const email: unknown = ctx.body?.email;
       if (typeof email !== "string") return;
 

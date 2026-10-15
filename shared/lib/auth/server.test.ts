@@ -186,10 +186,15 @@ beforeEach(async () => {
   vi.stubEnv("BETTER_AUTH_URL", ORIGIN);
   vi.stubEnv("RESEND_API_KEY", "re_test_123");
   vi.stubEnv("EMAIL_FROM", "DevApply <no-reply@devapply.test>");
+  vi.stubEnv("GOOGLE_CLIENT_ID", "google-client-id");
+  vi.stubEnv("GOOGLE_CLIENT_SECRET", "google-client-secret");
+  vi.stubEnv("GITHUB_CLIENT_ID", "github-client-id");
+  vi.stubEnv("GITHUB_CLIENT_SECRET", "github-client-secret");
 });
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 // Time passes for the code under test. Stored timestamps move with it, so the
@@ -225,6 +230,172 @@ async function failTimes(
     const response = await attempt(auth, email, `wrong-password-${n}`);
     expect(response.status, `failed attempt ${n}`).toBe(401);
   }
+}
+
+// ---- Social sign-in ------------------------------------------------------
+// Google and GitHub are the external boundary: their token and profile
+// endpoints are answered at `fetch`. Better Auth's own sign-in and callback
+// run for real. The profiles have the shape the installed providers read
+// (node_modules/@better-auth/core/dist/social-providers/google.mjs and
+// github.mjs): Google's claims travel in the id token, GitHub's in /user and
+// /user/emails. The values are made up.
+type SocialProvider = "google" | "github";
+
+interface ProviderAccount {
+  // The provider's own id for the person.
+  id: string;
+  email: string;
+  // What the provider says about the address.
+  verified: boolean;
+  name: string;
+}
+
+const GOOGLE_PERSON: ProviderAccount = {
+  id: "112233445566778899001",
+  email: "dev@example.com",
+  verified: true,
+  name: "Dev Example",
+};
+const GITHUB_PERSON: ProviderAccount = {
+  id: "4242424",
+  email: "dev@example.com",
+  verified: true,
+  name: "Dev Example",
+};
+
+function base64url(value: unknown): string {
+  return Buffer.from(JSON.stringify(value)).toString("base64url");
+}
+
+function fetchedUrl(input: unknown): string {
+  if (typeof input === "string") return input;
+  if (input instanceof URL) return input.href;
+  return (input as Request).url;
+}
+
+function jsonResponse(body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+// Answers what the providers would, for the people given. A call to anywhere
+// else fails the test.
+function stubProviders(people: {
+  google?: ProviderAccount;
+  github?: ProviderAccount;
+}): void {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: unknown) => {
+      const url = fetchedUrl(input);
+      const { google, github } = people;
+      if (google && url.startsWith("https://oauth2.googleapis.com/token")) {
+        const claims = {
+          iss: "https://accounts.google.com",
+          aud: "google-client-id",
+          sub: google.id,
+          email: google.email,
+          email_verified: google.verified,
+          name: google.name,
+          picture: "https://lh3.googleusercontent.example/a/photo",
+        };
+        return jsonResponse({
+          access_token: "google-access-token",
+          token_type: "Bearer",
+          expires_in: 3599,
+          scope: "openid email profile",
+          id_token: `${base64url({ alg: "RS256", typ: "JWT" })}.${base64url(claims)}.signature`,
+        });
+      }
+      if (
+        github &&
+        url.startsWith("https://github.com/login/oauth/access_token")
+      ) {
+        return jsonResponse({
+          access_token: "github-access-token",
+          token_type: "bearer",
+          scope: "read:user,user:email",
+        });
+      }
+      if (github && url === "https://api.github.com/user") {
+        // GitHub leaves `email` empty when the person keeps it private.
+        return jsonResponse({
+          id: Number(github.id),
+          login: "dev-example",
+          name: github.name,
+          email: null,
+          avatar_url: "https://avatars.githubusercontent.example/u/4242424",
+        });
+      }
+      if (github && url === "https://api.github.com/user/emails") {
+        return jsonResponse([
+          {
+            email: github.email,
+            primary: true,
+            verified: github.verified,
+            visibility: "private",
+          },
+        ]);
+      }
+      throw new Error(`unexpected request to ${url}`);
+    }),
+  );
+}
+
+// The two requests a browser makes: Better Auth's sign-in request, whose
+// answer is the provider's page, and the provider sending the person back
+// with a code. Returns the response of that second request.
+let nextSocialAddress = 0;
+async function signInWith(
+  auth: Awaited<ReturnType<typeof loadAuth>>,
+  provider: SocialProvider,
+  callbackURL = "/",
+): Promise<Response> {
+  nextSocialAddress += 1;
+  const started = await post(
+    auth,
+    "/sign-in/social",
+    { provider, callbackURL, errorCallbackURL: "/sign-in" },
+    `198.18.0.${nextSocialAddress}`,
+  );
+  expect(started.status).toBe(200);
+  const { url } = (await started.json()) as { url: string };
+  const state = new URL(url).searchParams.get("state");
+  expect(state, "the provider's page carries a state").toBeTruthy();
+
+  const back = new URL(`${ORIGIN}/api/auth/callback/${provider}`);
+  back.searchParams.set("code", "provider-code");
+  back.searchParams.set("state", state as string);
+  return auth.handler(
+    new Request(back, {
+      headers: {
+        cookie: cookieOf(started),
+        "x-forwarded-for": `198.18.1.${nextSocialAddress}`,
+      },
+    }),
+  );
+}
+
+function redirectedTo(response: Response): URL {
+  expect(response.status).toBe(302);
+  return new URL(response.headers.get("location") ?? "", ORIGIN);
+}
+
+function hasSession(response: Response): boolean {
+  return response.headers
+    .getSetCookie()
+    .some((cookie) => cookie.includes("session_token="));
+}
+
+function usersWith(email: string) {
+  return store.user.filter((row) => row.email === email);
+}
+
+function accountsOf(email: string) {
+  const [owner] = usersWith(email);
+  return store.account.filter((row) => row.userId === owner?.id);
 }
 
 describe("server", () => {
@@ -570,5 +741,272 @@ describe("server", () => {
     const withNew = await attempt(auth, "dev@example.com", NEW_PASSWORD);
     expect(withNew.status).toBe(200);
     expect(store.session).toHaveLength(1);
+  });
+  it("story-accounts-social-sign-in-ac-1: Continue with GitHub on sign up or sign in creates an account or signs in. [F-accounts-21] [bb-sign-in-21]", async () => {
+    // [F-accounts-21] [bb-sign-in-21]
+    const auth = await loadAuth();
+    stubProviders({ github: GITHUB_PERSON });
+
+    // First time: an account is created and the person is signed in.
+    const first = await signInWith(auth, "github", "/applications");
+
+    expect(redirectedTo(first).pathname).toBe("/applications");
+    expect(hasSession(first)).toBe(true);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    const accounts = accountsOf("dev@example.com");
+    expect(accounts).toHaveLength(1);
+    expect(accounts[0]).toMatchObject({
+      providerId: "github",
+      accountId: GITHUB_PERSON.id,
+    });
+    expect(store.session).toHaveLength(1);
+
+    // Next time: the same account signs in again, nothing new is created.
+    const again = await signInWith(auth, "github");
+
+    expect(redirectedTo(again).pathname).toBe("/");
+    expect(hasSession(again)).toBe(true);
+    expect(store.user).toHaveLength(1);
+    expect(store.account).toHaveLength(1);
+    expect(store.session).toHaveLength(2);
+  });
+
+  it("story-accounts-social-sign-in-ac-2: Continue with Google on sign up or sign in creates an account or signs in. [F-accounts-3] [bb-sign-in-21]", async () => {
+    // [F-accounts-3] [bb-sign-in-21]
+    const auth = await loadAuth();
+    stubProviders({ google: GOOGLE_PERSON });
+
+    const first = await signInWith(auth, "google", "/applications");
+
+    expect(redirectedTo(first).pathname).toBe("/applications");
+    expect(hasSession(first)).toBe(true);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    const accounts = accountsOf("dev@example.com");
+    expect(accounts).toHaveLength(1);
+    expect(accounts[0]).toMatchObject({
+      providerId: "google",
+      accountId: GOOGLE_PERSON.id,
+    });
+    expect(store.session).toHaveLength(1);
+
+    const again = await signInWith(auth, "google");
+
+    expect(redirectedTo(again).pathname).toBe("/");
+    expect(hasSession(again)).toBe(true);
+    expect(store.user).toHaveLength(1);
+    expect(store.account).toHaveLength(1);
+    expect(store.session).toHaveLength(2);
+  });
+
+  it("story-accounts-social-sign-in-ac-3: Google sign-in on an email that already has a password account links to it when Google reports the email as verified and the account's own email is confirmed. [F-accounts-4] [bb-sign-in-4]", async () => {
+    // [F-accounts-4] [bb-sign-in-4]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    const [owner] = usersWith("dev@example.com");
+    stubProviders({ google: { ...GOOGLE_PERSON, verified: true } });
+
+    const response = await signInWith(auth, "google", "/applications");
+
+    // Signed in as the same person, with Google added to their account.
+    expect(redirectedTo(response).pathname).toBe("/applications");
+    expect(hasSession(response)).toBe(true);
+    expect(store.user).toHaveLength(1);
+    expect(store.session).toHaveLength(1);
+    expect(store.session[0]).toMatchObject({ userId: owner.id });
+    expect(
+      accountsOf("dev@example.com")
+        .map((row) => row.providerId)
+        .sort(),
+    ).toEqual(["credential", "google"]);
+
+    // The password still works.
+    const withPassword = await signIn(auth, "dev@example.com");
+    expect(withPassword.status).toBe(200);
+  });
+
+  it("story-accounts-social-sign-in-ac-4: GitHub sign-in on an email that already has an account links to it when GitHub reports the email as verified and the account's own email is confirmed. [F-accounts-22] [bb-sign-in-4]", async () => {
+    // [F-accounts-22] [bb-sign-in-4]
+    const auth = await loadAuth();
+    await createConfirmedUser(auth, sendEmail, "dev@example.com");
+    const [owner] = usersWith("dev@example.com");
+    stubProviders({ github: { ...GITHUB_PERSON, verified: true } });
+
+    const response = await signInWith(auth, "github", "/applications");
+
+    expect(redirectedTo(response).pathname).toBe("/applications");
+    expect(hasSession(response)).toBe(true);
+    expect(store.user).toHaveLength(1);
+    expect(store.session).toHaveLength(1);
+    expect(store.session[0]).toMatchObject({ userId: owner.id });
+    expect(
+      accountsOf("dev@example.com")
+        .map((row) => row.providerId)
+        .sort(),
+    ).toEqual(["credential", "github"]);
+
+    const withPassword = await signIn(auth, "dev@example.com");
+    expect(withPassword.status).toBe(200);
+  });
+
+  it("story-accounts-social-sign-in-ac-5 (refused link): A link is refused when the provider reports the email as unverified, and when the account's own email is not confirmed; either way the visitor returns to sign in with the message to use the existing method. [F-accounts-4] [F-accounts-22] [bb-sign-in-4]", async () => {
+    // [F-accounts-4] [F-accounts-22] [bb-sign-in-4]
+    const auth = await loadAuth();
+    const cases: {
+      label: string;
+      provider: SocialProvider;
+      email: string;
+      // Whether the person confirmed the address of the password account.
+      accountConfirmed: boolean;
+      // What the provider says about the address.
+      providerVerified: boolean;
+    }[] = [
+      {
+        label: "Google reports the email unverified",
+        provider: "google",
+        email: "google-unverified@example.com",
+        accountConfirmed: true,
+        providerVerified: false,
+      },
+      {
+        label: "GitHub reports the email unverified",
+        provider: "github",
+        email: "github-unverified@example.com",
+        accountConfirmed: true,
+        providerVerified: false,
+      },
+      {
+        label: "Google verified, the account's email is not confirmed",
+        provider: "google",
+        email: "google-unconfirmed@example.com",
+        accountConfirmed: false,
+        providerVerified: true,
+      },
+      {
+        label: "GitHub verified, the account's email is not confirmed",
+        provider: "github",
+        email: "github-unconfirmed@example.com",
+        accountConfirmed: false,
+        providerVerified: true,
+      },
+    ];
+
+    for (const entry of cases) {
+      if (entry.accountConfirmed) {
+        await createConfirmedUser(auth, sendEmail, entry.email);
+      } else {
+        nextSocialAddress += 1;
+        const signedUp = await signUp(
+          auth,
+          entry.email,
+          `192.0.2.${200 + nextSocialAddress}`,
+        );
+        expect(signedUp.status, entry.label).toBe(200);
+      }
+      const person = {
+        ...(entry.provider === "google" ? GOOGLE_PERSON : GITHUB_PERSON),
+        email: entry.email,
+        verified: entry.providerVerified,
+      };
+      stubProviders({ [entry.provider]: person });
+      const sessionsBefore = store.session.length;
+
+      const response = await signInWith(auth, entry.provider, "/applications");
+
+      // Back to sign in, told the account exists; no session, no new user and
+      // no provider added to the account.
+      const target = redirectedTo(response);
+      expect(target.pathname, entry.label).toBe("/sign-in");
+      expect(target.searchParams.get("error"), entry.label).toBe(
+        "account_not_linked",
+      );
+      expect(hasSession(response), entry.label).toBe(false);
+      expect(store.session, entry.label).toHaveLength(sessionsBefore);
+      expect(usersWith(entry.email), entry.label).toHaveLength(1);
+      expect(
+        accountsOf(entry.email).map((row) => row.providerId),
+        entry.label,
+      ).toEqual(["credential"]);
+    }
+  });
+
+  it("story-accounts-timezone-settings-ac-1 (server): An email sign-up that carries a valid zone saves that zone with the new account. [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]", async () => {
+    // [F-accounts-13] [bb-sign-in-18] [bb-sign-in-33]
+    const auth = await loadAuth();
+
+    const response = await post(
+      auth,
+      "/sign-up/email",
+      {
+        email: "dev@example.com",
+        password: PASSWORD,
+        name: "dev",
+        timezone: "Europe/Berlin",
+      },
+      "198.51.100.51",
+    );
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    expect(usersWith("dev@example.com")[0]?.timezone).toBe("Europe/Berlin");
+  });
+
+  it("story-accounts-timezone-settings-ac-2 (server): A sign-up that carries `UTC` saves it as the account's confirmed timezone. [new] [bb-sign-in-7]", async () => {
+    // [new] [bb-sign-in-7]
+    const auth = await loadAuth();
+
+    const response = await post(
+      auth,
+      "/sign-up/email",
+      {
+        email: "dev@example.com",
+        password: PASSWORD,
+        name: "dev",
+        timezone: "UTC",
+      },
+      "198.51.100.52",
+    );
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")[0]?.timezone).toBe("UTC");
+  });
+
+  it("story-accounts-timezone-settings-ac-6 (no zone sent): A sign-up that carries no zone creates the account with no timezone. [new]", async () => {
+    // [new]
+    // Not set stays not set: nothing fills in UTC for the account.
+    const auth = await loadAuth();
+
+    const response = await signUp(auth, "dev@example.com", "198.51.100.53");
+
+    expect(response.status).toBe(200);
+    expect(usersWith("dev@example.com")).toHaveLength(1);
+    expect(usersWith("dev@example.com")[0]?.timezone ?? null).toBeNull();
+  });
+
+  it("story-accounts-timezone-settings-ac-9 (server): A sign-up whose zone name is not a valid zone is refused and creates no account. [F-accounts-13] [F-accounts-14]", async () => {
+    // [F-accounts-13] [F-accounts-14]
+    const auth = await loadAuth();
+    const invalid: unknown[] = ["Not/AZone", "Mars/Olympus_Mons", "Berlin", 5];
+
+    for (const [n, timezone] of invalid.entries()) {
+      const response = await post(
+        auth,
+        "/sign-up/email",
+        {
+          email: `dev${n}@example.com`,
+          password: PASSWORD,
+          name: "dev",
+          timezone,
+        },
+        `198.51.100.${60 + n}`,
+      );
+
+      expect(response.status, String(timezone)).toBeGreaterThanOrEqual(400);
+      expect(response.status, String(timezone)).toBeLessThan(500);
+    }
+
+    // No account, no credential, no confirmation email.
+    expect(store.user).toHaveLength(0);
+    expect(store.account).toHaveLength(0);
+    expect(sentEmails()).toHaveLength(0);
   });
 });

@@ -1,11 +1,12 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { NextResponse, type NextRequest } from "next/server";
 
-// The app routes. Every other address is left alone: the auth pages and the
+// The app routes, and the timezone confirm step, which only a signed-in
+// account reaches. Every other address is left alone: the auth pages and the
 // auth API have to stay open, and an address the app does not have is a 404
 // for everyone.
 export const config = {
-  matcher: ["/", "/settings/:path*"],
+  matcher: ["/", "/settings/:path*", "/sign-up/timezone"],
 };
 
 // Sends a visitor with no session cookie to sign-in, carrying the route they

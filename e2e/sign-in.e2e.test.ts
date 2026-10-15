@@ -142,3 +142,76 @@ test("at 390px the sign-in page is a white page with 44px touch targets", async 
   expect(overflow).toBeLessThanOrEqual(0);
   await context.close();
 });
+
+test.describe("a social sign-in that did not finish", () => {
+  const cases: Array<{ query: string; message: string | null }> = [
+    {
+      query: "provider=github&error=email_not_found",
+      message:
+        "We couldn't get an email address from GitHub. Sign in with email and password instead.",
+    },
+    {
+      query: "provider=google&error=email_not_found",
+      message:
+        "We couldn't get an email address from Google. Sign in with email and password instead.",
+    },
+    {
+      query: "provider=github&error=account_not_linked",
+      message:
+        "An account with this email already exists. Sign in the way you did before.",
+    },
+    {
+      query: "provider=google&error=server_error",
+      message: "Sign-in with Google didn't finish. Try again.",
+    },
+    { query: "provider=github&error=access_denied", message: null },
+    { query: "provider=nope&error=server_error", message: null },
+  ];
+
+  for (const { query, message } of cases) {
+    test(`/sign-in?${query} shows ${message ?? "no message"}`, async ({
+      page,
+    }) => {
+      await page.goto(`/sign-in?${query}`);
+
+      if (message) {
+        await expect(page.locator("p[role=alert]")).toHaveText(message);
+      } else {
+        await expect(page.locator("p[role=alert]")).toHaveCount(0);
+      }
+    });
+  }
+});
+
+test.describe("edge cases", () => {
+  test("a retry after a failed social sign-in returns to the kept route", async ({
+    page,
+  }) => {
+    await stubSignIn(page, 200, { token: "t", user: { id: "u1" } });
+
+    await page.goto(
+      "/sign-in?provider=github&error=server_error&returnTo=%2Fsettings%2Fprofile",
+    );
+    await expect(page.locator("p[role=alert]")).toHaveText(
+      "Sign-in with GitHub didn't finish. Try again.",
+    );
+    await submit(page, "ada@example.com");
+
+    // No session cookie from the stub, so the route gate bounces back to sign
+    // in carrying the route the retry went to.
+    await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fsettings%2Fprofile$/);
+  });
+
+  test("an off-site route kept with a failed social sign-in is dropped on retry", async ({
+    page,
+  }) => {
+    await stubSignIn(page, 200, { token: "t", user: { id: "u1" } });
+
+    await page.goto(
+      "/sign-in?provider=google&error=server_error&returnTo=https%3A%2F%2Fevil.example%2Fx",
+    );
+    await submit(page, "ada@example.com");
+
+    await expect(page).toHaveURL(/\/sign-in\?returnTo=%2F$/);
+  });
+});

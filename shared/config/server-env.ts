@@ -13,6 +13,12 @@ const schema = z.object({
   // Optional so PR previews, which have no key, still load. The Resend client
   // refuses to send without it.
   RESEND_API_KEY: z.string().min(1).optional(),
+  // Optional, one pair per provider: an environment with neither pair, a PR
+  // preview for one, still loads and offers no social sign-in.
+  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+  GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  GITHUB_CLIENT_ID: z.string().min(1).optional(),
+  GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
 });
 
 // A variable that is set but empty counts as missing.
